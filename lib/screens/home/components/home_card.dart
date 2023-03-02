@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/constants.dart';
 
+import '../../../models/Room.dart';
+
 class HomeCard extends StatefulWidget {
-  const HomeCard({Key? key}) : super(key: key);
+  final int index;
+
+  const HomeCard({Key? key, required this.index}) : super(key: key);
 
   @override
   State<HomeCard> createState() => _HomeCardState();
@@ -12,7 +16,10 @@ class HomeCard extends StatefulWidget {
 
 class _HomeCardState extends State<HomeCard> {
   bool _isFavourited = true;
+  late PageController _pageController;
+  late Room _room;
 
+  int _currentPage = 0;
 
   void _toggleFavorite() {
     setState(() {
@@ -21,62 +28,97 @@ class _HomeCardState extends State<HomeCard> {
   }
 
   @override
+  void initState() {
+    _room = RoomList.rooms[widget.index];
+    _pageController = PageController(initialPage: _currentPage, keepPage: true);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsetsDirectional.only(
           start: 16.0, end: 16.0, top: 8, bottom: 8),
       height: 500,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24.0),
-          // border: Border.all(
-          //   color: Colors.black,
-          //   width: 1,
-          // )
-      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                child: Image.asset(
-                  'assets/png/room1.png',
-                  fit: BoxFit.cover,
-                  height: 340,
-                  width: 366,
-                ),
-              ),
-              Positioned(
-                top: 0.5,
-                right: 0.5,
-                child: IconButton(
-                  icon: _isFavourited
-                      ? SvgPicture.asset(
-                    'assets/icons/Heart Icon.svg',
-                    width: 20,
-                    height: 20,
-                    color: kPrimaryColor,
-                  )
-                      : SvgPicture.asset(
-                    'assets/icons/Heart Icon_2.svg',
-                    width: 20,
-                    height: 20,
-                    color: Colors.red,
-                  ),
-                  onPressed: () {
-                    _toggleFavorite();
+            const SizedBox(
+              height: 12,
+            ),
+            SizedBox(
+              height: 300,
+              child: Stack(children: [
+                PageView.builder(
+                  controller: _pageController,
+                  itemCount: _room.imagePath.length,
+                  onPageChanged: (int page) {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                  },
+                  itemBuilder: (BuildContext context, int index) {
+                    return ClipRRect(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(12.0)),
+                      child: Image.asset(
+                        _room.imagePath[index],
+                        fit: BoxFit.cover,
+                        height: 340,
+                        width: 366,
+                      ),
+                    );
                   },
                 ),
-              ),
-            ]),
+                Positioned(
+                  top: 0.5,
+                  right: 0.5,
+                  child: IconButton(
+                    icon: _isFavourited
+                        ? SvgPicture.asset(
+                            'assets/icons/Heart Icon.svg',
+                            width: 20,
+                            height: 20,
+                            color: kPrimaryColor,
+                          )
+                        : SvgPicture.asset(
+                            'assets/icons/Heart Icon_2.svg',
+                            width: 20,
+                            height: 20,
+                            color: Colors.red,
+                          ),
+                    onPressed: () {
+                      _toggleFavorite();
+                    },
+                  ),
+                ),
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _buildPageIndicator(),
+                  ),
+                )
+              ]),
+            ),
             const SizedBox(
               height: 12,
             ),
             Text('Nhà cho thuê 1 phòng ngủ',
-                style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w600)),
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600)),
             const SizedBox(
               height: 2,
             ),
@@ -141,6 +183,30 @@ class _HomeCardState extends State<HomeCard> {
                     fontWeight: FontWeight.bold)),
           ],
         ),
+      ),
+    );
+  }
+
+  List<Widget> _buildPageIndicator() {
+    List<Widget> indicators = [];
+    for (int i = 0; i < _room.imagePath.length; i++) {
+      indicators.add(
+        i == _currentPage
+            ? _buildPageIndicatorItem(true)
+            : _buildPageIndicatorItem(false),
+      );
+    }
+    return indicators;
+  }
+
+  Widget _buildPageIndicatorItem(bool isActive) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      height: 8.0,
+      width: isActive ? 8.0 : 8.0,
+      decoration: BoxDecoration(
+        color: isActive ? Colors.white : Colors.grey,
+        borderRadius: BorderRadius.circular(24),
       ),
     );
   }

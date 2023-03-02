@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/screens/home/components/home_card.dart';
 
-import '../../../size_config.dart';
-import 'categories.dart';
-import 'discount_banner.dart';
-import 'home_header.dart';
-import 'popular_product.dart';
-import 'special_offers.dart';
-
 // class Body extends StatelessWidget {
 //
 //   const Body({super.key});
@@ -68,7 +61,9 @@ class _BodyState extends State<Body> {
       physics: const ClampingScrollPhysics(),
       itemCount: 10,
       itemBuilder: (context, index) {
-        return const HomeCard();
+        return HomeCard(
+          index: 0,
+        );
       },
     );
   }

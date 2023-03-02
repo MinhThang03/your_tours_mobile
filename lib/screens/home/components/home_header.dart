@@ -9,6 +9,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SearchField();
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 8), child: SearchField());
   }
 }

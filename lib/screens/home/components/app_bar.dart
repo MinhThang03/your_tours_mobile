@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../size_config.dart';
-import 'categories.dart';
 import 'home_header.dart';
 
 class AppBarHome extends StatelessWidget {
@@ -13,7 +11,6 @@ class AppBarHome extends StatelessWidget {
       child: Column(
         children: [
           HomeHeader(),
-          SizedBox(height: getProportionateScreenWidth(10)),
         ],
       ),
     );

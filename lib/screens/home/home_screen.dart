@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'components/app_bar.dart';
+import '../../size_config.dart';
 import 'components/body.dart';
 import 'components/categories.dart';
+import 'components/home_header.dart';
 
 class HomeScreen extends StatelessWidget {
   static String routeName = "/home";
@@ -12,27 +13,33 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, isInnerScroll) {
-          return [
-            SliverAppBar(
-              toolbarHeight: 2.5 * kToolbarHeight,
-              automaticallyImplyLeading: false,
-              elevation: 2,
-              backgroundColor: Colors.white,
-              iconTheme: const IconThemeData(
-                color: Colors.black, //change your color here
-              ),
-              title: Column(
-                children: [AppBarHome(), Categories()],
-              ),
-              pinned: true,
+      body: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                ),
+              ],
             ),
-            // SliverToBoxAdapter(child:                     Categories(),
-            //     )
-          ];
-        },
-        body: Body(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(height: MediaQuery.of(context).padding.top),
+                SizedBox(height: SizeConfig.screenHeight * 0.01),
+                HomeHeader(),
+                SizedBox(height: SizeConfig.screenHeight * 0.01),
+                Categories(),
+                SizedBox(height: SizeConfig.screenHeight * 0.01),
+              ],
+            ),
+          ),
+          Expanded(child: Body()),
+        ],
       ),
     );
   }
