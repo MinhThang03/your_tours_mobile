@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/components/coustom_bottom_nav_bar.dart';
-import 'package:your_tours_mobile/enums.dart';
 
 import 'components/body.dart';
 
@@ -12,8 +10,17 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
-      ),
+          automaticallyImplyLeading: false,
+          elevation: 1,
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Colors.black, //change your color here
+          ),
+          centerTitle: true,
+          title: const Text(
+            'Hồ sơ',
+            style: TextStyle(color: Colors.black, fontSize: 24),
+          )),
       body: Body(),
     );
   }

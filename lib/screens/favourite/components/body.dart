@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/constants.dart';
 
 import '../../../size_config.dart';
 import 'favorite_card.dart';
@@ -21,12 +20,12 @@ class _BodyState extends State<Body> {
             SizedBox(height: getProportionateScreenWidth(10)),
             ListView.builder(
               shrinkWrap: true,
-              physics: ClampingScrollPhysics(),
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return FavoriteCard();
-              },
-            ),
+            physics: ClampingScrollPhysics(),
+            itemCount: 9,
+            itemBuilder: (context, index) {
+              return FavoriteCard();
+            },
+          ),
             const SizedBox(
               height: 20,
             ),

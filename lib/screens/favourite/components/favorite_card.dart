@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
+
+import '../../../components/rating_bar.dart';
+import '../../../constants.dart';
 
 class FavoriteCard extends StatefulWidget {
   const FavoriteCard({Key? key}) : super(key: key);
@@ -20,80 +23,128 @@ class _FavoriteCardState extends State<FavoriteCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsetsDirectional.only(
-          start: 16.0, end: 16.0, top: 8, bottom: 8),
-      height: 400,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24.0),
-        border: Border.all(
-          color: Colors.black,
-          width: 2,
-        )
-      ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => RoomDetailScreen()));
+      },
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                child: Image.asset(
-                  'assets/png/room1.png',
-                  fit: BoxFit.cover,
-                  height: 240,
-                  width: 366,
+        padding: const EdgeInsets.only(right: 16.0, left: 16, top: 8),
+        child: Container(
+          height: 168,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 8.0, bottom: 20, top: 20, right: 10),
+                  child: Stack(children: [
+                    ClipRRect(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(4.0)),
+                      child: Image.asset(
+                        'assets/png/room1.png',
+                        fit: BoxFit.cover,
+                        height: 136,
+                        width: 128,
+                      ),
+                    ),
+                    Positioned(
+                      top: -10,
+                      right: -6,
+                      child: IconButton(
+                        icon: _isFavourited
+                            ? SvgPicture.asset(
+                                'assets/icons/Heart Icon.svg',
+                                width: 20,
+                                height: 20,
+                                color: kPrimaryColor,
+                              )
+                            : SvgPicture.asset(
+                                'assets/icons/Heart Icon_2.svg',
+                                width: 20,
+                                height: 20,
+                                color: Colors.red,
+                              ),
+                        onPressed: () {
+                          _toggleFavorite();
+                        },
+                      ),
+                    ),
+                  ]),
                 ),
               ),
-              Positioned(
-                top: 0.5,
-                right: 0.5,
-                child: IconButton(
-                  icon: _isFavourited
-                      ? SvgPicture.asset(
-                          'assets/icons/Heart Icon.svg',
-                          width: 20,
-                          height: 20,
-                          color: Colors.black,
-                        )
-                      : SvgPicture.asset(
-                          'assets/icons/Heart Icon_2.svg',
-                          width: 20,
-                          height: 20,
-                          color: Colors.red,
+              Flexible(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20.0, bottom: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Nhà cho thuê 1 phòng ngủ',
+                          style: const TextStyle(fontWeight: FontWeight.w600)),
+                      RatingBarCommon(
+                        maxRating: 5,
+                        minRating: 5,
+                        initialRating: 5,
+                      ),
+                      Row(
+                        children: [
+                          Text('3.000.000' + 'VNĐ'),
+                          const Text('/tháng')
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/homeCard.svg',
+                            width: 18,
+                            height: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Text('50'),
+                          const Text(
+                            ' m²',
+                            style: TextStyle(fontSize: 12),
+                          )
+                        ],
+                      ),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/location.svg',
+                              width: 18,
+                              height: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              flex: 3,
+                              child: Text(
+                                '48 Hoa Sứ, Phường 7, Q.Phú Nhuận. ',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            )
+                          ],
                         ),
-                  onPressed: () {
-                    _toggleFavorite();
-                  },
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ]),
-            const SizedBox(
-              height: 12,
-            ),
-            Text('Nhà cho thuê 1 phòng ngủ',
-                style: TextStyle(fontSize: 18, color: Colors.black)),
-            const SizedBox(
-              height: 8,
-            ),
-            Text('3.000.000' ' VNĐ',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: kPrimaryColor,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              '48 Hoa Sứ, Phường 7, Q.Phú Nhuận. ',
-              style: TextStyle(color: Colors.black),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

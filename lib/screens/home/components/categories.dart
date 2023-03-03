@@ -22,6 +22,7 @@ class Categories extends StatelessWidget {
       {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
     ];
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
