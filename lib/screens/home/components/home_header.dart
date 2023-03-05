@@ -32,7 +32,6 @@ class HomeHeader extends StatelessWidget {
               child: SearchField()),
           SizedBox(height: SizeConfig.screenHeight * 0.01),
           Categories(),
-          SizedBox(height: SizeConfig.screenHeight * 0.01),
         ],
       ),
     );
