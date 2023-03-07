@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/components/custom_surfix_icon.dart';
 import 'package:your_tours_mobile/components/default_button.dart';
 import 'package:your_tours_mobile/components/form_error.dart';
-import 'package:your_tours_mobile/screens/complete_profile/complete_profile_screen.dart';
+import 'package:your_tours_mobile/screens/otp/otp_screen.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -71,8 +71,9 @@ class _SignUpFormState extends State<SignUpForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OtpScreen()));
                 // if all are valid then go to success screen
-                Navigator.pushNamed(context, CompleteProfileScreen.routeName);
               }
             },
           ),
@@ -158,7 +159,7 @@ class _SignUpFormState extends State<SignUpForm> {
         } else if (emailValidatorRegExp.hasMatch(value)) {
           removeError(error: kInvalidEmailError);
         }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {

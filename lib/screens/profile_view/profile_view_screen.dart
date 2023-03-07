@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'components/body.dart';
 
-class CompleteProfileScreen extends StatelessWidget {
-  static String routeName = "/complete_profile";
+class ProfileViewScreen extends StatefulWidget {
+  const ProfileViewScreen({Key? key}) : super(key: key);
 
-  const CompleteProfileScreen({super.key});
+  @override
+  State<ProfileViewScreen> createState() => _ProfileViewScreenState();
+}
 
+class _ProfileViewScreenState extends State<ProfileViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,10 +22,10 @@ class CompleteProfileScreen extends StatelessWidget {
           },
         ),
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         centerTitle: true,
         title: const Text(
-          'Chỉnh sửa thông tin',
+          'Thông tin cá nhân',
           style: TextStyle(fontSize: 20.0, color: Colors.black),
         ),
       ),

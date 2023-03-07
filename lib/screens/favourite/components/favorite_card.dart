@@ -25,8 +25,28 @@ class _FavoriteCardState extends State<FavoriteCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => RoomDetailScreen()));
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: timeNavigatorPush,
+            transitionsBuilder: (BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              );
+            },
+            pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) {
+              return RoomDetailScreen();
+            },
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 16.0, left: 16, top: 8),

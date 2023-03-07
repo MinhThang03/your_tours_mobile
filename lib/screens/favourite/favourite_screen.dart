@@ -19,8 +19,7 @@ class FavouriteScreen extends StatelessWidget {
           centerTitle: true,
           title: const Text(
             'Yêu thích',
-            style: TextStyle(
-                color: Colors.black, fontSize: 24),
+            style: TextStyle(color: Colors.black, fontSize: 20),
           )),
       body: const Body(),
     );

@@ -45,8 +45,28 @@ class _HomeCardState extends State<HomeCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => RoomDetailScreen()))
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: timeNavigatorPush,
+            transitionsBuilder: (BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              );
+            },
+            pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) {
+              return RoomDetailScreen();
+            },
+          ),
+        )
       },
       child: Container(
         margin: const EdgeInsetsDirectional.only(
