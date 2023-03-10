@@ -31,7 +31,7 @@ class HomeHeader extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 8),
               child: SearchField()),
           SizedBox(height: SizeConfig.screenHeight * 0.01),
-          Categories(),
+          const Categories(),
         ],
       ),
     );

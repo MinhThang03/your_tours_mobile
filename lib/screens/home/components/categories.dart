@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:your_tours_mobile/controllers/amenities_controller.dart';
+import 'package:your_tours_mobile/models/responses/amenities_filter_response.dart';
 
 import '../../../size_config.dart';
 
@@ -23,9 +25,36 @@ class _CategoriesState extends State<Categories> {
     {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
     {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
     {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
+    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
+    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
+    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
+    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
+    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
   ];
 
+  AmenitiesFilterResponse? _amenities;
   int _indexSelected = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDataAmenitiesFromApi();
+  }
+
+  Future<void> _fetchDataAmenitiesFromApi() async {
+    try {
+      final response = await amenitiesController();
+      setState(() {
+        _amenities = response;
+      });
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +65,7 @@ class _CategoriesState extends State<Categories> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
-          categories.length,
+          _amenities?.data.content.length ?? 0,
           (index) => GestureDetector(
             onTap: () => {
               setState(() {
@@ -45,7 +74,7 @@ class _CategoriesState extends State<Categories> {
             },
             child: CategoryCard(
               icon: categories[index]["icon"],
-              text: categories[index]["text"],
+              text: _amenities?.data.content[index].name,
               index: index,
               indexSelected: _indexSelected,
             ),
