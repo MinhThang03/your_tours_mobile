@@ -5,9 +5,16 @@ import 'categories.dart';
 import 'search_field.dart';
 
 class HomeHeader extends StatelessWidget {
+  final ValueChanged<String?> onChangeTap;
+  final ValueChanged<String?> onChangeSearch;
+
   const HomeHeader({
     Key? key,
-  }) : super(key: key);
+    required this.onChangeTap,
+    required this.onChangeSearch,
+  }) : super(
+          key: key,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +36,17 @@ class HomeHeader extends StatelessWidget {
           SizedBox(height: SizeConfig.screenHeight * 0.01),
           Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: SearchField()),
+              child: SearchField(
+                onChangeSearch: (value) {
+                  onChangeSearch(value);
+                },
+              )),
           SizedBox(height: SizeConfig.screenHeight * 0.01),
-          const Categories(),
+          Categories(
+            onChangeTap: (value) {
+              onChangeTap(value);
+            },
+          ),
         ],
       ),
     );

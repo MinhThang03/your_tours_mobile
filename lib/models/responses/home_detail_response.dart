@@ -23,86 +23,86 @@ class Data {
   Data({
     required this.id,
     required this.name,
-    required this.description,
-    required this.wifi,
-    required this.passWifi,
-    required this.ruleOthers,
-    required this.timeCheckInStart,
-    required this.timeCheckInEnd,
-    required this.timeCheckOut,
-    required this.guide,
-    required this.addressDetail,
-    required this.provinceCode,
-    required this.rank,
-    required this.costPerNightDefault,
-    required this.refundPolicy,
-    required this.status,
-    required this.numberOfGuests,
-    required this.view,
-    required this.favorite,
-    required this.thumbnail,
-    required this.averageRate,
-    required this.numberOfReviews,
-    required this.lastModifiedDate,
-    required this.roomsImportant,
-    required this.numberOfBed,
-    required this.isFavorite,
-    required this.imagesOfHome,
-    required this.roomsOfHome,
-    required this.amenitiesOfHome,
-    required this.evaluates,
-    required this.rooms,
-    required this.userRate,
-    required this.dateIsBooked,
-    required this.ownerName,
-    required this.amenitiesView,
-    required this.descriptionHomeDetail,
-    required this.surcharges,
-    required this.totalCostBooking,
-    required this.discounts,
-    required this.booked,
+    this.description,
+    this.wifi,
+    this.passWifi,
+    this.ruleOthers,
+    this.timeCheckInStart,
+    this.timeCheckInEnd,
+    this.timeCheckOut,
+    this.guide,
+    this.addressDetail,
+    this.provinceCode,
+    this.rank,
+    this.costPerNightDefault,
+    this.refundPolicy,
+    this.status,
+    this.numberOfGuests,
+    this.view,
+    this.favorite,
+    this.thumbnail,
+    this.averageRate,
+    this.numberOfReviews,
+    this.lastModifiedDate,
+    this.roomsImportant,
+    this.numberOfBed,
+    this.isFavorite,
+    this.imagesOfHome,
+    this.roomsOfHome,
+    this.amenitiesOfHome,
+    this.evaluates,
+    this.rooms,
+    this.userRate,
+    this.dateIsBooked,
+    this.ownerName,
+    this.amenitiesView,
+    this.descriptionHomeDetail,
+    this.surcharges,
+    this.totalCostBooking,
+    this.discounts,
+    this.booked,
   });
 
   String id;
   String name;
-  String description;
-  String wifi;
-  String passWifi;
-  String ruleOthers;
-  TimeCheck timeCheckInStart;
-  TimeCheck timeCheckInEnd;
-  TimeCheck timeCheckOut;
-  String guide;
-  String addressDetail;
-  int provinceCode;
-  int rank;
-  int costPerNightDefault;
-  String refundPolicy;
-  String status;
-  int numberOfGuests;
-  int view;
-  bool favorite;
-  String thumbnail;
-  int averageRate;
-  int numberOfReviews;
-  DateTime lastModifiedDate;
-  List<RoomsImportant> roomsImportant;
-  int numberOfBed;
-  bool isFavorite;
-  List<ImagesOfHome> imagesOfHome;
-  List<RoomsOfHome> roomsOfHome;
-  List<AmenitiesOfHome> amenitiesOfHome;
-  Evaluates evaluates;
-  List<Room> rooms;
-  int userRate;
-  List<String> dateIsBooked;
-  String ownerName;
-  List<AmenitiesView> amenitiesView;
-  String descriptionHomeDetail;
-  List<Surcharge> surcharges;
-  int totalCostBooking;
-  List<Discount> discounts;
-  bool booked;
+  String? description;
+  String? wifi;
+  String? passWifi;
+  String? ruleOthers;
+  TimeCheck? timeCheckInStart;
+  TimeCheck? timeCheckInEnd;
+  TimeCheck? timeCheckOut;
+  String? guide;
+  String? addressDetail;
+  int? provinceCode;
+  int? rank;
+  double? costPerNightDefault;
+  String? refundPolicy;
+  String? status;
+  int? numberOfGuests;
+  int? view;
+  bool? favorite;
+  String? thumbnail;
+  int? averageRate;
+  int? numberOfReviews;
+  DateTime? lastModifiedDate;
+  List<RoomsImportant>? roomsImportant;
+  int? numberOfBed;
+  bool? isFavorite;
+  List<ImagesOfHome>? imagesOfHome;
+  List<RoomsOfHome>? roomsOfHome;
+  List<AmenitiesOfHome>? amenitiesOfHome;
+  Evaluates? evaluates;
+  List<Room>? rooms;
+  int? userRate;
+  List<String>? dateIsBooked;
+  String? ownerName;
+  List<AmenitiesView>? amenitiesView;
+  String? descriptionHomeDetail;
+  List<Surcharge>? surcharges;
+  double? totalCostBooking;
+  List<Discount>? discounts;
+  bool? booked;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["id"],
@@ -111,9 +111,15 @@ class Data {
         wifi: json["wifi"],
         passWifi: json["passWifi"],
         ruleOthers: json["ruleOthers"],
-        timeCheckInStart: TimeCheck.fromJson(json["timeCheckInStart"]),
-        timeCheckInEnd: TimeCheck.fromJson(json["timeCheckInEnd"]),
-        timeCheckOut: TimeCheck.fromJson(json["timeCheckOut"]),
+        timeCheckInStart: json["timeCheckInStart"] == null
+            ? null
+            : TimeCheck.fromJson(json["timeCheckInStart"]),
+        timeCheckInEnd: json["timeCheckInEnd"] == null
+            ? null
+            : TimeCheck.fromJson(json["timeCheckInEnd"]),
+        timeCheckOut: json["timeCheckOut"] == null
+            ? null
+            : TimeCheck.fromJson(json["timeCheckOut"]),
         guide: json["guide"],
         addressDetail: json["addressDetail"],
         provinceCode: json["provinceCode"],
@@ -127,43 +133,66 @@ class Data {
         thumbnail: json["thumbnail"],
         averageRate: json["averageRate"],
         numberOfReviews: json["numberOfReviews"],
-        lastModifiedDate: DateTime.parse(json["lastModifiedDate"]),
-        roomsImportant: List<RoomsImportant>.from(
-            json["roomsImportant"].map((x) => RoomsImportant.fromJson(x))),
+        lastModifiedDate: json["lastModifiedDate"] == null
+            ? null
+            : DateTime.parse(json["lastModifiedDate"]),
+        roomsImportant: json["roomsImportant"] == null
+            ? null
+            : List<RoomsImportant>.from(
+                json["roomsImportant"].map((x) => RoomsImportant.fromJson(x))),
         numberOfBed: json["numberOfBed"],
         isFavorite: json["isFavorite"],
-        imagesOfHome: List<ImagesOfHome>.from(
-            json["imagesOfHome"].map((x) => ImagesOfHome.fromJson(x))),
-        roomsOfHome: List<RoomsOfHome>.from(
-            json["roomsOfHome"].map((x) => RoomsOfHome.fromJson(x))),
-        amenitiesOfHome: List<AmenitiesOfHome>.from(
-            json["amenitiesOfHome"].map((x) => AmenitiesOfHome.fromJson(x))),
-        evaluates: Evaluates.fromJson(json["evaluates"]),
-        rooms: List<Room>.from(json["rooms"].map((x) => Room.fromJson(x))),
+        imagesOfHome: json["imagesOfHome"] == null
+            ? null
+            : List<ImagesOfHome>.from(
+                json["imagesOfHome"].map((x) => ImagesOfHome.fromJson(x))),
+        roomsOfHome: json["roomsOfHome"] == null
+            ? null
+            : List<RoomsOfHome>.from(
+                json["roomsOfHome"].map((x) => RoomsOfHome.fromJson(x))),
+        amenitiesOfHome: json["amenitiesOfHome"] == null
+            ? null
+            : List<AmenitiesOfHome>.from(json["amenitiesOfHome"]
+                .map((x) => AmenitiesOfHome.fromJson(x))),
+        evaluates: json["evaluates"] == null
+            ? null
+            : Evaluates.fromJson(json["evaluates"]),
+        rooms: json["rooms"] == null
+            ? null
+            : List<Room>.from(json["rooms"].map((x) => Room.fromJson(x))),
         userRate: json["userRate"],
-        dateIsBooked: List<String>.from(json["dateIsBooked"].map((x) => x)),
+        dateIsBooked: json["dateIsBooked"] == null
+            ? null
+            : List<String>.from(json["dateIsBooked"].map((x) => x)),
         ownerName: json["ownerName"],
-        amenitiesView: List<AmenitiesView>.from(
-            json["amenitiesView"].map((x) => AmenitiesView.fromJson(x))),
+        amenitiesView: json["amenitiesView"] == null
+            ? null
+            : List<AmenitiesView>.from(
+                json["amenitiesView"].map((x) => AmenitiesView.fromJson(x))),
         descriptionHomeDetail: json["descriptionHomeDetail"],
-        surcharges: List<Surcharge>.from(
-            json["surcharges"].map((x) => Surcharge.fromJson(x))),
+        surcharges: json["surcharges"] == null
+            ? null
+            : List<Surcharge>.from(
+                json["surcharges"].map((x) => Surcharge.fromJson(x))),
         totalCostBooking: json["totalCostBooking"],
-        discounts: List<Discount>.from(
-            json["discounts"].map((x) => Discount.fromJson(x))),
+        discounts: json["discounts"] == null
+            ? null
+            : List<Discount>.from(
+                json["discounts"].map((x) => Discount.fromJson(x))),
         booked: json["booked"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "id": id,
         "name": name,
         "description": description,
         "wifi": wifi,
         "passWifi": passWifi,
         "ruleOthers": ruleOthers,
-        "timeCheckInStart": timeCheckInStart.toJson(),
-        "timeCheckInEnd": timeCheckInEnd.toJson(),
-        "timeCheckOut": timeCheckOut.toJson(),
+        "timeCheckInStart": timeCheckInStart?.toJson(),
+        "timeCheckInEnd": timeCheckInEnd?.toJson(),
+        "timeCheckOut": timeCheckOut?.toJson(),
         "guide": guide,
         "addressDetail": addressDetail,
         "provinceCode": provinceCode,
@@ -177,26 +206,41 @@ class Data {
         "thumbnail": thumbnail,
         "averageRate": averageRate,
         "numberOfReviews": numberOfReviews,
-        "lastModifiedDate": lastModifiedDate.toIso8601String(),
-        "roomsImportant":
-            List<dynamic>.from(roomsImportant.map((x) => x.toJson())),
+        "lastModifiedDate": lastModifiedDate?.toIso8601String(),
+        "roomsImportant": roomsImportant == null
+            ? null
+            : List<dynamic>.from(roomsImportant!.map((x) => x.toJson())),
         "numberOfBed": numberOfBed,
         "isFavorite": isFavorite,
-        "imagesOfHome": List<dynamic>.from(imagesOfHome.map((x) => x.toJson())),
-        "roomsOfHome": List<dynamic>.from(roomsOfHome.map((x) => x.toJson())),
-        "amenitiesOfHome":
-            List<dynamic>.from(amenitiesOfHome.map((x) => x.toJson())),
-        "evaluates": evaluates.toJson(),
-        "rooms": List<dynamic>.from(rooms.map((x) => x.toJson())),
+        "imagesOfHome": imagesOfHome == null
+            ? null
+            : List<dynamic>.from(imagesOfHome!.map((x) => x.toJson())),
+        "roomsOfHome": roomsOfHome == null
+            ? null
+            : List<dynamic>.from(roomsOfHome!.map((x) => x.toJson())),
+        "amenitiesOfHome": amenitiesOfHome == null
+            ? null
+            : List<dynamic>.from(amenitiesOfHome!.map((x) => x.toJson())),
+        "evaluates": evaluates?.toJson(),
+        "rooms": rooms == null
+            ? null
+            : List<dynamic>.from(rooms!.map((x) => x.toJson())),
         "userRate": userRate,
-        "dateIsBooked": List<dynamic>.from(dateIsBooked.map((x) => x)),
+        "dateIsBooked": dateIsBooked == null
+            ? null
+            : List<dynamic>.from(dateIsBooked!.map((x) => x)),
         "ownerName": ownerName,
-        "amenitiesView":
-            List<dynamic>.from(amenitiesView.map((x) => x.toJson())),
+        "amenitiesView": amenitiesView == null
+            ? null
+            : List<dynamic>.from(amenitiesView!.map((x) => x.toJson())),
         "descriptionHomeDetail": descriptionHomeDetail,
-        "surcharges": List<dynamic>.from(surcharges.map((x) => x.toJson())),
+        "surcharges": surcharges == null
+            ? null
+            : List<dynamic>.from(surcharges!.map((x) => x.toJson())),
         "totalCostBooking": totalCostBooking,
-        "discounts": List<dynamic>.from(discounts.map((x) => x.toJson())),
+        "discounts": discounts == null
+            ? null
+            : List<dynamic>.from(discounts!.map((x) => x.toJson())),
         "booked": booked,
       };
 }
@@ -234,45 +278,48 @@ class AmenitiesView {
   AmenitiesView({
     required this.id,
     required this.name,
-    required this.description,
-    required this.status,
-    required this.categoryId,
-    required this.icon,
-    required this.category,
-    required this.setFilter,
-    required this.isConfig,
+    this.description,
+    this.status,
+    this.categoryId,
+    this.icon,
+    this.category,
+    this.setFilter,
+    this.isConfig,
   });
 
   String id;
   String name;
-  String description;
-  String status;
-  String categoryId;
-  String icon;
-  AmenitiesViewCategory category;
-  bool setFilter;
-  bool isConfig;
+  String? description;
+  String? status;
+  String? categoryId;
+  String? icon;
+  AmenitiesViewCategory? category;
+  bool? setFilter;
+  bool? isConfig;
 
   factory AmenitiesView.fromJson(Map<String, dynamic> json) => AmenitiesView(
         id: json["id"],
         name: json["name"],
         description: json["description"],
-        status: json["status"],
+        status: json["status"].toString(),
         categoryId: json["categoryId"],
         icon: json["icon"],
-        category: AmenitiesViewCategory.fromJson(json["category"]),
+        category: json["category"] == null
+            ? null
+            : AmenitiesViewCategory.fromJson(json["category"]),
         setFilter: json["setFilter"],
         isConfig: json["isConfig"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "id": id,
         "name": name,
         "description": description,
         "status": status,
         "categoryId": categoryId,
         "icon": icon,
-        "category": category.toJson(),
+        "category": category?.toJson(),
         "setFilter": setFilter,
         "isConfig": isConfig,
       };
@@ -282,16 +329,16 @@ class AmenitiesViewCategory {
   AmenitiesViewCategory({
     required this.id,
     required this.name,
-    required this.description,
-    required this.status,
-    required this.isDefault,
+    this.description,
+    this.status,
+    this.isDefault,
   });
 
   String id;
   String name;
-  String description;
-  String status;
-  bool isDefault;
+  String? description;
+  String? status;
+  bool? isDefault;
 
   factory AmenitiesViewCategory.fromJson(Map<String, dynamic> json) =>
       AmenitiesViewCategory(
@@ -335,18 +382,18 @@ class DiscountCategory {
   DiscountCategory({
     required this.id,
     required this.name,
-    required this.description,
-    required this.type,
-    required this.numDateDefault,
-    required this.status,
+    this.description,
+    this.type,
+    this.numDateDefault,
+    this.status,
   });
 
   String id;
   String name;
-  String description;
-  String type;
-  int numDateDefault;
-  String status;
+  String? description;
+  String? type;
+  int? numDateDefault;
+  String? status;
 
   factory DiscountCategory.fromJson(Map<String, dynamic> json) =>
       DiscountCategory(
@@ -371,19 +418,19 @@ class DiscountCategory {
 class Config {
   Config({
     required this.id,
-    required this.percent,
-    required this.numberDateStay,
-    required this.numberMonthAdvance,
-    required this.homeId,
-    required this.categoryId,
+    this.percent,
+    this.numberDateStay,
+    this.numberMonthAdvance,
+    this.homeId,
+    this.categoryId,
   });
 
   String id;
-  int percent;
-  int numberDateStay;
-  int numberMonthAdvance;
-  String homeId;
-  String categoryId;
+  int? percent;
+  int? numberDateStay;
+  int? numberMonthAdvance;
+  String? homeId;
+  String? categoryId;
 
   factory Config.fromJson(Map<String, dynamic> json) => Config(
         id: json["id"],

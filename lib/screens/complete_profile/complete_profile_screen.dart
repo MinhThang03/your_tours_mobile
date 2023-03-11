@@ -19,7 +19,7 @@ class CompleteProfileScreen extends StatelessWidget {
           },
         ),
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         centerTitle: true,
         title: const Text(
           'Chỉnh sửa thông tin',

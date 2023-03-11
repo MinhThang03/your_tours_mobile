@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class SearchField extends StatelessWidget {
+  final ValueChanged<String?> onChangeSearch;
+
   const SearchField({
     Key? key,
+    required this.onChangeSearch,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -20,12 +22,14 @@ class SearchField extends StatelessWidget {
             color: Colors.grey.withOpacity(0.3),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3), // Đặt shadow theo chiều dọc
+            offset: const Offset(0, 3), // Đặt shadow theo chiều dọc
           ),
         ],
       ),
       child: TextField(
-        onChanged: (value) => print(value),
+        onChanged: (value) {
+          onChangeSearch(value);
+        },
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(20),

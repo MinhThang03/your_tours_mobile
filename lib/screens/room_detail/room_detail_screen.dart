@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
+import 'package:your_tours_mobile/models/Room.dart';
+import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/booking_page.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/pick_date_and_time.dart';
 
-import '../../../models/Room.dart';
-
 class RoomDetailScreen extends StatefulWidget {
   final int index;
+  final String homeId;
 
-  const RoomDetailScreen({this.index = 0, Key? key}) : super(key: key);
+  const RoomDetailScreen({this.index = 0, Key? key, required this.homeId})
+      : super(key: key);
 
   @override
   State<RoomDetailScreen> createState() => _RoomDetailScreenState();
@@ -21,8 +24,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   final myController = TextEditingController();
   final myController2 = TextEditingController();
 
-  late Room _room;
-
+  late RoomTest _room;
+  HomeDetailResponse? _homeDetail;
   late PageController _pageController;
   int _currentPage = 0;
 
@@ -54,15 +57,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                               fontWeight: FontWeight.w600, fontSize: 14),
                         ),
                         const SizedBox(height: 2.0),
-                        Container(
-                          child: TextField(
-                            controller: myController,
-                            decoration: const InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 20),
-                              border: OutlineInputBorder(),
-                              hintText: "Nhập họ và tên",
-                            ),
+                        TextField(
+                          controller: myController,
+                          decoration: const InputDecoration(
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 20),
+                            border: OutlineInputBorder(),
+                            hintText: "Nhập họ và tên",
                           ),
                         ),
                       ],
@@ -150,10 +151,25 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   @override
   void initState() {
-    _room = RoomList.rooms[widget.index];
-
-    _pageController = PageController(initialPage: _currentPage);
     super.initState();
+    _room = RoomList.rooms[widget.index];
+    _pageController = PageController(initialPage: _currentPage);
+    _fetchDataHomeDetailFromApi();
+  }
+
+  Future<void> _fetchDataHomeDetailFromApi() async {
+    try {
+      final response = await homeDetailController(widget.homeId);
+      setState(() {
+        _homeDetail = response;
+      });
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    }
   }
 
   @override
@@ -175,7 +191,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           },
         ),
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         centerTitle: true,
         title: const Text(
           'Chi tiết phòng',
@@ -183,29 +199,31 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 3,
-              child: Stack(children: [
-                PageView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  controller: _pageController,
-                  itemCount: _room.imagePath.length,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    return Image.asset(
-                      _room.imagePath[index],
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
-                Positioned(
+        child: _homeDetail == null
+            ? null
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 3,
+                    child: Stack(children: [
+                      PageView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        controller: _pageController,
+                        itemCount: _room.imagePath.length,
+                        onPageChanged: (int page) {
+                          setState(() {
+                            _currentPage = page;
+                          });
+                        },
+                        itemBuilder: (BuildContext context, int index) {
+                          return Image.asset(
+                            _room.imagePath[index],
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
+                      Positioned(
                   bottom: 20,
                   left: 0,
                   right: 0,
@@ -230,17 +248,17 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           children: [
                             SizedBox(
                               width: 200,
-                              child: Text(
-                                _room.title,
-                                softWrap: true,
-                                textAlign: TextAlign.start,
-                                maxLines: 2,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                                    child: Text(
+                                      _homeDetail!.data.name,
+                                      softWrap: true,
+                                      textAlign: TextAlign.start,
+                                      maxLines: 2,
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                             Chip(
                                 label: const Text('Còn phòng',
                                     style: TextStyle(

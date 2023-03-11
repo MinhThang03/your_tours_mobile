@@ -43,7 +43,9 @@ class _FavoriteCardState extends State<FavoriteCard> {
             },
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
-              return RoomDetailScreen();
+              return RoomDetailScreen(
+                homeId: "t",
+              );
             },
           ),
         );

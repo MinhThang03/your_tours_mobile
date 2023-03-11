@@ -27,14 +27,14 @@ class Data {
     required this.totalElements,
   });
 
-  List<Content> content;
+  List<HomeInfo> content;
   int pageNumber;
   int pageSize;
   int totalElements;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        content:
-            List<Content>.from(json["content"].map((x) => Content.fromJson(x))),
+        content: List<HomeInfo>.from(
+            json["content"].map((x) => HomeInfo.fromJson(x))),
         pageNumber: json["pageNumber"],
         pageSize: json["pageSize"],
         totalElements: json["totalElements"],
@@ -48,75 +48,81 @@ class Data {
       };
 }
 
-class Content {
-  Content({
+class HomeInfo {
+  HomeInfo({
     required this.id,
-    required this.name,
-    required this.description,
-    required this.wifi,
-    required this.passWifi,
-    required this.ruleOthers,
-    required this.timeCheckInStart,
-    required this.timeCheckInEnd,
-    required this.timeCheckOut,
-    required this.guide,
-    required this.addressDetail,
-    required this.provinceCode,
-    required this.rank,
-    required this.costPerNightDefault,
-    required this.refundPolicy,
-    required this.status,
-    required this.numberOfGuests,
-    required this.view,
-    required this.favorite,
-    required this.thumbnail,
-    required this.averageRate,
-    required this.numberOfReviews,
-    required this.lastModifiedDate,
-    required this.roomsImportant,
-    required this.numberOfBed,
-    required this.isFavorite,
-    required this.imagesOfHome,
+    this.name,
+    this.description,
+    this.wifi,
+    this.passWifi,
+    this.ruleOthers,
+    this.timeCheckInStart,
+    this.timeCheckInEnd,
+    this.timeCheckOut,
+    this.guide,
+    this.addressDetail,
+    this.provinceCode,
+    this.rank,
+    this.costPerNightDefault,
+    this.refundPolicy,
+    this.status,
+    this.numberOfGuests,
+    this.view,
+    this.favorite,
+    this.thumbnail,
+    this.averageRate,
+    this.numberOfReviews,
+    this.lastModifiedDate,
+    this.roomsImportant,
+    this.numberOfBed,
+    this.isFavorite,
+    this.imagesOfHome,
   });
 
   String id;
-  String name;
-  String description;
-  String wifi;
-  String passWifi;
-  String ruleOthers;
-  TimeCheck timeCheckInStart;
-  TimeCheck timeCheckInEnd;
-  TimeCheck timeCheckOut;
-  String guide;
-  String addressDetail;
-  int provinceCode;
-  int rank;
-  int costPerNightDefault;
-  String refundPolicy;
-  String status;
-  int numberOfGuests;
-  int view;
-  int favorite;
-  String thumbnail;
-  int averageRate;
-  int numberOfReviews;
-  DateTime lastModifiedDate;
-  List<RoomsImportant> roomsImportant;
-  int numberOfBed;
-  bool isFavorite;
-  List<ImagesOfHome> imagesOfHome;
+  String? name;
+  String? description;
+  String? wifi;
+  String? passWifi;
+  String? ruleOthers;
+  TimeCheck? timeCheckInStart;
+  TimeCheck? timeCheckInEnd;
+  TimeCheck? timeCheckOut;
+  String? guide;
+  String? addressDetail;
+  int? provinceCode;
+  int? rank;
+  double? costPerNightDefault;
+  String? refundPolicy;
+  String? status;
+  int? numberOfGuests;
+  int? view;
+  int? favorite;
+  String? thumbnail;
+  int? averageRate;
+  int? numberOfReviews;
+  DateTime? lastModifiedDate;
+  List<RoomsImportant>? roomsImportant;
+  int? numberOfBed;
+  bool? isFavorite;
+  List<ImagesOfHome>? imagesOfHome;
 
-  factory Content.fromJson(Map<String, dynamic> json) => Content(
+  factory HomeInfo.fromJson(Map<String, dynamic> json) => HomeInfo(
         id: json["id"],
         name: json["name"],
         description: json["description"],
         wifi: json["wifi"],
         passWifi: json["passWifi"],
         ruleOthers: json["ruleOthers"],
-        timeCheckInStart: TimeCheck.fromJson(json["timeCheckInStart"]),
-        timeCheckInEnd: TimeCheck.fromJson(json["timeCheckInEnd"]),
-        timeCheckOut: TimeCheck.fromJson(json["timeCheckOut"]),
+        timeCheckInStart: json["timeCheckInStart"] != null
+            ? TimeCheck.fromJson(json["timeCheckInStart"])
+            : null,
+        timeCheckInEnd: json["timeCheckInEnd"] != null
+            ? TimeCheck.fromJson(json["timeCheckInEnd"])
+            : null,
+        timeCheckOut: json["timeCheckOut"] != null
+            ? TimeCheck.fromJson(json["timeCheckOut"])
+            : null,
         guide: json["guide"],
         addressDetail: json["addressDetail"],
         provinceCode: json["provinceCode"],
@@ -131,12 +137,16 @@ class Content {
         averageRate: json["averageRate"],
         numberOfReviews: json["numberOfReviews"],
         lastModifiedDate: DateTime.parse(json["lastModifiedDate"]),
-        roomsImportant: List<RoomsImportant>.from(
-            json["roomsImportant"].map((x) => RoomsImportant.fromJson(x))),
+        roomsImportant: json["roomsImportant"] != null
+            ? List<RoomsImportant>.from(
+                json["roomsImportant"].map((x) => RoomsImportant.fromJson(x)))
+            : null,
         numberOfBed: json["numberOfBed"],
         isFavorite: json["isFavorite"],
-        imagesOfHome: List<ImagesOfHome>.from(
-            json["imagesOfHome"].map((x) => ImagesOfHome.fromJson(x))),
+        imagesOfHome: json["imagesOfHome"] != null
+            ? List<ImagesOfHome>.from(
+                json["imagesOfHome"].map((x) => ImagesOfHome.fromJson(x)))
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -146,9 +156,9 @@ class Content {
         "wifi": wifi,
         "passWifi": passWifi,
         "ruleOthers": ruleOthers,
-        "timeCheckInStart": timeCheckInStart.toJson(),
-        "timeCheckInEnd": timeCheckInEnd.toJson(),
-        "timeCheckOut": timeCheckOut.toJson(),
+        "timeCheckInStart": timeCheckInStart?.toJson(),
+        "timeCheckInEnd": timeCheckInEnd?.toJson(),
+        "timeCheckOut": timeCheckOut?.toJson(),
         "guide": guide,
         "addressDetail": addressDetail,
         "provinceCode": provinceCode,
@@ -162,12 +172,15 @@ class Content {
         "thumbnail": thumbnail,
         "averageRate": averageRate,
         "numberOfReviews": numberOfReviews,
-        "lastModifiedDate": lastModifiedDate.toIso8601String(),
-        "roomsImportant":
-            List<dynamic>.from(roomsImportant.map((x) => x.toJson())),
+        "lastModifiedDate": lastModifiedDate?.toIso8601String(),
+        "roomsImportant": roomsImportant != null
+            ? List<dynamic>.from(roomsImportant!.map((x) => x.toJson()))
+            : null,
         "numberOfBed": numberOfBed,
         "isFavorite": isFavorite,
-        "imagesOfHome": List<dynamic>.from(imagesOfHome.map((x) => x.toJson())),
+        "imagesOfHome": imagesOfHome != null
+            ? List<dynamic>.from(imagesOfHome!.map((x) => x.toJson()))
+            : null,
       };
 }
 

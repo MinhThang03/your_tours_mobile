@@ -5,7 +5,10 @@ import 'package:your_tours_mobile/helper/keyboard.dart';
 import 'package:your_tours_mobile/screens/forgot_password/forgot_password_screen.dart';
 
 import '../../../components/default_button.dart';
+import '../../../components/loading_overlay.dart';
 import '../../../constants.dart';
+import '../../../controllers/login_controller.dart';
+import '../../../models/requests/login_request.dart';
 import '../../../size_config.dart';
 import '../../main_screen/main_screen.dart';
 
@@ -18,6 +21,9 @@ class SignForm extends StatefulWidget {
 
 class _SignFormState extends State<SignForm> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   String? email;
   String? password;
   bool? remember = false;
@@ -37,6 +43,34 @@ class _SignFormState extends State<SignForm> {
       setState(() {
         errors.add(error);
       });
+    }
+  }
+
+  Future<void> _submit() async {
+    try {
+      await LoadingOverlay.of(context).during(
+          future: loginController(LoginRequest(
+              email: _emailController.text,
+              password: _passwordController.text)));
+
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const MainScreen(selectedInit: 0)),
+      );
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+        ),
+      );
     }
   }
 
@@ -88,13 +122,9 @@ class _SignFormState extends State<SignForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                // if all are valid then go to success screen
                 KeyboardUtil.hideKeyboard(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MainScreen(selectedInit: 0)),
-                );
+
+                _submit();
               }
             },
           ),
@@ -105,6 +135,7 @@ class _SignFormState extends State<SignForm> {
 
   TextFormField buildPasswordFormField() {
     return TextFormField(
+      controller: _passwordController,
       obscureText: !_showPassword,
       onSaved: (newValue) => password = newValue,
       onChanged: (value) {
@@ -138,6 +169,7 @@ class _SignFormState extends State<SignForm> {
 
   TextFormField buildEmailFormField() {
     return TextFormField(
+      controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       onSaved: (newValue) => email = newValue,
       onChanged: (value) {

@@ -6,7 +6,9 @@ import 'package:your_tours_mobile/models/responses/amenities_filter_response.dar
 import '../../../size_config.dart';
 
 class Categories extends StatefulWidget {
-  const Categories({Key? key}) : super(key: key);
+  final ValueChanged<String?> onChangeTap;
+
+  const Categories({Key? key, required this.onChangeTap}) : super(key: key);
 
   @override
   State<Categories> createState() => _CategoriesState();
@@ -67,10 +69,11 @@ class _CategoriesState extends State<Categories> {
         children: List.generate(
           _amenities?.data.content.length ?? 0,
           (index) => GestureDetector(
-            onTap: () => {
+            onTap: () {
               setState(() {
                 _indexSelected = index;
-              })
+              });
+              widget.onChangeTap(_amenities!.data.content[index].id);
             },
             child: CategoryCard(
               icon: categories[index]["icon"],

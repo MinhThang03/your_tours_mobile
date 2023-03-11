@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/models/responses/home_page_filter_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 
 import '../../../components/rating_bar.dart';
@@ -8,8 +9,9 @@ import '../../../models/Room.dart';
 
 class HomeCard extends StatefulWidget {
   final int index;
+  final HomeInfo? homeInfo;
 
-  const HomeCard({Key? key, this.index = 0}) : super(key: key);
+  const HomeCard({Key? key, this.index = 0, this.homeInfo}) : super(key: key);
 
   @override
   State<HomeCard> createState() => _HomeCardState();
@@ -18,7 +20,7 @@ class HomeCard extends StatefulWidget {
 class _HomeCardState extends State<HomeCard> {
   bool _isFavourited = true;
   late PageController _pageController;
-  late Room _room;
+  late RoomTest _room;
 
   int _currentPage = 0;
 
@@ -63,7 +65,9 @@ class _HomeCardState extends State<HomeCard> {
             },
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
-              return RoomDetailScreen();
+              return RoomDetailScreen(
+                homeId: widget.homeInfo!.id,
+              );
             },
           ),
         )
@@ -137,8 +141,8 @@ class _HomeCardState extends State<HomeCard> {
               const SizedBox(
                 height: 12,
               ),
-              Text('Nhà cho thuê 1 phòng ngủ',
-                  style: TextStyle(
+              Text(widget.homeInfo!.name!,
+                  style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
@@ -147,7 +151,7 @@ class _HomeCardState extends State<HomeCard> {
               const SizedBox(
                 height: 2,
               ),
-              RatingBarCommon(
+              const RatingBarCommon(
                 maxRating: 5,
                 minRating: 0,
                 initialRating: 5,

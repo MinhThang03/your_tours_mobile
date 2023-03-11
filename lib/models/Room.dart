@@ -1,4 +1,4 @@
-class Room {
+class RoomTest {
   String title;
   List<String> imagePath;
   double rating;
@@ -8,7 +8,7 @@ class Room {
   String description;
   bool isFavorite;
 
-  Room(
+  RoomTest(
       {required this.title,
       required this.imagePath,
       required this.rating,
@@ -20,8 +20,8 @@ class Room {
 }
 
 class RoomList {
-  static List<Room> rooms = [
-    Room(
+  static List<RoomTest> rooms = [
+    RoomTest(
         title: 'Trọ gác lửng',
         imagePath: [
           'assets/png/room1.png',
@@ -37,7 +37,7 @@ class RoomList {
         description:
             'Nhà cửa nhỏ nhắn và ấm cúng: Đây là một căn nhà nhỏ, tuy nhiên cực kỳ dễ thương và ấm áp. Nó có thể có những chi tiết trang trí tinh tế và màu sắc tươi sáng. Nó là nơi lý tưởng để thư giãn và tận hưởng những khoảnh khắc bình yên.',
         isFavorite: true),
-    Room(
+    RoomTest(
         title: 'Ký túc xá',
         imagePath: [
           'assets/png/room1.png',
@@ -53,7 +53,7 @@ class RoomList {
             'Ngôi nhà hiện đại: Mô tả cho một căn nhà hiện đại, sử dụng các vật liệu và thiết kế tối giản, trang trí đơn giản, tuy nhiên tạo cảm giác rộng rãi, thoải mái và sang trọng. Nó thường có nhiều cửa sổ, mang đến ánh sáng tự nhiên và tầm nhìn đẹp.',
         address: '480 Lê Văn Việt, Phường 7, Quận 9',
         isFavorite: false),
-    Room(
+    RoomTest(
         title: 'Căn hộ 2 phòng ngủ',
         imagePath: ['assets/png/room4.png'],
         area: '80',
@@ -63,7 +63,7 @@ class RoomList {
             'Căn biệt thự rộng lớn: Đây là mô tả cho một căn nhà lớn, nhiều phòng, thường có sân vườn và bể bơi. Nó có thể có các phòng đa chức năng và tiện nghi như phòng tập thể dục, thư viện, rạp chiếu phim và phòng khách sang trọng. Đây là loại nhà lý tưởng cho các gia đình đông người hoặc những người yêu thích không gian rộng lớn.',
         address: 'Vinhome GrandPark 20 Nguyễn Xiển, P. Phước Long B, Quận 9',
         isFavorite: false),
-    Room(
+    RoomTest(
         title: 'Căn hộ studio Sky9',
         imagePath: [
           'assets/png/room1.png',
@@ -80,7 +80,7 @@ class RoomList {
         address:
             'Đ. Liên Phường, Bình Trưng Đông, Quận 9, Thành phố Hồ Chí Minh',
         isFavorite: true),
-    Room(
+    RoomTest(
         title: 'Nhà trọ có gác',
         imagePath: ['assets/png/room5.png'],
         area: '40',
