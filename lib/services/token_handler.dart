@@ -5,7 +5,7 @@ Future<void> saveToken(String? token) async {
   // Lưu token vào SharedPreferences
   if (token != null) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+    prefs.setString('token', token);
   }
 }
 

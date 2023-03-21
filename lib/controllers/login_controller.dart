@@ -22,8 +22,8 @@ Future<void> loginController(LoginRequest requestBody) async {
 
     if (response.statusCode == 200) {
       LoginResponse loginResponse = LoginResponse.fromJson(responseJson);
-      saveToken(loginResponse.data?.accessToken);
-      saveUserInfo(loginResponse.data?.userInfo);
+      await saveToken(loginResponse.data?.accessToken);
+      await saveUserInfo(loginResponse.data?.userInfo);
       return;
     }
 

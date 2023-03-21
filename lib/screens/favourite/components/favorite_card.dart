@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 
 import '../../../components/rating_bar.dart';
 import '../../../constants.dart';
 
 class FavoriteCard extends StatefulWidget {
-  const FavoriteCard({Key? key}) : super(key: key);
+  final HomeInfo homeInfo;
+
+  const FavoriteCard({Key? key, required this.homeInfo}) : super(key: key);
 
   @override
   State<FavoriteCard> createState() => _FavoriteCardState();
@@ -108,9 +111,9 @@ class _FavoriteCardState extends State<FavoriteCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Nhà cho thuê 1 phòng ngủ',
+                      Text(widget.homeInfo.name!,
                           style: const TextStyle(fontWeight: FontWeight.w600)),
-                      RatingBarCommon(
+                      const RatingBarCommon(
                         maxRating: 5,
                         minRating: 5,
                         initialRating: 5,

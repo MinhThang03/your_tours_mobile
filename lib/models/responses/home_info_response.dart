@@ -1,5 +1,5 @@
-class HomePageFilterResponse {
-  HomePageFilterResponse({
+class HomeInfoResponse {
+  HomeInfoResponse({
     required this.success,
     required this.data,
   });
@@ -7,8 +7,8 @@ class HomePageFilterResponse {
   bool success;
   Data data;
 
-  factory HomePageFilterResponse.fromJson(Map<String, dynamic> json) =>
-      HomePageFilterResponse(
+  factory HomeInfoResponse.fromJson(Map<String, dynamic> json) =>
+      HomeInfoResponse(
         success: json["success"],
         data: Data.fromJson(json["data"]),
       );

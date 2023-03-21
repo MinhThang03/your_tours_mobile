@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/constants.dart';
-import 'package:your_tours_mobile/models/responses/home_page_filter_response.dart';
+import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 
 import '../../../components/rating_bar.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/models/responses/home_page_filter_response.dart';
+import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 
 import '../../controllers/home_page_filter_controller.dart';
 import 'components/body.dart';
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _amenityId;
   String? _province;
 
-  HomePageFilterResponse? _homeList;
+  HomeInfoResponse? _homeList;
 
   @override
   void initState() {

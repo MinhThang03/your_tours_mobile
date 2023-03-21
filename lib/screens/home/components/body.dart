@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/models/responses/home_page_filter_response.dart';
+import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/screens/home/components/home_card.dart';
 
 class Body extends StatefulWidget {
