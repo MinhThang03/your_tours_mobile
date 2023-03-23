@@ -7,3 +7,5 @@ const String homePageFilterUrl =
     "/api/v1/public/homes/page/filter?number=0&size=20";
 const String homeDetailUrl = "/api/v1/public/homes/{homeId}/detail";
 const String favouritePageUrl = "/api/v1/app/favorites/pages?number=0&size=20";
+const String getUserProfile = "/api/v1/user/profile";
+const String registerUrl = "/api/v1/auth/register";

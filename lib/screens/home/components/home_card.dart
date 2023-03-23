@@ -9,9 +9,10 @@ import '../../../models/Room.dart';
 
 class HomeCard extends StatefulWidget {
   final int index;
-  final HomeInfo? homeInfo;
+  final HomeInfo homeInfo;
 
-  const HomeCard({Key? key, this.index = 0, this.homeInfo}) : super(key: key);
+  const HomeCard({Key? key, this.index = 0, required this.homeInfo})
+      : super(key: key);
 
   @override
   State<HomeCard> createState() => _HomeCardState();
@@ -66,7 +67,7 @@ class _HomeCardState extends State<HomeCard> {
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
               return RoomDetailScreen(
-                homeId: widget.homeInfo!.id,
+                homeId: widget.homeInfo.id,
               );
             },
           ),
@@ -86,7 +87,7 @@ class _HomeCardState extends State<HomeCard> {
                   PageView.builder(
                     controller: _pageController,
                     physics: const BouncingScrollPhysics(),
-                    itemCount: _room.imagePath.length,
+                    itemCount: widget.homeInfo.imagesOfHome?.length ?? 0,
                     onPageChanged: (int page) {
                       setState(() {
                         _currentPage = page;
@@ -96,8 +97,8 @@ class _HomeCardState extends State<HomeCard> {
                       return ClipRRect(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(12.0)),
-                        child: Image.asset(
-                          _room.imagePath[index],
+                        child: Image.network(
+                          widget.homeInfo.imagesOfHome![index].path,
                           fit: BoxFit.cover,
                           height: 340,
                           width: 366,
@@ -141,7 +142,7 @@ class _HomeCardState extends State<HomeCard> {
               const SizedBox(
                 height: 12,
               ),
-              Text(widget.homeInfo!.name!,
+              Text(widget.homeInfo.name!,
                   style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black,
@@ -186,8 +187,8 @@ class _HomeCardState extends State<HomeCard> {
                   ),
                 ],
               ),
-              Text('3.000.000' ' VNĐ',
-                  style: TextStyle(
+              Text('${widget.homeInfo.costPerNightDefault} VNĐ',
+                  style: const TextStyle(
                       fontSize: 16,
                       color: kPrimaryColor,
                       fontWeight: FontWeight.bold)),

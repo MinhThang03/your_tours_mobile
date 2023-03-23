@@ -17,6 +17,7 @@ class SignUpForm extends StatefulWidget {
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   String? email;
+  String? name;
   String? password;
   String? confirmPassword;
   bool remember = false;
@@ -176,6 +177,32 @@ class _SignUpFormState extends State<SignUpForm> {
         hintText: "Enter your email",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+      ),
+    );
+  }
+
+  TextFormField buildNameFormField() {
+    return TextFormField(
+      keyboardType: TextInputType.name,
+      onSaved: (newValue) => name = newValue,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: "Nhập họ và tên");
+        }
+        return;
+      },
+      validator: (value) {
+        if (value!.isEmpty) {
+          addError(error: "Nhập họ và tên");
+          return "";
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: "Name",
+        hintText: "Nhập họ và tên",
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/name_icon.svg"),
       ),
     );
   }

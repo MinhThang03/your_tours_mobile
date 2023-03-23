@@ -21,7 +21,7 @@ class _BodyState extends State<Body> {
       itemCount: widget.homeList == null ? 0 : widget.homeList?.length,
       itemBuilder: (context, index) {
         return HomeCard(
-          homeInfo: widget.homeList?[index],
+          homeInfo: widget.homeList![index],
         );
       },
     );

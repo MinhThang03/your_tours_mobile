@@ -48,14 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           HomeHeader(
             onChangeSearch: (value) {
-              print(value);
               setState(() {
                 _province = value;
                 _fetchDataHomesFromApi();
               });
             },
             onChangeTap: (value) {
-              print(value);
               setState(() {
                 _amenityId = value;
                 _fetchDataHomesFromApi();

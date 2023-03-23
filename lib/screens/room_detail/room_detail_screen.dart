@@ -210,15 +210,15 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       PageView.builder(
                         physics: const BouncingScrollPhysics(),
                         controller: _pageController,
-                        itemCount: _room.imagePath.length,
+                        itemCount: _homeDetail?.data.imagesOfHome?.length,
                         onPageChanged: (int page) {
                           setState(() {
                             _currentPage = page;
                           });
                         },
                         itemBuilder: (BuildContext context, int index) {
-                          return Image.asset(
-                            _room.imagePath[index],
+                          return Image.network(
+                            _homeDetail!.data.imagesOfHome![index].path,
                             fit: BoxFit.cover,
                           );
                         },
@@ -267,33 +267,34 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                         color: kPrimaryColor)),
                                 backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                    color: kPrimaryColor, // Border color
-                                    width: 1.0, // Border width
+                                        side: const BorderSide(
+                                          color: kPrimaryColor, // Border color
+                                          width: 1.0, // Border width
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ))
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Text(
+                                '${_homeDetail?.data.costPerNightDefault.toString()} / 1 đêm',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/homeCard.svg',
+                                    width: 18,
+                                    height: 18,
                                   ),
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ))
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-                        Text(
-                          '${_room.price} / 1 tháng',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/homeCard.svg',
-                              width: 18,
-                              height: 18,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(_room.area),
+                                  const SizedBox(width: 6),
+                                  Text(_room.area),
                             const Text(
                               ' m²',
                               style: TextStyle(fontSize: 12),
@@ -333,17 +334,18 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Mô tả',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          _room.description,
-                          textAlign: TextAlign.justify,
-                        ),
-                      ],
+                              const Text('Mô tả',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600)),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                _homeDetail?.data.description ?? '',
+                                textAlign: TextAlign.justify,
+                              ),
+                            ],
                     ),
                   ),
 
