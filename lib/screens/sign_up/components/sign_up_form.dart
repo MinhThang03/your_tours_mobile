@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/components/custom_surfix_icon.dart';
 import 'package:your_tours_mobile/components/default_button.dart';
 import 'package:your_tours_mobile/components/form_error.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
+import 'package:your_tours_mobile/models/requests/register_request.dart';
 import 'package:your_tours_mobile/screens/otp/otp_screen.dart';
 
 import '../../../constants.dart';
+import '../../../controllers/register_controller.dart';
 import '../../../size_config.dart';
 
 class SignUpForm extends StatefulWidget {
@@ -16,6 +19,11 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
+
+  final _emailController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   String? email;
   String? name;
   String? password;
@@ -34,6 +42,35 @@ class _SignUpFormState extends State<SignUpForm> {
     setState(() {
       _showRePassword = !_showRePassword;
     });
+  }
+
+  Future<void> _submit() async {
+    try {
+      await LoadingOverlay.of(context).during(
+          future: registerController(RegisterRequest(
+        email: _emailController.text,
+        password: _passwordController.text,
+        fullName: _nameController.text,
+      )));
+
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const OtpScreen()),
+      );
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+        ),
+      );
+    }
   }
 
   final List<String?> errors = [];
@@ -60,6 +97,8 @@ class _SignUpFormState extends State<SignUpForm> {
       key: _formKey,
       child: Column(
         children: [
+          buildNameFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
           buildEmailFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
           buildPasswordFormField(),
@@ -72,9 +111,7 @@ class _SignUpFormState extends State<SignUpForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => OtpScreen()));
-                // if all are valid then go to success screen
+                _submit();
               }
             },
           ),
@@ -119,6 +156,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   TextFormField buildPasswordFormField() {
     return TextFormField(
+      controller: _passwordController,
       obscureText: !_showPassword,
       onSaved: (newValue) => password = newValue,
       onChanged: (value) {
@@ -152,6 +190,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   TextFormField buildEmailFormField() {
     return TextFormField(
+      controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       onSaved: (newValue) => email = newValue,
       onChanged: (value) {
@@ -183,6 +222,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   TextFormField buildNameFormField() {
     return TextFormField(
+      controller: _nameController,
       keyboardType: TextInputType.name,
       onSaved: (newValue) => name = newValue,
       onChanged: (value) {

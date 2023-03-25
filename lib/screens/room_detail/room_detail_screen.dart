@@ -294,13 +294,10 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                     height: 18,
                                   ),
                                   const SizedBox(width: 6),
-                                  Text(_room.area),
-                            const Text(
-                              ' m²',
-                              style: TextStyle(fontSize: 12),
-                            )
-                          ],
-                        ),
+                                  Text(
+                                      'Chủ nhà: ${_homeDetail?.data.ownerName}'),
+                                ],
+                              ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -316,12 +313,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                             const SizedBox(width: 6),
                             SizedBox(
                               width: 300,
-                              child: Text(
-                                _room.address,
-                                softWrap: true,
-                                maxLines: 3,
-                              ),
-                            )
+                                    child: Text(
+                                      _homeDetail?.data.provinceName ?? '',
+                                      softWrap: true,
+                                      maxLines: 3,
+                                    ),
+                                  )
                           ],
                         )
                       ],

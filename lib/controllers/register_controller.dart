@@ -6,7 +6,7 @@ import 'package:your_tours_mobile/models/requests/register_request.dart';
 import 'package:your_tours_mobile/models/responses/error_response.dart';
 import 'package:your_tours_mobile/models/responses/register_response.dart';
 
-Future<RegisterResponse> registerController(RegisterRequest requestBody) async {
+Future<SuccessResponse> registerController(RegisterRequest requestBody) async {
   try {
     http.Response response = await http.post(
       Uri.parse(domain + registerUrl),
@@ -20,7 +20,7 @@ Future<RegisterResponse> registerController(RegisterRequest requestBody) async {
         json.decode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode == 200) {
-      return RegisterResponse.fromJson(responseJson);
+      return SuccessResponse.fromJson(responseJson);
     }
 
     ErrorResponse errorResponse = ErrorResponse.fromJson(responseJson);

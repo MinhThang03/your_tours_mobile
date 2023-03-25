@@ -77,6 +77,7 @@ class HomeInfo {
     this.numberOfBed,
     this.isFavorite,
     this.imagesOfHome,
+    this.provinceName,
   });
 
   String id;
@@ -90,7 +91,7 @@ class HomeInfo {
   TimeCheck? timeCheckOut;
   String? guide;
   String? addressDetail;
-  int? provinceCode;
+  String? provinceCode;
   int? rank;
   double? costPerNightDefault;
   String? refundPolicy;
@@ -105,6 +106,7 @@ class HomeInfo {
   List<RoomsImportant>? roomsImportant;
   int? numberOfBed;
   bool? isFavorite;
+  String? provinceName;
   List<ImagesOfHome>? imagesOfHome;
 
   factory HomeInfo.fromJson(Map<String, dynamic> json) => HomeInfo(
@@ -126,6 +128,7 @@ class HomeInfo {
         guide: json["guide"],
         addressDetail: json["addressDetail"],
         provinceCode: json["provinceCode"],
+        provinceName: json["provinceName"],
         rank: json["rank"],
         costPerNightDefault: json["costPerNightDefault"],
         refundPolicy: json["refundPolicy"],
@@ -162,6 +165,7 @@ class HomeInfo {
         "guide": guide,
         "addressDetail": addressDetail,
         "provinceCode": provinceCode,
+        "provinceName": provinceName,
         "rank": rank,
         "costPerNightDefault": costPerNightDefault,
         "refundPolicy": refundPolicy,

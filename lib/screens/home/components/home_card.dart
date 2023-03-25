@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/favourite_controller.dart';
+import 'package:your_tours_mobile/models/requests/favourite_request.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 
@@ -29,6 +31,23 @@ class _HomeCardState extends State<HomeCard> {
     setState(() {
       _isFavourited = !_isFavourited;
     });
+  }
+
+  Future<void> _handleFavourite() async {
+    try {
+      await favouriteHandlerController(
+          FavouriteRequest(homeId: widget.homeInfo.id));
+
+      setState(() {
+        _isFavourited = !_isFavourited;
+      });
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    }
   }
 
   @override
@@ -157,21 +176,21 @@ class _HomeCardState extends State<HomeCard> {
                 minRating: 0,
                 initialRating: 5,
               ),
-              Row(
-                children: [
-                  SvgPicture.asset(
-                    'assets/icons/homeCard.svg',
-                    width: 20,
-                    height: 20,
-                    color: Colors.red,
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    '50 m2',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     SvgPicture.asset(
+              //       'assets/icons/homeCard.svg',
+              //       width: 20,
+              //       height: 20,
+              //       color: Colors.red,
+              //     ),
+              //     SizedBox(width: 5),
+              //     Text(
+              //       '50 m2',
+              //       style: TextStyle(color: Colors.black),
+              //     ),
+              //   ],
+              // ),
               Row(
                 children: [
                   SvgPicture.asset(
@@ -180,10 +199,10 @@ class _HomeCardState extends State<HomeCard> {
                     height: 20,
                     color: Colors.red,
                   ),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Text(
-                    '48 Hoa Sứ, Phường 7, Q.Phú Nhuận. ',
-                    style: TextStyle(color: Colors.black),
+                    widget.homeInfo.provinceName ?? '',
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ],
               ),

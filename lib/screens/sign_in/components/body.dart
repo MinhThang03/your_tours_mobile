@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/components/no_account_text.dart';
 import 'package:your_tours_mobile/components/socal_card.dart';
+
 import '../../../size_config.dart';
 import 'sign_form.dart';
 
@@ -33,7 +34,7 @@ class Body extends StatelessWidget {
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
                 const SignForm(),
-                SizedBox(height: SizeConfig.screenHeight * 0.08),
+                SizedBox(height: SizeConfig.screenHeight * 0.02),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -53,7 +54,7 @@ class Body extends StatelessWidget {
                 ),
                 SizedBox(height: getProportionateScreenHeight(20)),
                 const NoAccountText(),
-                SizedBox(height: getProportionateScreenHeight(20)),
+                SizedBox(height: getProportionateScreenHeight(50)),
               ],
             ),
           ),

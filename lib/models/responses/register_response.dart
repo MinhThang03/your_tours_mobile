@@ -1,5 +1,5 @@
-class RegisterResponse {
-  RegisterResponse({
+class SuccessResponse {
+  SuccessResponse({
     required this.success,
     required this.data,
   });
@@ -7,8 +7,8 @@ class RegisterResponse {
   bool success;
   Data data;
 
-  factory RegisterResponse.fromJson(Map<String, dynamic> json) =>
-      RegisterResponse(
+  factory SuccessResponse.fromJson(Map<String, dynamic> json) =>
+      SuccessResponse(
         success: json["success"],
         data: Data.fromJson(json["data"]),
       );

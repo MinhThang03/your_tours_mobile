@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../controllers/favourite_page_controller.dart';
+import '../../../controllers/favourite_controller.dart';
 import '../../../models/responses/home_info_response.dart';
 import '../../../size_config.dart';
 import 'favorite_card.dart';

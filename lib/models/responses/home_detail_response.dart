@@ -61,6 +61,7 @@ class Data {
     this.totalCostBooking,
     this.discounts,
     this.booked,
+    this.provinceName,
   });
 
   String id;
@@ -74,7 +75,8 @@ class Data {
   TimeCheck? timeCheckOut;
   String? guide;
   String? addressDetail;
-  int? provinceCode;
+  String? provinceCode;
+  String? provinceName;
   int? rank;
   double? costPerNightDefault;
   String? refundPolicy;
@@ -123,6 +125,7 @@ class Data {
         guide: json["guide"],
         addressDetail: json["addressDetail"],
         provinceCode: json["provinceCode"],
+        provinceName: json["provinceName"],
         rank: json["rank"],
         costPerNightDefault: json["costPerNightDefault"],
         refundPolicy: json["refundPolicy"],
@@ -196,6 +199,7 @@ class Data {
         "guide": guide,
         "addressDetail": addressDetail,
         "provinceCode": provinceCode,
+        "provinceName": provinceName,
         "rank": rank,
         "costPerNightDefault": costPerNightDefault,
         "refundPolicy": refundPolicy,
