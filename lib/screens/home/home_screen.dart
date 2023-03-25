@@ -26,6 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchDataHomesFromApi();
   }
 
+  @override
+  void dispose() {
+    _homeList = null; // phá vỡ reference tới _otherObject
+    super.dispose();
+  }
+
   Future<void> _fetchDataHomesFromApi() async {
     try {
       final response = await homePageController(_amenityId, _province);

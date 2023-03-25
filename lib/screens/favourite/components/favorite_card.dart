@@ -5,6 +5,9 @@ import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 
 import '../../../components/rating_bar.dart';
 import '../../../constants.dart';
+import '../../../controllers/favourite_controller.dart';
+import '../../../models/requests/favourite_request.dart';
+import '../../../models/responses/register_response.dart';
 
 class FavoriteCard extends StatefulWidget {
   final HomeInfo homeInfo;
@@ -16,12 +19,45 @@ class FavoriteCard extends StatefulWidget {
 }
 
 class _FavoriteCardState extends State<FavoriteCard> {
-  bool _isFavourited = true;
+  bool _isFavourited = false;
 
-  void _toggleFavorite() {
-    setState(() {
-      _isFavourited = !_isFavourited;
-    });
+  @override
+  void initState() {
+    _isFavourited = widget.homeInfo.isFavorite ?? false;
+    super.initState();
+  }
+
+  Future<void> _handleFavourite() async {
+    try {
+      SuccessResponse favouriteResponse = await favouriteHandlerController(
+          FavouriteRequest(homeId: widget.homeInfo.id));
+
+      setState(() {
+        _isFavourited = !_isFavourited;
+      });
+
+      if (!mounted) return;
+
+      if (favouriteResponse.success == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Thêm vào danh sách yêu thích thành công"),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Xóa khỏi danh sách yêu thích thành công"),
+          ),
+        );
+      }
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    }
   }
 
   @override
@@ -47,7 +83,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
               return RoomDetailScreen(
-                homeId: "t",
+                homeId: widget.homeInfo.id,
               );
             },
           ),
@@ -71,8 +107,8 @@ class _FavoriteCardState extends State<FavoriteCard> {
                     ClipRRect(
                       borderRadius:
                           const BorderRadius.all(Radius.circular(4.0)),
-                      child: Image.asset(
-                        'assets/png/room1.png',
+                      child: Image.network(
+                        widget.homeInfo.thumbnail!,
                         fit: BoxFit.cover,
                         height: 136,
                         width: 128,
@@ -84,19 +120,19 @@ class _FavoriteCardState extends State<FavoriteCard> {
                       child: IconButton(
                         icon: _isFavourited
                             ? SvgPicture.asset(
-                                'assets/icons/Heart Icon.svg',
+                          'assets/icons/Heart Icon_2.svg',
                                 width: 20,
                                 height: 20,
                                 color: kPrimaryColor,
                               )
                             : SvgPicture.asset(
-                                'assets/icons/Heart Icon_2.svg',
+                          'assets/icons/Heart Icon.svg',
                                 width: 20,
                                 height: 20,
                                 color: Colors.red,
                               ),
                         onPressed: () {
-                          _toggleFavorite();
+                          _handleFavourite();
                         },
                       ),
                     ),
@@ -120,29 +156,29 @@ class _FavoriteCardState extends State<FavoriteCard> {
                       ),
                       Row(
                         children: [
-                          Text('3.000.000' + 'VNĐ'),
-                          const Text('/tháng')
+                          Text('${widget.homeInfo.costPerNightDefault}VNĐ'),
+                          const Text('/đêm')
                         ],
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/homeCard.svg',
-                            width: 18,
-                            height: 18,
-                          ),
-                          const SizedBox(width: 4),
-                          Text('50'),
-                          const Text(
-                            ' m²',
-                            style: TextStyle(fontSize: 12),
-                          )
-                        ],
-                      ),
+                      // Row(
+                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                      //   children: [
+                      //     SvgPicture.asset(
+                      //       'assets/icons/homeCard.svg',
+                      //       width: 18,
+                      //       height: 18,
+                      //     ),
+                      //     const SizedBox(width: 4),
+                      //     Text('50'),
+                      //     const Text(
+                      //       ' m²',
+                      //       style: TextStyle(fontSize: 12),
+                      //     )
+                      //   ],
+                      // ),
                       Expanded(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -157,7 +193,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                             Flexible(
                               flex: 3,
                               child: Text(
-                                '48 Hoa Sứ, Phường 7, Q.Phú Nhuận. ',
+                                widget.homeInfo.provinceName ?? '',
                                 style: const TextStyle(fontSize: 12),
                               ),
                             )

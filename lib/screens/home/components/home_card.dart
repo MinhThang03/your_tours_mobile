@@ -7,7 +7,6 @@ import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 
 import '../../../components/rating_bar.dart';
-import '../../../models/Room.dart';
 
 class HomeCard extends StatefulWidget {
   final int index;
@@ -21,17 +20,10 @@ class HomeCard extends StatefulWidget {
 }
 
 class _HomeCardState extends State<HomeCard> {
-  bool _isFavourited = true;
+  bool _isFavourited = false;
   late PageController _pageController;
-  late RoomTest _room;
 
   int _currentPage = 0;
-
-  void _toggleFavorite() {
-    setState(() {
-      _isFavourited = !_isFavourited;
-    });
-  }
 
   Future<void> _handleFavourite() async {
     try {
@@ -41,6 +33,22 @@ class _HomeCardState extends State<HomeCard> {
       setState(() {
         _isFavourited = !_isFavourited;
       });
+
+      if (!mounted) return;
+
+      if (_isFavourited == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Thêm vào danh sách yêu thích thành công"),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Xóa khỏi danh sách yêu thích thành công"),
+          ),
+        );
+      }
     } on FormatException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -52,8 +60,8 @@ class _HomeCardState extends State<HomeCard> {
 
   @override
   void initState() {
-    _room = RoomList.rooms[widget.index];
     _pageController = PageController(initialPage: _currentPage, keepPage: true);
+    _isFavourited = widget.homeInfo.isFavorite ?? false;
     super.initState();
   }
 
@@ -131,19 +139,19 @@ class _HomeCardState extends State<HomeCard> {
                     child: IconButton(
                       icon: _isFavourited
                           ? SvgPicture.asset(
-                              'assets/icons/Heart Icon.svg',
+                        'assets/icons/Heart Icon_2.svg',
                               width: 20,
                               height: 20,
                               color: kPrimaryColor,
                             )
                           : SvgPicture.asset(
-                              'assets/icons/Heart Icon_2.svg',
+                        'assets/icons/Heart Icon.svg',
                               width: 20,
                               height: 20,
                               color: Colors.red,
                             ),
                       onPressed: () {
-                        _toggleFavorite();
+                        _handleFavourite();
                       },
                     ),
                   ),
@@ -220,7 +228,7 @@ class _HomeCardState extends State<HomeCard> {
 
   List<Widget> _buildPageIndicator() {
     List<Widget> indicators = [];
-    for (int i = 0; i < _room.imagePath.length; i++) {
+    for (int i = 0; i < widget.homeInfo.imagesOfHome!.length; i++) {
       indicators.add(
         i == _currentPage
             ? _buildPageIndicatorItem(true)
