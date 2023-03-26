@@ -56,7 +56,10 @@ class _SignUpFormState extends State<SignUpForm> {
       if (!mounted) return;
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const OtpScreen()),
+        MaterialPageRoute(
+            builder: (context) => OtpScreen(
+                  email: _emailController.text,
+                )),
       );
     } on FormatException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(

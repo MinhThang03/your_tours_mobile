@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
 import 'package:your_tours_mobile/models/Room.dart';
@@ -329,8 +331,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                     color: Colors.white,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               const Text('Mô tả',
                                   style: TextStyle(
                                       fontSize: 16,
@@ -343,36 +345,90 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                 textAlign: TextAlign.justify,
                               ),
                             ],
-                    ),
-                  ),
+                          ),
+                        ),
 
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showRatingPopup(context);
-                    },
-                    child: Container(
-                      height: 60,
-                      color: Colors.white,
-                      child: Row(
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        TableCalendar(
+                          daysOfWeekHeight: 24,
+                          startingDayOfWeek: StartingDayOfWeek.monday,
+                          firstDay: DateTime.now(),
+                          lastDay: DateTime.utc(2030, 3, 14),
+                          focusedDay: DateTime.now(),
+                          calendarBuilders:
+                              CalendarBuilders(dowBuilder: (context, day) {
+                            if (day.weekday == DateTime.sunday) {
+                              final text = DateFormat.E().format(day);
+
+                              return Center(
+                                child: Text(
+                                  text,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              );
+                            }
+
+                            return null;
+                          }, defaultBuilder: (context, day, _) {
+                            DateTime dateCompare =
+                                DateTime.now().add(const Duration(days: 1));
+                            DateTime dateCompare2 =
+                                DateTime.now().add(const Duration(days: 2));
+                            String formattedDate1 =
+                                DateFormat('dd/MM/yyyy').format(dateCompare);
+                            String formattedDate2 =
+                                DateFormat('dd/MM/yyyy').format(day);
+                            String formattedDate3 =
+                                DateFormat('dd/MM/yyyy').format(dateCompare2);
+                            if (formattedDate1 == formattedDate2 ||
+                                formattedDate2 == formattedDate3) {
+                              return Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.redAccent,
+                                  borderRadius: BorderRadius.circular(80.0),
+                                ),
+                                child: Text(
+                                  day.day.toString(),
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              );
+                            }
+                          }),
+                          onFormatChanged: (format) {
+                            CalendarFormat.month;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showRatingPopup(context);
+                          },
+                          child: Container(
+                            height: 60,
+                            color: Colors.white,
+                            child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          const Text('Đánh giá',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w400)),
-                          RatingBar(
-                            itemSize: 25,
-                            maxRating: 5.0,
-                            minRating: 0.0,
-                            initialRating: _room.rating,
-                            onRatingUpdate: (double rating) => {},
-                            ignoreGestures: true,
-                            allowHalfRating: true,
-                            ratingWidget: RatingWidget(
-                              empty: const Icon(
-                                Icons.star_border_rounded,
+                                const Text('Đánh giá',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400)),
+                                RatingBar(
+                                  itemSize: 25,
+                                  maxRating: 5.0,
+                                  minRating: 0.0,
+                                  initialRating: _room.rating,
+                                  onRatingUpdate: (double rating) => {},
+                                  ignoreGestures: true,
+                                  allowHalfRating: true,
+                                  ratingWidget: RatingWidget(
+                                    empty: const Icon(
+                                      Icons.star_border_rounded,
                                 color: kPrimaryColor,
                               ),
                               full: const Icon(
@@ -387,69 +443,70 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           ),
                           Text(
                             '${_room.rating} /5',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 14),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const Text('Gợi ý cho bạn',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  // SizedBox(
-                  //         height: 310,
-                  //         child: ListView.builder(
-                  //           scrollDirection: Axis.horizontal,
-                  //           itemBuilder: (context, index) {
-                  //             return  NearByRoomCard(
-                  //               indexRoom: index,
-                  //               title: RoomList.rooms[index].title,
-                  //               imagePath: RoomList.rooms[index].imagePath.first,
-                  //               rating: RoomList.rooms[index].rating,
-                  //               price: RoomList.rooms[index].price,
-                  //               area: RoomList.rooms[index].area,
-                  //               address: RoomList.rooms[index].address,
-                  //               isFavorite: RoomList.rooms[index].isFavorite,);
-                  //           },
-                  //           itemCount: RoomList.rooms.length,
-                  //         ),
-                  //       ),
-                ],
-              ),
-            ),
-            Container(
-              padding:
-                  const EdgeInsets.only(top: 12, bottom: 16, left: 4, right: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          showBookingPopup(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryLightColor,
                         ),
-                        child: const Text("Đặt lịch",
-                            style: TextStyle(color: kPrimaryColor)),
-                      ),
+
+                        const Text('Gợi ý cho bạn',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        // SizedBox(
+                        //         height: 310,
+                        //         child: ListView.builder(
+                        //           scrollDirection: Axis.horizontal,
+                        //           itemBuilder: (context, index) {
+                        //             return  NearByRoomCard(
+                        //               indexRoom: index,
+                        //               title: RoomList.rooms[index].title,
+                        //               imagePath: RoomList.rooms[index].imagePath.first,
+                        //               rating: RoomList.rooms[index].rating,
+                        //               price: RoomList.rooms[index].price,
+                        //               area: RoomList.rooms[index].area,
+                        //               address: RoomList.rooms[index].address,
+                        //               isFavorite: RoomList.rooms[index].isFavorite,);
+                        //           },
+                        //           itemCount: RoomList.rooms.length,
+                        //         ),
+                        //       ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 3),
-                  Expanded(
-                    child: SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const BookingPage()),
+                  Container(
+                    padding: const EdgeInsets.only(
+                        top: 12, bottom: 16, left: 4, right: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showBookingPopup(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kPrimaryLightColor,
+                              ),
+                              child: const Text("Đặt lịch",
+                                  style: TextStyle(color: kPrimaryColor)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 3),
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const BookingPage()),
                           );
                         },
                         style: ElevatedButton.styleFrom(

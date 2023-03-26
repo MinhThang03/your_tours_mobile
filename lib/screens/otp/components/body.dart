@@ -5,7 +5,9 @@ import 'package:your_tours_mobile/size_config.dart';
 import 'otp_form.dart';
 
 class Body extends StatelessWidget {
-  const Body({super.key});
+  final String email;
+
+  const Body({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,9 @@ class Body extends StatelessWidget {
                 "OTP Verification",
                 style: headingStyle,
               ),
-              const Text("We sent your code to email  thang***"),
+              Container(
+                  alignment: Alignment.center,
+                  child: Text("We sent your code to email $email")),
               buildTimer(),
               const OtpForm(),
               SizedBox(height: SizeConfig.screenHeight * 0.1),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/components/default_button.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
+import 'package:your_tours_mobile/controllers/otp_controller.dart';
+import 'package:your_tours_mobile/models/requests/active_account_request.dart';
+import 'package:your_tours_mobile/screens/sign_in/sign_in_screen.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
 import '../../../constants.dart';
@@ -19,6 +23,12 @@ class _OtpFormState extends State<OtpForm> {
   FocusNode? pin4FocusNode;
   FocusNode? pin5FocusNode;
 
+  final _num1Controller = TextEditingController();
+  final _num2Controller = TextEditingController();
+  final _num3Controller = TextEditingController();
+  final _num4Controller = TextEditingController();
+  final _num5Controller = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +45,44 @@ class _OtpFormState extends State<OtpForm> {
     pin3FocusNode!.dispose();
     pin4FocusNode!.dispose();
     pin5FocusNode!.dispose();
+  }
+
+  Future<void> _submit() async {
+    try {
+      await LoadingOverlay.of(context).during(
+          future: activeAccountController(ActiveAccountRequest(
+        otp: _num1Controller.text +
+            _num2Controller.text +
+            _num3Controller.text +
+            _num4Controller.text +
+            _num5Controller.text,
+      )));
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Kích hoạt thành công"),
+        ),
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SignInScreen()),
+      );
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+        ),
+      );
+    }
   }
 
   void nextField(String value, FocusNode? focusNode) {
@@ -55,6 +103,7 @@ class _OtpFormState extends State<OtpForm> {
               SizedBox(
                 width: getProportionateScreenWidth(60),
                 child: TextFormField(
+                  controller: _num1Controller,
                   autofocus: true,
                   style: const TextStyle(fontSize: 24),
                   keyboardType: TextInputType.number,
@@ -68,6 +117,7 @@ class _OtpFormState extends State<OtpForm> {
               SizedBox(
                 width: getProportionateScreenWidth(60),
                 child: TextFormField(
+                  controller: _num2Controller,
                   focusNode: pin2FocusNode,
                   style: const TextStyle(fontSize: 24),
                   keyboardType: TextInputType.number,
@@ -79,6 +129,7 @@ class _OtpFormState extends State<OtpForm> {
               SizedBox(
                 width: getProportionateScreenWidth(60),
                 child: TextFormField(
+                  controller: _num3Controller,
                   focusNode: pin3FocusNode,
                   style: const TextStyle(fontSize: 24),
                   keyboardType: TextInputType.number,
@@ -90,6 +141,7 @@ class _OtpFormState extends State<OtpForm> {
               SizedBox(
                 width: getProportionateScreenWidth(60),
                 child: TextFormField(
+                  controller: _num4Controller,
                   focusNode: pin4FocusNode,
                   style: const TextStyle(fontSize: 24),
                   keyboardType: TextInputType.number,
@@ -101,6 +153,7 @@ class _OtpFormState extends State<OtpForm> {
               SizedBox(
                 width: getProportionateScreenWidth(60),
                 child: TextFormField(
+                  controller: _num5Controller,
                   focusNode: pin5FocusNode,
                   style: const TextStyle(fontSize: 24),
                   keyboardType: TextInputType.number,
@@ -119,7 +172,9 @@ class _OtpFormState extends State<OtpForm> {
           SizedBox(height: SizeConfig.screenHeight * 0.15),
           DefaultButton(
             text: "Continue",
-            press: () {},
+            press: () {
+              _submit();
+            },
           )
         ],
       ),
