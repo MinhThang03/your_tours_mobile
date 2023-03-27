@@ -9,21 +9,22 @@ class DateTimePickerRow extends StatefulWidget {
 }
 
 class _DateTimePickerRowState extends State<DateTimePickerRow> {
-  late DateTime _selectedDateTime;
-
+  late DateTime _selectedDateTimeFrom;
+  late DateTime _selectedDateTimeTo;
   final _dateFormat = DateFormat('dd/MM/yyyy');
   final _timeFormat = DateFormat('HH:mm');
 
   @override
   void initState() {
     super.initState();
-    _selectedDateTime = DateTime.now();
+    _selectedDateTimeFrom = DateTime.now();
+    _selectedDateTimeTo = DateTime.now();
   }
 
-  Future<void> _pickDate() async {
+  Future<void> _pickDateFrom() async {
     final DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDateTime,
+      initialDate: _selectedDateTimeFrom,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
       builder: (BuildContext context, Widget? child) {
@@ -40,12 +41,43 @@ class _DateTimePickerRowState extends State<DateTimePickerRow> {
 
     if (selectedDate != null) {
       setState(() {
-        _selectedDateTime = DateTime(
+        _selectedDateTimeFrom = DateTime(
           selectedDate.year,
           selectedDate.month,
           selectedDate.day,
-          _selectedDateTime.hour,
-          _selectedDateTime.minute,
+          _selectedDateTimeFrom.hour,
+          _selectedDateTimeFrom.minute,
+        );
+      });
+    }
+  }
+
+  Future<void> _pickDateTo() async {
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDateTimeTo,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.blue,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        _selectedDateTimeTo = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          _selectedDateTimeTo.hour,
+          _selectedDateTimeTo.minute,
         );
       });
     }
@@ -54,7 +86,7 @@ class _DateTimePickerRowState extends State<DateTimePickerRow> {
   Future<void> _pickTime() async {
     final TimeOfDay? selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_selectedDateTime),
+      initialTime: TimeOfDay.fromDateTime(_selectedDateTimeFrom),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -69,10 +101,10 @@ class _DateTimePickerRowState extends State<DateTimePickerRow> {
 
     if (selectedTime != null) {
       setState(() {
-        _selectedDateTime = DateTime(
-          _selectedDateTime.year,
-          _selectedDateTime.month,
-          _selectedDateTime.day,
+        _selectedDateTimeFrom = DateTime(
+          _selectedDateTimeFrom.year,
+          _selectedDateTimeFrom.month,
+          _selectedDateTimeFrom.day,
           selectedTime.hour,
           selectedTime.minute,
         );
@@ -86,16 +118,16 @@ class _DateTimePickerRowState extends State<DateTimePickerRow> {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: _pickDate,
+            onTap: _pickDateFrom,
             child: AbsorbPointer(
               child: TextFormField(
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                  labelText: 'Ngày',
+                  labelText: "Nhận phòng",
                   border: OutlineInputBorder(),
                 ),
                 controller: TextEditingController(
-                  text: _dateFormat.format(_selectedDateTime),
+                  text: _dateFormat.format(_selectedDateTimeFrom),
                 ),
               ),
             ),
@@ -104,21 +136,38 @@ class _DateTimePickerRowState extends State<DateTimePickerRow> {
         const SizedBox(width: 8.0),
         Expanded(
           child: GestureDetector(
-            onTap: _pickTime,
+            onTap: _pickDateTo,
             child: AbsorbPointer(
               child: TextFormField(
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                  labelText: 'Giờ',
+                  labelText: "Trả phòng",
                   border: OutlineInputBorder(),
                 ),
                 controller: TextEditingController(
-                  text: _timeFormat.format(_selectedDateTime),
+                  text: _dateFormat.format(_selectedDateTimeTo),
                 ),
               ),
             ),
           ),
         ),
+        // Expanded(
+        //   child: GestureDetector(
+        //     onTap: _pickTime,
+        //     child: AbsorbPointer(
+        //       child: TextFormField(
+        //         decoration: const InputDecoration(
+        //           contentPadding: EdgeInsets.symmetric(horizontal: 20),
+        //           labelText: "Trả phòng" ,
+        //           border: OutlineInputBorder(),
+        //         ),
+        //         controller: TextEditingController(
+        //           text: _timeFormat.format(_selectedDateTime),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

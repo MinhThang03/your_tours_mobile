@@ -9,6 +9,7 @@ import 'package:your_tours_mobile/models/Room.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/booking_page.dart';
+import 'package:your_tours_mobile/screens/room_detail/components/choose_guests.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/pick_date_and_time.dart';
 
 class RoomDetailScreen extends StatefulWidget {
@@ -31,6 +32,10 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   late PageController _pageController;
   int _currentPage = 0;
 
+  int _numOfAdult = 0;
+  int _numOfChildren = 0;
+  int _numOfBaby = 0;
+
   void showBookingPopup(BuildContext context) {
     showDialog(
       context: context,
@@ -45,67 +50,47 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
               child: Column(
                 children: [
                   const Text(
-                    'Thông tin người đặt cọc',
+                    'Đặt lịch',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Tên",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 14),
-                        ),
-                        const SizedBox(height: 2.0),
-                        TextField(
-                          controller: myController,
-                          decoration: const InputDecoration(
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 20),
-                            border: OutlineInputBorder(),
-                            hintText: "Nhập họ và tên",
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(
+                    height: 8,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Số điện thoại",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 14),
-                        ),
-                        const SizedBox(height: 2.0),
-                        SizedBox(
-                          child: TextField(
-                            controller: myController2,
-                            decoration: const InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 20),
-                              border: OutlineInputBorder(),
-                              hintText: "Nhập số điện thoại",
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  ChooseGuestRow(
+                    title: "Người lớn",
+                    description: "Từ 13 tuổi trở lên",
+                    onChangeTap: (value) {
+                      setState(() {
+                        _numOfAdult = value;
+                      });
+                    },
+                  ),
+                  ChooseGuestRow(
+                    title: "Trẻ em",
+                    description: "Độ tuổi 2 - 12",
+                    onChangeTap: (value) {
+                      setState(() {
+                        _numOfChildren = value;
+                      });
+                    },
+                  ),
+                  ChooseGuestRow(
+                    title: "Em bé",
+                    description: "Dưới 2 tuổi",
+                    onChangeTap: (value) {
+                      setState(() {
+                        _numOfBaby = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(
+                    height: 12,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Text(
-                          "Ngày hẹn",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 14),
-                        ),
                         SizedBox(height: 10.0),
                         DateTimePickerRow()
                       ],
@@ -116,7 +101,10 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        showPopupSuccess(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const BookingPage()));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryColor,
@@ -268,7 +256,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                         fontWeight: FontWeight.w400,
                                         color: kPrimaryColor)),
                                 backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
+                                      shape: RoundedRectangleBorder(
                                         side: const BorderSide(
                                           color: kPrimaryColor, // Border color
                                           width: 1.0, // Border width
@@ -278,7 +266,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                       ))
                                 ],
                               ),
-                              const SizedBox(height: 18),
+                              Text(
+                                '${_homeDetail?.data.descriptionHomeDetail} ',
+                              ),
                               Text(
                                 '${_homeDetail?.data.costPerNightDefault.toString()} / 1 đêm',
                                 style: const TextStyle(
@@ -286,7 +276,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 16),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -300,9 +289,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                       'Chủ nhà: ${_homeDetail?.data.ownerName}'),
                                 ],
                               ),
-                        const SizedBox(
-                          height: 10,
-                        ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -311,35 +297,31 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                               'assets/icons/location.svg',
                               width: 18,
                               height: 18,
-                            ),
-                            const SizedBox(width: 6),
-                            SizedBox(
-                              width: 300,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  SizedBox(
+                                    width: 300,
                                     child: Text(
                                       _homeDetail?.data.provinceName ?? '',
                                       softWrap: true,
                                       maxLines: 3,
                                     ),
                                   )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          color: Colors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               const Text('Mô tả',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600)),
-                              const SizedBox(
-                                height: 5,
-                              ),
                               Text(
                                 _homeDetail?.data.description ?? '',
                                 textAlign: TextAlign.justify,
@@ -347,59 +329,76 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                             ],
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        Container(
+                          color: Colors.white,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Lịch',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600)),
+                              TableCalendar(
+                                daysOfWeekHeight: 24,
+                                startingDayOfWeek: StartingDayOfWeek.monday,
+                                firstDay: DateTime.now(),
+                                lastDay: DateTime.utc(2030, 3, 14),
+                                focusedDay: DateTime.now(),
+                                calendarBuilders: CalendarBuilders(
+                                    dowBuilder: (context, day) {
+                                  if (day.weekday == DateTime.sunday) {
+                                    final text = DateFormat.E().format(day);
 
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        TableCalendar(
-                          daysOfWeekHeight: 24,
-                          startingDayOfWeek: StartingDayOfWeek.monday,
-                          firstDay: DateTime.now(),
-                          lastDay: DateTime.utc(2030, 3, 14),
-                          focusedDay: DateTime.now(),
-                          calendarBuilders:
-                              CalendarBuilders(dowBuilder: (context, day) {
-                            if (day.weekday == DateTime.sunday) {
-                              final text = DateFormat.E().format(day);
+                                    return Center(
+                                      child: Text(
+                                        text,
+                                        style:
+                                            const TextStyle(color: Colors.red),
+                                      ),
+                                    );
+                                  }
 
-                              return Center(
-                                child: Text(
-                                  text,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              );
-                            }
-
-                            return null;
-                          }, defaultBuilder: (context, day, _) {
-                            DateTime dateCompare =
-                                DateTime.now().add(const Duration(days: 1));
-                            DateTime dateCompare2 =
-                                DateTime.now().add(const Duration(days: 2));
-                            String formattedDate1 =
-                                DateFormat('dd/MM/yyyy').format(dateCompare);
-                            String formattedDate2 =
-                                DateFormat('dd/MM/yyyy').format(day);
-                            String formattedDate3 =
-                                DateFormat('dd/MM/yyyy').format(dateCompare2);
-                            if (formattedDate1 == formattedDate2 ||
-                                formattedDate2 == formattedDate3) {
-                              return Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: Colors.redAccent,
-                                  borderRadius: BorderRadius.circular(80.0),
-                                ),
-                                child: Text(
-                                  day.day.toString(),
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              );
-                            }
-                          }),
-                          onFormatChanged: (format) {
-                            CalendarFormat.month;
-                          },
+                                  return null;
+                                }, defaultBuilder: (context, day, _) {
+                                  String formattedDate =
+                                      DateFormat('dd/MM/yyyy').format(day);
+                                  bool flag = false;
+                                  for (int i = 0;
+                                      i <
+                                          (_homeDetail
+                                                  ?.data.dateIsBooked?.length ??
+                                              0);
+                                      i++) {
+                                    if (formattedDate ==
+                                        _homeDetail?.data.dateIsBooked![i]) {
+                                      flag = true;
+                                      break;
+                                    }
+                                  }
+                                  if (flag) {
+                                    return Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: kPrimaryColor,
+                                        borderRadius:
+                                            BorderRadius.circular(80.0),
+                                      ),
+                                      child: Text(
+                                        day.day.toString(),
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                      ),
+                                    );
+                                  }
+                                }),
+                                onFormatChanged: (format) {
+                                  CalendarFormat.month;
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(
                           height: 12,
@@ -476,51 +475,19 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                        top: 12, bottom: 16, left: 4, right: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                showBookingPopup(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: kPrimaryLightColor,
-                              ),
-                              child: const Text("Đặt lịch",
-                                  style: TextStyle(color: kPrimaryColor)),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 3),
-                        Expanded(
-                          child: SizedBox(
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const BookingPage()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryColor,
-                        ),
-                        child: const Text("Đặt cọc ngay",
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                  ),
                 ],
               ),
-            ),
-          ],
+      ),
+      bottomNavigationBar: SizedBox(
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () {
+            showBookingPopup(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: kPrimaryLightColor,
+          ),
+          child: const Text("Đặt lịch", style: TextStyle(color: kPrimaryColor)),
         ),
       ),
     );
