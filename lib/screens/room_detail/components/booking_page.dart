@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:your_tours_mobile/constants.dart';
-import 'package:your_tours_mobile/screens/room_detail/components/pick_date_and_time.dart';
 
 import '../../main_screen/main_screen.dart';
 
@@ -110,7 +109,7 @@ class BookingPage extends StatelessWidget {
                                 fontWeight: FontWeight.w600, fontSize: 16),
                           ),
                           SizedBox(height: 15.0),
-                          DateTimePickerRow(),
+                          // DateTimePickerRow(),
                         ],
                       ),
                     )

@@ -24,6 +24,12 @@ class _BodyState extends State<Body> {
     _fetchDataUserInfoFromApi();
   }
 
+  @override
+  void dispose() {
+    _userInfo = null;
+    super.dispose();
+  }
+
   Future<void> _fetchDataUserInfoFromApi() async {
     try {
       final response = await getCurrentUserController();

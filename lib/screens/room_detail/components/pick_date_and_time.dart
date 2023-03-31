@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateTimePickerRow extends StatefulWidget {
-  const DateTimePickerRow({Key? key}) : super(key: key);
+  final ValueChanged<DateTime> onChangeStartDate;
+  final ValueChanged<DateTime> onChangeEndDate;
+
+  const DateTimePickerRow(
+      {Key? key,
+      required this.onChangeStartDate,
+      required this.onChangeEndDate})
+      : super(key: key);
 
   @override
   State<DateTimePickerRow> createState() => _DateTimePickerRowState();
@@ -49,6 +56,8 @@ class _DateTimePickerRowState extends State<DateTimePickerRow> {
           _selectedDateTimeFrom.minute,
         );
       });
+
+      widget.onChangeStartDate(_selectedDateTimeFrom);
     }
   }
 
@@ -80,6 +89,8 @@ class _DateTimePickerRowState extends State<DateTimePickerRow> {
           _selectedDateTimeTo.minute,
         );
       });
+
+      widget.onChangeEndDate(_selectedDateTimeTo);
     }
   }
 

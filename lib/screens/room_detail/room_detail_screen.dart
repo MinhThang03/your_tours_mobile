@@ -4,7 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/booking_controller.dart';
 import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
+import 'package:your_tours_mobile/models/enums/guest_category.dart';
+import 'package:your_tours_mobile/models/requests/booking_request.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/amenity_row.dart';
@@ -37,6 +40,41 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   int _numOfAdult = 0;
   int _numOfChildren = 0;
   int _numOfBaby = 0;
+  DateTime _startDateBooking = DateTime.now();
+  DateTime _endDateBooking = DateTime.now();
+
+  Future<void> _callCheckBookingApi() async {
+    try {
+      Guest adult = Guest(
+          guestCategory: GuestCategoryEnum.ADULTS.name, number: _numOfAdult);
+      Guest child = Guest(
+          guestCategory: GuestCategoryEnum.CHILDREN.name,
+          number: _numOfChildren);
+      Guest baby =
+          Guest(guestCategory: GuestCategoryEnum.BABY.name, number: _numOfBaby);
+      List<Guest> guests = [adult, child, baby];
+
+      BookingRequest request = BookingRequest(
+          dateStart: _startDateBooking,
+          dateEnd: _endDateBooking,
+          homeId: _homeDetail!.data.id,
+          guests: guests);
+
+      await checkBookingController(request);
+
+      if (!mounted) {
+        return;
+      }
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const BookingPage()));
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    }
+  }
 
   void showBookingPopup(BuildContext context) {
     showDialog(
@@ -92,9 +130,20 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                     padding: const EdgeInsets.only(bottom: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        SizedBox(height: 10.0),
-                        DateTimePickerRow()
+                      children: [
+                        const SizedBox(height: 10.0),
+                        DateTimePickerRow(
+                          onChangeStartDate: (value) {
+                            setState(() {
+                              _startDateBooking = value;
+                            });
+                          },
+                          onChangeEndDate: (value) {
+                            setState(() {
+                              _endDateBooking = value;
+                            });
+                          },
+                        )
                       ],
                     ),
                   ),
@@ -103,10 +152,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const BookingPage()));
+                        _callCheckBookingApi();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryColor,
@@ -152,7 +198,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: SingleChildScrollView(
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   children: [
@@ -223,7 +269,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         _homeDetail = response;
         if ((_homeDetail?.data.amenitiesView?.length ?? 0) >= 3) {
           _amenitiesLeft = _homeDetail!.data.amenitiesView!.sublist(0, 2);
-          _amenitiesRight = _homeDetail!.data.amenitiesView!.sublist(2, 4);
+          if ((_homeDetail?.data.amenitiesView?.length ?? 0) >= 4) {
+            _amenitiesRight = _homeDetail!.data.amenitiesView!.sublist(2, 4);
+          } else {
+            _amenitiesRight = _homeDetail!.data.amenitiesView!
+                .sublist(2, _homeDetail?.data.amenitiesView?.length);
+          }
         } else if ((_homeDetail?.data.amenitiesView?.length ?? 0) > 0 &&
             (_homeDetail?.data.amenitiesView?.length ?? 0) <= 2) {
           _amenitiesLeft = _homeDetail!.data.amenitiesView!.sublist(0, 2);
@@ -417,8 +468,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 4),
                               Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
                                       child: Column(
@@ -430,21 +482,23 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                         itemCount: _amenitiesLeft.length,
                                         itemBuilder: (context, index) {
                                           return Column(
-                                            children: [
-                                              AmenityRow(
-                                                amenity: _amenitiesLeft[index],
-                                              ),
-                                              const SizedBox(
-                                                height: 4,
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  )),
+                                                children: [
+                                                  AmenityRow(
+                                                    amenity: _amenitiesLeft[index],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 4,
+                                                  )
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      )),
                                   Expanded(
                                       child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       ListView.builder(
                                         padding: EdgeInsets.zero,
@@ -456,16 +510,16 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                             children: [
                                               AmenityRow(
                                                 amenity: _amenitiesRight[index],
-                                              ),
-                                              const SizedBox(
-                                                height: 4,
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ))
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 4,
+                                                  )
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ))
                                 ],
                               ),
                             ],
