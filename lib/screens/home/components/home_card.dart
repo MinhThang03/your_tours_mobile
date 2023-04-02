@@ -214,7 +214,8 @@ class _HomeCardState extends State<HomeCard> {
                   ),
                 ],
               ),
-              Text('${widget.homeInfo.costPerNightDefault} VNĐ',
+              Text(
+                  '${widget.homeInfo.costPerNightDefault?.toInt().toString()} VNĐ',
                   style: const TextStyle(
                       fontSize: 16,
                       color: kPrimaryColor,

@@ -13,7 +13,7 @@ class BookingRequest {
   String? paymentMethod;
   String homeId;
   List<Guest> guests;
-  int? moneyPayed;
+  double? moneyPayed;
 
   Map<String, dynamic> toJson() => {
         "dateStart":

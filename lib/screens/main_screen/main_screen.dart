@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/screens/history_booking_page/history_booking_screen.dart';
 
 import '../favourite/favourite_screen.dart';
 import '../home/home_screen.dart';
@@ -20,8 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _pages = <Widget>[
     HomeScreen(),
     FavouriteScreen(),
-    HomeScreen(),
-    // ChatPage(),
+    HistoryBookingScreen(),
     ProfileScreen()
   ];
 

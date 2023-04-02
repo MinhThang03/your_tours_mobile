@@ -1,11 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/booking_controller.dart';
+import 'package:your_tours_mobile/models/requests/booking_request.dart';
+import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
+import 'package:your_tours_mobile/models/responses/price_of_home_response.dart';
+import 'package:your_tours_mobile/screens/room_detail/components/booking_info_row.dart';
+import 'package:your_tours_mobile/screens/room_detail/components/price_of_home_row.dart';
 
 import '../../main_screen/main_screen.dart';
 
-class BookingPage extends StatelessWidget {
-  const BookingPage({Key? key}) : super(key: key);
+class BookingPage extends StatefulWidget {
+  final BookingRequest bookingRequest;
+  final HomeDetailResponse homeDetail;
+  final PriceOfHomeResponse priceResponse;
+
+  const BookingPage(
+      {Key? key,
+      required this.bookingRequest,
+      required this.homeDetail,
+      required this.priceResponse})
+      : super(key: key);
+
+  @override
+  State<BookingPage> createState() => _BookingPageState();
+}
+
+class _BookingPageState extends State<BookingPage> {
+  Future<void> _callCreateBookingApi() async {
+    try {
+      double cost = widget.priceResponse.data.percent == null
+          ? widget.priceResponse.data.totalCostWithSurcharge
+          : widget.priceResponse.data.totalCostWithSurcharge *
+              (widget.priceResponse.data.percent! / 100);
+
+      widget.bookingRequest.moneyPayed = cost;
+      widget.bookingRequest.paymentMethod = 'PAY_IN_FULL';
+
+      await createBookingController(widget.bookingRequest);
+
+      if (!mounted) {
+        return;
+      }
+      showPopupSuccess(context);
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +69,7 @@ class BookingPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: const Text(
-          'Đặt cọc phòng',
+          'Thanh toán',
           style: TextStyle(fontSize: 20.0, color: Colors.black),
         ),
       ),
@@ -40,79 +86,66 @@ class BookingPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(
-                      height: 40,
+                      height: 20,
                     ),
                     const Text(
-                      'Thông tin người đặt cọc',
+                      'Thông tin khách hàng',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, right: 20.0, bottom: 15.0, top: 15.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Tên",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
-                          ),
-                          SizedBox(height: 10.0),
-                          SizedBox(
-                            height: 58,
-                            child: TextField(
-                              maxLines: 2,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: "Nhập họ và tên",
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    const SizedBox(
+                      height: 16,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, right: 20.0, bottom: 15.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Số điện thoại",
+                    Row(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            'Số lượng khách',
                             style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           ),
-                          SizedBox(height: 10.0),
-                          SizedBox(
-                            height: 58,
-                            child: TextField(
-                              maxLines: 2,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: "Nhập số điện thoại",
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 40),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Ngày hẹn",
+                    BookingInfoRow(
+                        title: "Người lớn:",
+                        content:
+                            widget.bookingRequest.guests[0].number.toString()),
+                    BookingInfoRow(
+                        title: "Trẻ em:",
+                        content:
+                            widget.bookingRequest.guests[1].number.toString()),
+                    BookingInfoRow(
+                        title: "Em bé:",
+                        content:
+                            widget.bookingRequest.guests[2].number.toString()),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            'Ngày hẹn',
                             style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           ),
-                          SizedBox(height: 15.0),
-                          // DateTimePickerRow(),
-                        ],
-                      ),
-                    )
+                        ),
+                      ],
+                    ),
+                    BookingInfoRow(
+                        title: "Ngày nhận phòng:",
+                        content: DateFormat('dd-MM-yyyy')
+                            .format(widget.bookingRequest.dateStart)),
+                    BookingInfoRow(
+                        title: "Ngày trả phòng:",
+                        content: DateFormat('dd-MM-yyyy')
+                            .format(widget.bookingRequest.dateEnd)),
+                    const SizedBox(
+                      height: 16,
+                    ),
                   ],
                 ),
               ),
@@ -127,107 +160,250 @@ class BookingPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(
-                      height: 30,
+                      height: 16,
                     ),
                     const Text(
-                      'Thông tin nơi đặt cọc',
+                      'Thông tin nhà',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 18.0, top: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 4.0),
-                              child: Text(
-                                "Loại phòng",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16),
-                              ),
-                            ),
-                            const Text(
-                              "Căn hộ 2 phòng ngủ",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  color: Colors.grey),
-                            ),
-                            const SizedBox(
-                              height: 18,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 4.0),
-                              child: Text(
-                                "Giá tiền cần cọc",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16),
-                              ),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/price.svg',
-                                  width: 18,
-                                  height: 18,
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  flex: 3,
-                                  child: Text(
-                                    '2.000.000',
-                                    style:
-                                        const TextStyle(color: Colors.black54),
-                                  ),
-                                )
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 18,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 4.0),
-                              child: Text(
-                                "Địa chỉ",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16),
-                              ),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/location.svg',
-                                  width: 18,
-                                  height: 18,
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  flex: 3,
-                                  child: Text(
-                                    '480 Lê Văn Việt, Phường 7, Quận 9',
-                                    style:
-                                        const TextStyle(color: Colors.black54),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
+                    BookingInfoRow(
+                        title: "Tên nhà", content: widget.homeDetail.data.name),
+                    BookingInfoRow(
+                        title: "Chủ nhà",
+                        content: widget.homeDetail.data.ownerName!),
+                    BookingInfoRow(
+                        title: "Địa chỉ",
+                        content: widget.homeDetail.data.provinceName!),
+                    BookingInfoRow(
+                        title: "Giá cơ bản",
+                        content:
+                            "${widget.homeDetail.data.costPerNightDefault?.toInt()}đ /1đêm"),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    const Text(
+                      'Thông tin thanh toán',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: const [
+                          Text(
+                            'Chi tiết giá',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(
-                      height: 50,
+                      height: 10,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.priceResponse.data.detail.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return PriceOfHomeRow(
+                          title: DateFormat("dd-MM-yyyy").format(
+                              widget.priceResponse.data.detail[index].day),
+                          content:
+                              "${widget.priceResponse.data.detail[index].cost.toInt()}đ",
+                          especially: widget
+                              .priceResponse.data.detail[index].especially,
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: const [
+                          Text(
+                            'Phụ phí',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.homeDetail.data.surcharges?.length ?? 0,
+                      itemBuilder: (BuildContext context, int index) {
+                        return BookingInfoRow(
+                          title: widget.homeDetail.data.surcharges![index]
+                              .surchargeCategoryName,
+                          content:
+                              "${widget.homeDetail.data.surcharges![index].cost.toInt()}đ",
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20.0, bottom: 0, top: 0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: const [
+                                    Text(
+                                      "Tổng tiền",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                                    ),
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  "${widget.priceResponse.data.totalCostWithSurcharge.toInt()}đ",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    widget.priceResponse.data.discountName == null
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Row(
+                              children: const [
+                                Text(
+                                  'Khuyến mãi',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                          ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    widget.priceResponse.data.discountName == null
+                        ? Container()
+                        : BookingInfoRow(
+                            title: widget.priceResponse.data.discountName!,
+                            content: "${widget.priceResponse.data.percent!}%"),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20.0, bottom: 0, top: 0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: const [
+                                    Text(
+                                      "Cần thanh toán",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                                    ),
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  widget.priceResponse.data.percent == null
+                                      ? "${widget.priceResponse.data.totalCostWithSurcharge}đ"
+                                      : "${widget.priceResponse.data.totalCostWithSurcharge * (widget.priceResponse.data.percent! / 100)}đ",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            "Chi tiết giá",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/location.svg',
+                            width: 18,
+                            height: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            flex: 3,
+                            child: Text(
+                              widget.homeDetail.data.provinceName!,
+                              style: const TextStyle(color: Colors.black54),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 16,
                     ),
                   ],
                 ),
@@ -271,7 +447,7 @@ class BookingPage extends StatelessWidget {
                         children: const [
                           Text('Phương thức thanh toán:',
                               style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text('Thẻ tín dụng',
+                          Text('Trực tuyến',
                               style: TextStyle(fontWeight: FontWeight.bold))
                         ],
                       ),
@@ -282,13 +458,16 @@ class BookingPage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text('Khuyến mãi:',
+                        children: [
+                          const Text('Số tiền:',
                               style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text('Sắp đến',
-                              style: TextStyle(
+                          Text(
+                              widget.priceResponse.data.percent == null
+                                  ? "${widget.priceResponse.data.totalCostWithSurcharge}đ"
+                                  : "${widget.priceResponse.data.totalCostWithSurcharge * (widget.priceResponse.data.percent! / 100)}đ",
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey))
+                                  color: kPrimaryColor))
                         ],
                       ),
                     ),
@@ -311,7 +490,7 @@ class BookingPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    showPopupSuccess(context);
+                    _callCreateBookingApi();
                   },
                   child: const Text('Thanh toán',
                       style: TextStyle(
@@ -360,8 +539,8 @@ void showPopupSuccess(BuildContext context) {
       );
     },
   ).then((value) => Navigator.push(
-        context,
+    context,
         MaterialPageRoute(
-            builder: (context) => const MainScreen(selectedInit: 0)),
+            builder: (context) => const MainScreen(selectedInit: 2)),
       ));
 }

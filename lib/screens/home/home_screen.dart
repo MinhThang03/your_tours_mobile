@@ -29,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _homeList = null; // phá vỡ reference tới _otherObject
+    _amenityId = null;
+    _province = null;
     super.dispose();
   }
 

@@ -6,9 +6,11 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/booking_controller.dart';
 import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
+import 'package:your_tours_mobile/controllers/price_home_controller.dart';
 import 'package:your_tours_mobile/models/enums/guest_category.dart';
 import 'package:your_tours_mobile/models/requests/booking_request.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
+import 'package:your_tours_mobile/models/responses/price_of_home_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/amenity_row.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/booking_page.dart';
@@ -43,6 +45,17 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   DateTime _startDateBooking = DateTime.now();
   DateTime _endDateBooking = DateTime.now();
 
+  @override
+  void dispose() {
+    _homeDetail = null;
+    _amenitiesRight = [];
+    _amenitiesLeft = [];
+    _pageController.dispose();
+    myController.dispose();
+    myController2.dispose();
+    super.dispose();
+  }
+
   Future<void> _callCheckBookingApi() async {
     try {
       Guest adult = Guest(
@@ -60,13 +73,33 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           homeId: _homeDetail!.data.id,
           guests: guests);
 
+      if (_numOfAdult == 0 && _numOfChildren == 0 && _numOfBaby == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Nhập số lượng khách"),
+          ),
+        );
+        return;
+      }
+
+      PriceOfHomeResponse priceResponse = await getPriceOfHome(
+          _homeDetail!.data.id,
+          DateFormat('yyyy-MM-dd').format(_startDateBooking),
+          DateFormat('yyyy-MM-dd').format(_endDateBooking));
+
       await checkBookingController(request);
 
       if (!mounted) {
         return;
       }
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const BookingPage()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => BookingPage(
+                    bookingRequest: request,
+                    homeDetail: _homeDetail!,
+                    priceResponse: priceResponse,
+                  )));
     } on FormatException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -136,11 +169,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           onChangeStartDate: (value) {
                             setState(() {
                               _startDateBooking = value;
+                              print("Ngay bat dau $_startDateBooking");
                             });
                           },
                           onChangeEndDate: (value) {
                             setState(() {
                               _endDateBooking = value;
+                              print("Ngay ket thuc $_endDateBooking");
                             });
                           },
                         )
@@ -289,11 +324,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -311,7 +341,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         elevation: 1,
         centerTitle: true,
         title: const Text(
-          'Chi tiết phòng',
+          'Chi tiết nhà',
           style: TextStyle(fontSize: 20.0, color: Colors.black),
         ),
       ),
@@ -341,17 +371,17 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         },
                       ),
                       Positioned(
-                  bottom: 20,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: _buildPageIndicator(),
+                        bottom: 20,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: _buildPageIndicator(),
+                        ),
+                      )
+                    ]),
                   ),
-                )
-              ]),
-            ),
-            Padding(
+                  Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: [
@@ -363,8 +393,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              width: 200,
+                                  SizedBox(
+                                    width: 200,
                                     child: Text(
                                       _homeDetail!.data.name,
                                       softWrap: true,
@@ -376,13 +406,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                       ),
                                     ),
                                   ),
-                            Chip(
-                                label: const Text('Còn phòng',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        color: kPrimaryColor)),
-                                backgroundColor: Colors.white,
+                                  Chip(
+                                      label: const Text('Còn phòng',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: kPrimaryColor)),
+                                      backgroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(
                                         side: const BorderSide(
                                           color: kPrimaryColor, // Border color
@@ -482,19 +512,19 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                         itemCount: _amenitiesLeft.length,
                                         itemBuilder: (context, index) {
                                           return Column(
-                                                children: [
-                                                  AmenityRow(
-                                                    amenity: _amenitiesLeft[index],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 4,
-                                                  )
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      )),
+                                            children: [
+                                              AmenityRow(
+                                                amenity: _amenitiesLeft[index],
+                                              ),
+                                              const SizedBox(
+                                                height: 4,
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  )),
                                   Expanded(
                                       child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -510,16 +540,16 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                             children: [
                                               AmenityRow(
                                                 amenity: _amenitiesRight[index],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 4,
-                                                  )
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ))
+                                              ),
+                                              const SizedBox(
+                                                height: 4,
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ))
                                 ],
                               ),
                             ],
@@ -577,7 +607,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                   return null;
                                 }, defaultBuilder: (context, day, _) {
                                   String formattedDate =
-                                      DateFormat('dd/MM/yyyy').format(day);
+                                      DateFormat('dd-MM-yyyy').format(day);
                                   bool flag = false;
                                   for (int i = 0;
                                       i <

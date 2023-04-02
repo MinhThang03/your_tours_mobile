@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:your_tours_mobile/controllers/booking_controller.dart';
+import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
 
-import '../../../controllers/favourite_controller.dart';
-import '../../../models/responses/home_info_response.dart';
 import '../../../size_config.dart';
-import 'favorite_card.dart';
+import 'history_card.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -13,25 +13,25 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  HomeInfoResponse? _homeInfoResponse;
+  BookHomePageResponse? _bookingPageResponse;
 
   @override
   void initState() {
     super.initState();
-    _fetchDataFavouriteFromApi();
+    _fetchDataBookingPageFromApi();
   }
 
   @override
   void dispose() {
-    _homeInfoResponse = null;
+    _bookingPageResponse = null;
     super.dispose();
   }
 
-  Future<void> _fetchDataFavouriteFromApi() async {
+  Future<void> _fetchDataBookingPageFromApi() async {
     try {
-      final response = await favouritePageController();
+      final response = await bookingPageController();
       setState(() {
-        _homeInfoResponse = response;
+        _bookingPageResponse = response;
       });
     } on FormatException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,12 +45,12 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: (_homeInfoResponse?.data.content.length ?? 0) == 0
+      child: (_bookingPageResponse?.data.content.length ?? 0) == 0
           ? Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               alignment: Alignment.center,
               child: Text(
-                "Hiện chưa có danh sách yêu thích",
+                "Bạn không có lịch sử đặt",
                 style: TextStyle(fontSize: getProportionateScreenWidth(16)),
               ),
             )
@@ -61,10 +61,10 @@ class _BodyState extends State<Body> {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
-                  itemCount: _homeInfoResponse?.data.content.length ?? 0,
+                  itemCount: _bookingPageResponse?.data.content.length ?? 0,
                   itemBuilder: (context, index) {
-                    return FavoriteCard(
-                        homeInfo: _homeInfoResponse!.data.content[index]);
+                    return HistoryCard(
+                        bookingInfo: _bookingPageResponse!.data.content[index]);
                   },
                 ),
                 const SizedBox(

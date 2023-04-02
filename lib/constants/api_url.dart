@@ -16,3 +16,7 @@ const String favouriteUrl = "/api/v1/app/favorites/handle";
 const String favouritePageUrl = "/api/v1/app/favorites/pages?number=0&size=20";
 const String homeDetailUrl = "/api/v1/public/homes/{homeId}/detail";
 const String checkBookingUrl = "/api/v1/app/booking/check";
+const String getPriceOfHomeUrl =
+    "/api/v1/public/prices?{homeId}&{dateFrom}&{dateTo}";
+const String createBookingUrl = "/api/v1/app/booking/create";
+const String getPageBookingUrl = "/api/v1/app/booking/page?number=0&size=20";
