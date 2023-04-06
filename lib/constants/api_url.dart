@@ -20,3 +20,4 @@ const String getPriceOfHomeUrl =
     "/api/v1/public/prices?{homeId}&{dateFrom}&{dateTo}";
 const String createBookingUrl = "/api/v1/app/booking/create";
 const String getPageBookingUrl = "/api/v1/app/booking/page?number=0&size=20";
+const String cancelBookingUrl = "/api/v1/app/booking/cancel";

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/booking_controller.dart';
 import 'package:your_tours_mobile/models/requests/booking_request.dart';
@@ -38,7 +39,8 @@ class _BookingPageState extends State<BookingPage> {
       widget.bookingRequest.moneyPayed = cost;
       widget.bookingRequest.paymentMethod = 'PAY_IN_FULL';
 
-      await createBookingController(widget.bookingRequest);
+      await LoadingOverlay.of(context)
+          .during(future: createBookingController(widget.bookingRequest));
 
       if (!mounted) {
         return;
@@ -490,7 +492,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                   ),
                   onPressed: () {
-                    _callCreateBookingApi();
+                    showConfirmBookingPopup(context);
                   },
                   child: const Text('Thanh toán',
                       style: TextStyle(
@@ -503,6 +505,82 @@ class _BookingPageState extends State<BookingPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void showConfirmBookingPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.check_circle_outline_rounded,
+                    size: 120.0,
+                    color: kPrimaryColor,
+                  ),
+                  const Text(
+                    'Xác nhận thanh toán',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 45,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _callCreateBookingApi();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryColor,
+                            ),
+                            child: const Text("Thanh toán",
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 45,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryLightColor,
+                            ),
+                            child: const Text("Hủy",
+                                style: TextStyle(color: kPrimaryColor)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

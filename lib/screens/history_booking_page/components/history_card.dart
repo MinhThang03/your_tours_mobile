@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:your_tours_mobile/controllers/booking_controller.dart';
 import 'package:your_tours_mobile/models/enums/booking_status.dart';
+import 'package:your_tours_mobile/models/requests/cancel_booking_request.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
 
+import '../../../components/loading_overlay.dart';
 import '../../../constants.dart';
 import 'booking_info_row.dart';
 
@@ -23,7 +26,27 @@ class _HistoryCardState extends State<HistoryCard> {
     super.initState();
   }
 
-  Future<void> _handleCancelBooking() async {}
+  Future<void> _handleCancelBookingApi() async {
+    try {
+      CancelBookingRequest request =
+          CancelBookingRequest(bookingId: widget.bookingInfo.id);
+
+      await LoadingOverlay.of(context)
+          .during(future: cancelBookingPageController(request));
+
+      if (!mounted) {
+        return;
+      }
+      Navigator.of(context).pop();
+      showPopupSuccess(context);
+    } on FormatException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +70,7 @@ class _HistoryCardState extends State<HistoryCard> {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(4.0)),
                         child: Image.network(
-                          widget.bookingInfo.thumbnail!,
+                          widget.bookingInfo.thumbnail,
                           fit: BoxFit.cover,
                           height: 136,
                           width: 128,
@@ -90,6 +113,11 @@ class _HistoryCardState extends State<HistoryCard> {
                           content: getDescriptionBookingStatus(
                               widget.bookingInfo.status),
                         ),
+                        Text(getRefundPolicy(widget.bookingInfo.refundPolicy),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.italic,
+                            )),
                         widget.bookingInfo.status != 'WAITING'
                             ? Container()
                             : Row(
@@ -154,8 +182,7 @@ class _HistoryCardState extends State<HistoryCard> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
-                              showPopupSuccess(context);
+                              _handleCancelBookingApi();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kPrimaryColor,
@@ -231,5 +258,18 @@ class _HistoryCardState extends State<HistoryCard> {
           MaterialPageRoute(
               builder: (context) => const MainScreen(selectedInit: 2)),
         ));
+  }
+
+  String getRefundPolicy(String refundPolicy) {
+    switch (refundPolicy) {
+      case 'BEFORE_ONE_DAY':
+        return 'Hủy phòng trước một ngày';
+      case 'NO_REFUND':
+        return 'Không cho phép hủy phòng';
+      case 'BEFORE_SEVEN_DAYS ':
+        return 'Hủy phòng trước bảy ngày';
+      default:
+        return '';
+    }
   }
 }
