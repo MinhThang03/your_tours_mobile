@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/components/custom_surfix_icon.dart';
 import 'package:your_tours_mobile/components/default_button.dart';
@@ -48,31 +49,33 @@ class _SignUpFormState extends State<SignUpForm> {
     try {
       await LoadingOverlay.of(context).during(
           future: registerController(RegisterRequest(
-        email: _emailController.text,
-        password: _passwordController.text,
-        fullName: _nameController.text,
-      )));
+            email: _emailController.text,
+            password: _passwordController.text,
+            fullName: _nameController.text,
+          )));
 
       if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => OtpScreen(
-                  email: _emailController.text,
-                )),
+              email: _emailController.text,
+            )),
       );
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.toString(),
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -151,7 +154,7 @@ class _SignUpFormState extends State<SignUpForm> {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: IconButton(
             icon:
-                Icon(_showRePassword ? Icons.visibility : Icons.visibility_off),
+            Icon(_showRePassword ? Icons.visibility : Icons.visibility_off),
             onPressed: _toggleRePasswordVisibility),
       ),
     );

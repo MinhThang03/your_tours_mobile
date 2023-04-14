@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
@@ -40,24 +41,29 @@ class _HomeCardState extends State<HomeCard> {
       if (!mounted) return;
 
       if (_isFavourited == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Thêm vào danh sách yêu thích thành công"),
-          ),
-        );
+        AnimatedSnackBar.material(
+          "Thêm vào danh sách yêu thích thành công",
+          type: AnimatedSnackBarType.success,
+          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+          // Position of snackbar on mobile devices
+          desktopSnackBarPosition: DesktopSnackBarPosition
+              .topRight, // Position of snackbar on desktop devices
+        ).show(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Xóa khỏi danh sách yêu thích thành công"),
-          ),
-        );
+        AnimatedSnackBar.material(
+          "Xóa khỏi danh sách yêu thích thành công",
+          type: AnimatedSnackBarType.success,
+          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+          desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+        ).show(context);
       }
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -95,11 +101,12 @@ class _HomeCardState extends State<HomeCard> {
         ),
       );
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -159,13 +166,13 @@ class _HomeCardState extends State<HomeCard> {
                     child: IconButton(
                       icon: _isFavourited
                           ? SvgPicture.asset(
-                        'assets/icons/Heart Icon_2.svg',
+                              'assets/icons/Heart Icon_2.svg',
                               width: 20,
                               height: 20,
                               color: kPrimaryColor,
                             )
                           : SvgPicture.asset(
-                        'assets/icons/Heart Icon.svg',
+                              'assets/icons/Heart Icon.svg',
                               width: 20,
                               height: 20,
                               color: Colors.red,

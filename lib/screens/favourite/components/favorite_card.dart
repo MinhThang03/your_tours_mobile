@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
@@ -42,24 +43,27 @@ class _FavoriteCardState extends State<FavoriteCard> {
       if (!mounted) return;
 
       if (favouriteResponse.success == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Thêm vào danh sách yêu thích thành công"),
-          ),
-        );
+        AnimatedSnackBar.material(
+          'Thêm vào danh sách yêu thích thành công',
+          type: AnimatedSnackBarType.success,
+          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+          desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+        ).show(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Xóa khỏi danh sách yêu thích thành công"),
-          ),
-        );
+        AnimatedSnackBar.material(
+          'Xóa khỏi danh sách yêu thích thành công',
+          type: AnimatedSnackBarType.error,
+          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+          desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+        ).show(context);
       }
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -97,11 +101,12 @@ class _FavoriteCardState extends State<FavoriteCard> {
         ),
       );
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -128,7 +133,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                   child: Stack(children: [
                     ClipRRect(
                       borderRadius:
-                          const BorderRadius.all(Radius.circular(4.0)),
+                      const BorderRadius.all(Radius.circular(4.0)),
                       child: Image.network(
                         widget.homeInfo.thumbnail!,
                         fit: BoxFit.cover,
@@ -143,16 +148,16 @@ class _FavoriteCardState extends State<FavoriteCard> {
                         icon: _isFavourited
                             ? SvgPicture.asset(
                           'assets/icons/Heart Icon_2.svg',
-                                width: 20,
-                                height: 20,
-                                color: kPrimaryColor,
-                              )
+                          width: 20,
+                          height: 20,
+                          color: kPrimaryColor,
+                        )
                             : SvgPicture.asset(
                           'assets/icons/Heart Icon.svg',
-                                width: 20,
-                                height: 20,
-                                color: Colors.red,
-                              ),
+                          width: 20,
+                          height: 20,
+                          color: Colors.red,
+                        ),
                         onPressed: () {
                           _handleFavourite();
                         },

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -97,14 +98,23 @@ class _ProfilePicSelectedState extends State<ProfilePicSelected> {
                         GestureDetector(
                           onTap: () async {
                             _path = await selectImageFromGallery();
+
+                            if (!mounted) {
+                              return;
+                            }
+
                             if (_path != '') {
                               Navigator.pop(context);
                               setState(() {});
                             } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text("No Image Selected !"),
-                              ));
+                              AnimatedSnackBar.material(
+                                'Không có hình ảnh được chọn',
+                                type: AnimatedSnackBarType.error,
+                                mobileSnackBarPosition:
+                                    MobileSnackBarPosition.bottom,
+                                desktopSnackBarPosition:
+                                    DesktopSnackBarPosition.topRight,
+                              ).show(context);
                             }
                           },
                           child: Card(
@@ -125,6 +135,11 @@ class _ProfilePicSelectedState extends State<ProfilePicSelected> {
                         GestureDetector(
                           onTap: () async {
                             _path = await selectImageFromCamera();
+
+                            if (!mounted) {
+                              return;
+                            }
+
                             if (_path != '') {
                               Navigator.pop(context);
                               setState(() {});

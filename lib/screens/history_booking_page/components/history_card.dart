@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -29,7 +30,7 @@ class _HistoryCardState extends State<HistoryCard> {
   Future<void> _handleCancelBookingApi() async {
     try {
       CancelBookingRequest request =
-          CancelBookingRequest(bookingId: widget.bookingInfo.id);
+      CancelBookingRequest(bookingId: widget.bookingInfo.id);
 
       await LoadingOverlay.of(context)
           .during(future: cancelBookingPageController(request));
@@ -40,11 +41,12 @@ class _HistoryCardState extends State<HistoryCard> {
       Navigator.of(context).pop();
       showPopupSuccess(context);
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -64,11 +66,11 @@ class _HistoryCardState extends State<HistoryCard> {
                   flex: 2,
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(left: 8.0, top: 20, right: 10),
+                    const EdgeInsets.only(left: 8.0, top: 20, right: 10),
                     child: Stack(children: [
                       ClipRRect(
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(4.0)),
+                        const BorderRadius.all(Radius.circular(4.0)),
                         child: Image.network(
                           widget.bookingInfo.thumbnail,
                           fit: BoxFit.cover,
@@ -89,7 +91,7 @@ class _HistoryCardState extends State<HistoryCard> {
                       children: [
                         Text(widget.bookingInfo.homeName,
                             style:
-                                const TextStyle(fontWeight: FontWeight.w600)),
+                            const TextStyle(fontWeight: FontWeight.w600)),
                         BookingCardInfoRow(
                           icon: 'assets/icons/price.svg',
                           title: 'Số tiền:',
@@ -121,19 +123,19 @@ class _HistoryCardState extends State<HistoryCard> {
                         widget.bookingInfo.status != 'WAITING'
                             ? Container()
                             : Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      showPopupCancel(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: kPrimaryColor,
-                                    ),
-                                    child: const Text('Hủy đặt'),
-                                  ),
-                                ],
-                              )
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                showPopupCancel(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kPrimaryColor,
+                              ),
+                              child: const Text('Hủy đặt'),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -254,10 +256,10 @@ class _HistoryCardState extends State<HistoryCard> {
         );
       },
     ).then((value) => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const MainScreen(selectedInit: 2)),
-        ));
+      context,
+      MaterialPageRoute(
+          builder: (context) => const MainScreen(selectedInit: 2)),
+    ));
   }
 
   String getRefundPolicy(String refundPolicy) {

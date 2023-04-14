@@ -1,8 +1,10 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/booking_controller.dart';
 import 'package:your_tours_mobile/controllers/price_home_controller.dart';
@@ -62,7 +64,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           guestCategory: GuestCategoryEnum.CHILDREN.name,
           number: _numOfChildren);
       Guest baby =
-          Guest(guestCategory: GuestCategoryEnum.BABY.name, number: _numOfBaby);
+      Guest(guestCategory: GuestCategoryEnum.BABY.name, number: _numOfBaby);
       List<Guest> guests = [adult, child, baby];
 
       BookingRequest request = BookingRequest(
@@ -72,11 +74,14 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           guests: guests);
 
       if (_numOfAdult == 0 && _numOfChildren == 0 && _numOfBaby == 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Nhập số lượng khách"),
-          ),
-        );
+        AnimatedSnackBar.material(
+          'Nhập số lượng khách',
+          type: AnimatedSnackBarType.error,
+          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+          // Position of snackbar on mobile devices
+          desktopSnackBarPosition: DesktopSnackBarPosition
+              .topRight, // Position of snackbar on desktop devices
+        ).show(context);
         return;
       }
 
@@ -85,25 +90,32 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           DateFormat('yyyy-MM-dd').format(_startDateBooking),
           DateFormat('yyyy-MM-dd').format(_endDateBooking));
 
-      await checkBookingController(request);
+      if (!mounted) {
+        return;
+      }
+
+      await LoadingOverlay.of(context)
+          .during(future: checkBookingController(request));
 
       if (!mounted) {
         return;
       }
+
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => BookingPage(
-                bookingRequest: request,
+                    bookingRequest: request,
                     homeDetail: widget.homeDetail,
                     priceResponse: priceResponse,
                   )));
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -236,7 +248,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                     const Text(
                       'Tiện ích',
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(
                       height: 8,
@@ -246,13 +258,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
                       itemCount:
-                          widget.homeDetail.data.amenitiesView?.length ?? 0,
+                      widget.homeDetail.data.amenitiesView?.length ?? 0,
                       itemBuilder: (context, index) {
                         return Column(
                           children: [
                             AmenityRow(
                               amenity:
-                                  widget.homeDetail.data.amenitiesView![index],
+                              widget.homeDetail.data.amenitiesView![index],
                             ),
                             const SizedBox(
                               height: 8,
@@ -322,11 +334,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         }
       });
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -471,88 +484,88 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         )
                       ],
                     ),
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Tiện ích',
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            const Text('Tiện ích',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600)),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.topRight,
+                                child: TextButton(
+                                  onPressed: () {
+                                    showAmenityPopup(context);
+                                  },
+                                  child: const Text('Xem thêm ...',
                                       style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600)),
-                                  Expanded(
-                                    child: Container(
-                                      alignment: Alignment.topRight,
-                                      child: TextButton(
-                                        onPressed: () {
-                                          showAmenityPopup(context);
-                                        },
-                                        child: const Text('Xem thêm ...',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.w400)),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                          fontSize: 13,
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.w400)),
+                                ),
                               ),
-                              const SizedBox(height: 4),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                      child: Column(
-                                    children: [
-                                      ListView.builder(
-                                        padding: EdgeInsets.zero,
-                                        shrinkWrap: true,
-                                        physics: const ClampingScrollPhysics(),
-                                        itemCount: _amenitiesLeft.length,
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            children: [
-                                              AmenityRow(
-                                                amenity: _amenitiesLeft[index],
-                                              ),
-                                              const SizedBox(
-                                                height: 4,
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  )),
-                                  Expanded(
-                                      child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      ListView.builder(
-                                        padding: EdgeInsets.zero,
-                                        shrinkWrap: true,
-                                        physics: const ClampingScrollPhysics(),
-                                        itemCount: _amenitiesRight.length,
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            children: [
-                                              AmenityRow(
-                                                amenity: _amenitiesRight[index],
-                                              ),
-                                              const SizedBox(
-                                                height: 4,
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ],
-                            ))
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                child: Column(
+                                  children: [
+                                    ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      physics: const ClampingScrollPhysics(),
+                                      itemCount: _amenitiesLeft.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          children: [
+                                            AmenityRow(
+                                              amenity: _amenitiesLeft[index],
+                                            ),
+                                            const SizedBox(
+                                              height: 4,
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                )),
+                            Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      physics: const ClampingScrollPhysics(),
+                                      itemCount: _amenitiesRight.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          children: [
+                                            AmenityRow(
+                                              amenity: _amenitiesRight[index],
+                                            ),
+                                            const SizedBox(
+                                              height: 4,
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ))
                           ],
                         ),
                       ],
@@ -585,36 +598,36 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         const Text('Lịch',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w600)),
-                              TableCalendar(
-                                daysOfWeekHeight: 24,
-                                startingDayOfWeek: StartingDayOfWeek.monday,
-                                firstDay: DateTime.now(),
-                                lastDay: DateTime.utc(2030, 3, 14),
-                                focusedDay: DateTime.now(),
-                                calendarBuilders: CalendarBuilders(
-                                    dowBuilder: (context, day) {
-                                  if (day.weekday == DateTime.sunday) {
-                                    final text = DateFormat.E().format(day);
+                        TableCalendar(
+                          daysOfWeekHeight: 24,
+                          startingDayOfWeek: StartingDayOfWeek.monday,
+                          firstDay: DateTime.now(),
+                          lastDay: DateTime.utc(2030, 3, 14),
+                          focusedDay: DateTime.now(),
+                          calendarBuilders: CalendarBuilders(
+                              dowBuilder: (context, day) {
+                                if (day.weekday == DateTime.sunday) {
+                                  final text = DateFormat.E().format(day);
 
-                                    return Center(
-                                      child: Text(
-                                  text,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              );
-                            }
+                                  return Center(
+                                    child: Text(
+                                      text,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  );
+                                }
 
-                            return null;
-                          }, defaultBuilder: (context, day, _) {
+                                return null;
+                              }, defaultBuilder: (context, day, _) {
                             String formattedDate =
-                                DateFormat('dd-MM-yyyy').format(day);
+                            DateFormat('dd-MM-yyyy').format(day);
                             bool flag = false;
                             for (int i = 0;
-                                i <
-                                    (widget.homeDetail.data.dateIsBooked
-                                            ?.length ??
-                                        0);
-                                i++) {
+                            i <
+                                (widget.homeDetail.data.dateIsBooked
+                                    ?.length ??
+                                    0);
+                            i++) {
                               if (formattedDate ==
                                   widget.homeDetail.data.dateIsBooked![i]) {
                                 flag = true;
@@ -640,39 +653,39 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                             CalendarFormat.month;
                           },
                         ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showRatingPopup(context);
-                          },
-                          child: Container(
-                            height: 60,
-                            color: Colors.white,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                const Text('Đánh giá',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400)),
-                                RatingBar(
-                                  itemSize: 25,
-                                  maxRating: 5.0,
-                                  minRating: 0.0,
-                                  initialRating: 5,
-                                  onRatingUpdate: (double rating) => {},
-                                  ignoreGestures: true,
-                                  allowHalfRating: true,
-                                  ratingWidget: RatingWidget(
-                                    empty: const Icon(
-                                      Icons.star_border_rounded,
-                                      color: kPrimaryColor,
-                                    ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      showRatingPopup(context);
+                    },
+                    child: Container(
+                      height: 60,
+                      color: Colors.white,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text('Đánh giá',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400)),
+                          RatingBar(
+                            itemSize: 25,
+                            maxRating: 5.0,
+                            minRating: 0.0,
+                            initialRating: 5,
+                            onRatingUpdate: (double rating) => {},
+                            ignoreGestures: true,
+                            allowHalfRating: true,
+                            ratingWidget: RatingWidget(
+                              empty: const Icon(
+                                Icons.star_border_rounded,
+                                color: kPrimaryColor,
+                              ),
                               full: const Icon(
                                 Icons.star_rounded,
                                 color: kPrimaryColor,
@@ -689,36 +702,36 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                 fontWeight: FontWeight.w400, fontSize: 14),
                           ),
                         ],
-                            ),
-                          ),
-                        ),
-
-                        const Text('Gợi ý cho bạn',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
-                        // SizedBox(
-                        //         height: 310,
-                        //         child: ListView.builder(
-                        //           scrollDirection: Axis.horizontal,
-                        //           itemBuilder: (context, index) {
-                        //             return  NearByRoomCard(
-                        //               indexRoom: index,
-                        //               title: RoomList.rooms[index].title,
-                        //               imagePath: RoomList.rooms[index].imagePath.first,
-                        //               rating: RoomList.rooms[index].rating,
-                        //               price: RoomList.rooms[index].price,
-                        //               area: RoomList.rooms[index].area,
-                        //               address: RoomList.rooms[index].address,
-                        //               isFavorite: RoomList.rooms[index].isFavorite,);
-                        //           },
-                        //           itemCount: RoomList.rooms.length,
-                        //         ),
-                        //       ),
-                      ],
+                      ),
                     ),
                   ),
+
+                  const Text('Gợi ý cho bạn',
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600)),
+                  // SizedBox(
+                  //         height: 310,
+                  //         child: ListView.builder(
+                  //           scrollDirection: Axis.horizontal,
+                  //           itemBuilder: (context, index) {
+                  //             return  NearByRoomCard(
+                  //               indexRoom: index,
+                  //               title: RoomList.rooms[index].title,
+                  //               imagePath: RoomList.rooms[index].imagePath.first,
+                  //               rating: RoomList.rooms[index].rating,
+                  //               price: RoomList.rooms[index].price,
+                  //               area: RoomList.rooms[index].area,
+                  //               address: RoomList.rooms[index].address,
+                  //               isFavorite: RoomList.rooms[index].isFavorite,);
+                  //           },
+                  //           itemCount: RoomList.rooms.length,
+                  //         ),
+                  //       ),
                 ],
               ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: SizedBox(
         height: 50,
@@ -914,8 +927,8 @@ void showPopupSuccess(BuildContext context) {
       );
     },
   ).then((value) => Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const MainScreen(selectedInit: 0)),
-      ));
+    context,
+    MaterialPageRoute(
+        builder: (context) => const MainScreen(selectedInit: 0)),
+  ));
 }

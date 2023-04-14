@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -17,11 +18,10 @@ class BookingPage extends StatefulWidget {
   final HomeDetailResponse homeDetail;
   final PriceOfHomeResponse priceResponse;
 
-  const BookingPage(
-      {Key? key,
-      required this.bookingRequest,
-      required this.homeDetail,
-      required this.priceResponse})
+  const BookingPage({Key? key,
+    required this.bookingRequest,
+    required this.homeDetail,
+    required this.priceResponse})
       : super(key: key);
 
   @override
@@ -34,7 +34,7 @@ class _BookingPageState extends State<BookingPage> {
       double cost = widget.priceResponse.data.percent == null
           ? widget.priceResponse.data.totalCostWithSurcharge
           : widget.priceResponse.data.totalCostWithSurcharge *
-              (widget.priceResponse.data.percent! / 100);
+          (widget.priceResponse.data.percent! / 100);
 
       widget.bookingRequest.moneyPayed = cost;
       widget.bookingRequest.paymentMethod = 'PAY_IN_FULL';
@@ -47,11 +47,12 @@ class _BookingPageState extends State<BookingPage> {
       }
       showPopupSuccess(context);
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -93,7 +94,7 @@ class _BookingPageState extends State<BookingPage> {
                     const Text(
                       'Thông tin khách hàng',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(
                       height: 16,
@@ -113,15 +114,15 @@ class _BookingPageState extends State<BookingPage> {
                     BookingInfoRow(
                         title: "Người lớn:",
                         content:
-                            widget.bookingRequest.guests[0].number.toString()),
+                        widget.bookingRequest.guests[0].number.toString()),
                     BookingInfoRow(
                         title: "Trẻ em:",
                         content:
-                            widget.bookingRequest.guests[1].number.toString()),
+                        widget.bookingRequest.guests[1].number.toString()),
                     BookingInfoRow(
                         title: "Em bé:",
                         content:
-                            widget.bookingRequest.guests[2].number.toString()),
+                        widget.bookingRequest.guests[2].number.toString()),
                     const SizedBox(
                       height: 16,
                     ),
@@ -167,7 +168,7 @@ class _BookingPageState extends State<BookingPage> {
                     const Text(
                       'Thông tin nhà',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(
                       height: 10,
@@ -183,7 +184,7 @@ class _BookingPageState extends State<BookingPage> {
                     BookingInfoRow(
                         title: "Giá cơ bản",
                         content:
-                            "${widget.homeDetail.data.costPerNightDefault?.toInt()}đ /1đêm"),
+                        "${widget.homeDetail.data.costPerNightDefault?.toInt()}đ /1đêm"),
                     const SizedBox(
                       height: 50,
                     ),
@@ -206,7 +207,7 @@ class _BookingPageState extends State<BookingPage> {
                     const Text(
                       'Thông tin thanh toán',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(
                       height: 16,
@@ -235,7 +236,7 @@ class _BookingPageState extends State<BookingPage> {
                           title: DateFormat("dd-MM-yyyy").format(
                               widget.priceResponse.data.detail[index].day),
                           content:
-                              "${widget.priceResponse.data.detail[index].cost.toInt()}đ",
+                          "${widget.priceResponse.data.detail[index].cost.toInt()}đ",
                           especially: widget
                               .priceResponse.data.detail[index].especially,
                         );
@@ -268,7 +269,7 @@ class _BookingPageState extends State<BookingPage> {
                           title: widget.homeDetail.data.surcharges![index]
                               .surchargeCategoryName,
                           content:
-                              "${widget.homeDetail.data.surcharges![index].cost.toInt()}đ",
+                          "${widget.homeDetail.data.surcharges![index].cost.toInt()}đ",
                         );
                       },
                     ),
@@ -313,26 +314,26 @@ class _BookingPageState extends State<BookingPage> {
                     widget.priceResponse.data.discountName == null
                         ? Container()
                         : Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              children: const [
-                                Text(
-                                  'Khuyến mãi',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: const [
+                          Text(
+                            'Khuyến mãi',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600),
                           ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
                     widget.priceResponse.data.discountName == null
                         ? Container()
                         : BookingInfoRow(
-                            title: widget.priceResponse.data.discountName!,
-                            content: "${widget.priceResponse.data.percent!}%"),
+                        title: widget.priceResponse.data.discountName!,
+                        content: "${widget.priceResponse.data.percent!}%"),
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 20.0, right: 20.0, bottom: 0, top: 0),
@@ -484,7 +485,7 @@ class _BookingPageState extends State<BookingPage> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(kPrimaryColor),
+                    MaterialStateProperty.all<Color>(kPrimaryColor),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -618,7 +619,7 @@ void showPopupSuccess(BuildContext context) {
     },
   ).then((value) => Navigator.push(
     context,
-        MaterialPageRoute(
-            builder: (context) => const MainScreen(selectedInit: 2)),
-      ));
+    MaterialPageRoute(
+        builder: (context) => const MainScreen(selectedInit: 2)),
+  ));
 }

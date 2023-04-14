@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 
 import '../../../controllers/favourite_controller.dart';
@@ -34,11 +35,12 @@ class _BodyState extends State<Body> {
         _homeInfoResponse = response;
       });
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -47,31 +49,31 @@ class _BodyState extends State<Body> {
     return SingleChildScrollView(
       child: (_homeInfoResponse?.data.content.length ?? 0) == 0
           ? Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              alignment: Alignment.center,
-              child: Text(
-                "Hiện chưa có danh sách yêu thích",
-                style: TextStyle(fontSize: getProportionateScreenWidth(16)),
-              ),
-            )
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        alignment: Alignment.center,
+        child: Text(
+          "Hiện chưa có danh sách yêu thích",
+          style: TextStyle(fontSize: getProportionateScreenWidth(16)),
+        ),
+      )
           : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: getProportionateScreenWidth(10)),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: _homeInfoResponse?.data.content.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return FavoriteCard(
-                        homeInfo: _homeInfoResponse!.data.content[index]);
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: getProportionateScreenWidth(10)),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const ClampingScrollPhysics(),
+            itemCount: _homeInfoResponse?.data.content.length ?? 0,
+            itemBuilder: (context, index) {
+              return FavoriteCard(
+                  homeInfo: _homeInfoResponse!.data.content[index]);
+            },
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+        ],
+      ),
     );
   }
 }

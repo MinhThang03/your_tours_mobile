@@ -1,5 +1,5 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:your_tours_mobile/controllers/amenities_controller.dart';
 import 'package:your_tours_mobile/models/responses/amenities_filter_response.dart';
 
@@ -15,24 +15,6 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
-  List<Map<String, dynamic>> categories = [
-    {"icon": "assets/icons/Flash Icon.svg", "text": "Flash Deal"},
-    {"icon": "assets/icons/Bill Icon.svg", "text": "Bill"},
-    {"icon": "assets/icons/Game Icon.svg", "text": "Game"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "Daily Gift"},
-    {"icon": "assets/icons/Discover.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-    {"icon": "assets/icons/Gift Icon.svg", "text": "More"},
-  ];
 
   AmenitiesFilterResponse? _amenities;
   int _indexSelected = 0;
@@ -50,11 +32,12 @@ class _CategoriesState extends State<Categories> {
         _amenities = response;
       });
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -68,7 +51,7 @@ class _CategoriesState extends State<Categories> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
           _amenities?.data.content.length ?? 0,
-          (index) => GestureDetector(
+              (index) => GestureDetector(
             onTap: () {
               setState(() {
                 _indexSelected = index;
@@ -76,7 +59,7 @@ class _CategoriesState extends State<Categories> {
               widget.onChangeTap(_amenities!.data.content[index].id);
             },
             child: CategoryCard(
-              icon: categories[index]["icon"],
+              icon: _amenities?.data.content[index].icon,
               text: _amenities?.data.content[index].name,
               index: index,
               indexSelected: _indexSelected,
@@ -126,7 +109,10 @@ class _CategoryCardState extends State<CategoryCard> {
               padding: EdgeInsets.all(getProportionateScreenWidth(10)),
               height: getProportionateScreenWidth(40),
               width: getProportionateScreenWidth(40),
-              child: SvgPicture.asset(widget.icon!),
+              child: Image.network(
+                widget.icon!,
+                fit: BoxFit.cover,
+              ),
             ),
             const SizedBox(height: 4),
             FittedBox(

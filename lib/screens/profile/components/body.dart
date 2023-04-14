@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
@@ -37,11 +38,12 @@ class _BodyState extends State<Body> {
         _userInfo = response;
       });
     } on FormatException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message),
-        ),
-      );
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
     }
   }
 
@@ -74,10 +76,10 @@ class _BodyState extends State<Body> {
           _getStatusOfUser() == true
               ? Container()
               : ProfileMenu(
-                  text: "Active account",
-                  icon: "assets/icons/active_user_icon.svg",
-                  press: () => {},
-                ),
+            text: "Active account",
+            icon: "assets/icons/active_user_icon.svg",
+            press: () => {},
+          ),
           ProfileMenu(
             text: "My Account",
             icon: "assets/icons/User Icon.svg",
