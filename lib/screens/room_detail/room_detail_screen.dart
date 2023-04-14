@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/booking_controller.dart';
-import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
 import 'package:your_tours_mobile/controllers/price_home_controller.dart';
 import 'package:your_tours_mobile/models/enums/guest_category.dart';
 import 'package:your_tours_mobile/models/requests/booking_request.dart';
@@ -19,9 +18,9 @@ import 'package:your_tours_mobile/screens/room_detail/components/pick_date_and_t
 
 class RoomDetailScreen extends StatefulWidget {
   final int index;
-  final String homeId;
+  final HomeDetailResponse homeDetail;
 
-  const RoomDetailScreen({this.index = 0, Key? key, required this.homeId})
+  const RoomDetailScreen({this.index = 0, Key? key, required this.homeDetail})
       : super(key: key);
 
   @override
@@ -32,12 +31,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   final myController = TextEditingController();
   final myController2 = TextEditingController();
 
-  HomeDetailResponse? _homeDetail;
   late PageController _pageController;
   int _currentPage = 0;
 
   List<AmenitiesView> _amenitiesRight = [];
   List<AmenitiesView> _amenitiesLeft = [];
+  final List<String> _imagesUrl = [];
 
   int _numOfAdult = 0;
   int _numOfChildren = 0;
@@ -47,7 +46,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   @override
   void dispose() {
-    _homeDetail = null;
     _amenitiesRight = [];
     _amenitiesLeft = [];
     _pageController.dispose();
@@ -70,7 +68,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       BookingRequest request = BookingRequest(
           dateStart: _startDateBooking,
           dateEnd: _endDateBooking,
-          homeId: _homeDetail!.data.id,
+          homeId: widget.homeDetail.data.id,
           guests: guests);
 
       if (_numOfAdult == 0 && _numOfChildren == 0 && _numOfBaby == 0) {
@@ -83,7 +81,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       }
 
       PriceOfHomeResponse priceResponse = await getPriceOfHome(
-          _homeDetail!.data.id,
+          widget.homeDetail.data.id,
           DateFormat('yyyy-MM-dd').format(_startDateBooking),
           DateFormat('yyyy-MM-dd').format(_endDateBooking));
 
@@ -96,8 +94,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => BookingPage(
-                    bookingRequest: request,
-                    homeDetail: _homeDetail!,
+                bookingRequest: request,
+                    homeDetail: widget.homeDetail,
                     priceResponse: priceResponse,
                   )));
     } on FormatException catch (error) {
@@ -169,13 +167,11 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           onChangeStartDate: (value) {
                             setState(() {
                               _startDateBooking = value;
-                              print("Ngay bat dau $_startDateBooking");
                             });
                           },
                           onChangeEndDate: (value) {
                             setState(() {
                               _endDateBooking = value;
-                              print("Ngay ket thuc $_endDateBooking");
                             });
                           },
                         )
@@ -249,12 +245,14 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
-                      itemCount: _homeDetail?.data.amenitiesView?.length ?? 0,
+                      itemCount:
+                          widget.homeDetail.data.amenitiesView?.length ?? 0,
                       itemBuilder: (context, index) {
                         return Column(
                           children: [
                             AmenityRow(
-                              amenity: _homeDetail!.data.amenitiesView![index],
+                              amenity:
+                                  widget.homeDetail.data.amenitiesView![index],
                             ),
                             const SizedBox(
                               height: 8,
@@ -299,20 +297,28 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   Future<void> _fetchDataHomeDetailFromApi() async {
     try {
-      final response = await homeDetailController(widget.homeId);
       setState(() {
-        _homeDetail = response;
-        if ((_homeDetail?.data.amenitiesView?.length ?? 0) >= 3) {
-          _amenitiesLeft = _homeDetail!.data.amenitiesView!.sublist(0, 2);
-          if ((_homeDetail?.data.amenitiesView?.length ?? 0) >= 4) {
-            _amenitiesRight = _homeDetail!.data.amenitiesView!.sublist(2, 4);
+        if (widget.homeDetail.data.thumbnail != null) {
+          _imagesUrl.add(widget.homeDetail.data.thumbnail!);
+        }
+
+        int len = widget.homeDetail.data.imagesOfHome?.length ?? 0;
+        for (int i = 0; i < len; i++) {
+          _imagesUrl.add(widget.homeDetail.data.imagesOfHome![i].path);
+        }
+
+        if ((widget.homeDetail.data.amenitiesView?.length ?? 0) >= 3) {
+          _amenitiesLeft = widget.homeDetail.data.amenitiesView!.sublist(0, 2);
+          if ((widget.homeDetail.data.amenitiesView?.length ?? 0) >= 4) {
+            _amenitiesRight =
+                widget.homeDetail.data.amenitiesView!.sublist(2, 4);
           } else {
-            _amenitiesRight = _homeDetail!.data.amenitiesView!
-                .sublist(2, _homeDetail?.data.amenitiesView?.length);
+            _amenitiesRight = widget.homeDetail.data.amenitiesView!
+                .sublist(2, widget.homeDetail.data.amenitiesView?.length);
           }
-        } else if ((_homeDetail?.data.amenitiesView?.length ?? 0) > 0 &&
-            (_homeDetail?.data.amenitiesView?.length ?? 0) <= 2) {
-          _amenitiesLeft = _homeDetail!.data.amenitiesView!.sublist(0, 2);
+        } else if ((widget.homeDetail.data.amenitiesView?.length ?? 0) > 0 &&
+            (widget.homeDetail.data.amenitiesView?.length ?? 0) <= 2) {
+          _amenitiesLeft = widget.homeDetail.data.amenitiesView!.sublist(0, 2);
         }
       });
     } on FormatException catch (error) {
@@ -346,42 +352,40 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: _homeDetail == null
-            ? null
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: Stack(children: [
-                      PageView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        controller: _pageController,
-                        itemCount: _homeDetail?.data.imagesOfHome?.length,
-                        onPageChanged: (int page) {
-                          setState(() {
-                            _currentPage = page;
-                          });
-                        },
-                        itemBuilder: (BuildContext context, int index) {
-                          return Image.network(
-                            _homeDetail!.data.imagesOfHome![index].path,
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      ),
-                      Positioned(
-                        bottom: 20,
-                        left: 0,
-                        right: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: _buildPageIndicator(),
-                        ),
-                      )
-                    ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 3,
+              child: Stack(children: [
+                PageView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  controller: _pageController,
+                  itemCount: _imagesUrl.length,
+                  onPageChanged: (int page) {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                  },
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.network(
+                      _imagesUrl[index],
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _buildPageIndicator(),
                   ),
-                  Padding(
+                )
+              ]),
+            ),
+            Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: [
@@ -393,81 +397,80 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                                  SizedBox(
-                                    width: 200,
-                                    child: Text(
-                                      _homeDetail!.data.name,
-                                      softWrap: true,
-                                      textAlign: TextAlign.start,
-                                      maxLines: 2,
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Chip(
-                                      label: const Text('Còn phòng',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                              color: kPrimaryColor)),
-                                      backgroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        side: const BorderSide(
-                                          color: kPrimaryColor, // Border color
-                                          width: 1.0, // Border width
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                      ))
-                                ],
-                              ),
-                              Text(
-                                '${_homeDetail?.data.descriptionHomeDetail} ',
-                              ),
-                              Text(
-                                '${_homeDetail?.data.costPerNightDefault.toString()} / 1 đêm',
+                            SizedBox(
+                              width: 200,
+                              child: Text(
+                                widget.homeDetail.data.name,
+                                softWrap: true,
+                                textAlign: TextAlign.start,
+                                maxLines: 2,
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icons/homeCard.svg',
-                                    width: 18,
-                                    height: 18,
+                            ),
+                            Chip(
+                                label: const Text('Còn phòng',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: kPrimaryColor)),
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                    color: kPrimaryColor, // Border color
+                                    width: 1.0, // Border width
                                   ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                      'Chủ nhà: ${_homeDetail?.data.ownerName}'),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icons/location.svg',
-                                    width: 18,
-                                    height: 18,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  SizedBox(
-                                    width: 300,
-                                    child: Text(
-                                      _homeDetail?.data.provinceName ?? '',
-                                      softWrap: true,
-                                      maxLines: 3,
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ))
+                          ],
+                        ),
+                        Text(
+                          '${widget.homeDetail.data.descriptionHomeDetail} ',
+                        ),
+                        Text(
+                          '${widget.homeDetail.data.costPerNightDefault.toString()} / 1 đêm',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/homeCard.svg',
+                              width: 18,
+                              height: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                                'Chủ nhà: ${widget.homeDetail.data.ownerName}'),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/location.svg',
+                              width: 18,
+                              height: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            SizedBox(
+                              width: 300,
+                              child: Text(
+                                widget.homeDetail.data.provinceName ?? '',
+                                softWrap: true,
+                                maxLines: 3,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                         ),
                         const SizedBox(height: 12),
                         Container(
@@ -549,41 +552,39 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                         },
                                       ),
                                     ],
-                                  ))
-                                ],
-                              ),
-                            ],
-                          ),
+                            ))
+                          ],
                         ),
+                      ],
+                    ),
+                  ),
 
-                        const SizedBox(height: 12),
-                        Container(
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const Text('Mô tả',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600)),
-                              Text(
-                                _homeDetail?.data.description ?? '',
-                                textAlign: TextAlign.justify,
-                              ),
-                            ],
-                          ),
+                  const SizedBox(height: 12),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text('Mô tả',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(
+                          widget.homeDetail.data.description ?? '',
+                          textAlign: TextAlign.justify,
                         ),
-                        const SizedBox(height: 12),
-                        Container(
-                          color: Colors.white,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Lịch',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Lịch',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
                               TableCalendar(
                                 daysOfWeekHeight: 24,
                                 startingDayOfWeek: StartingDayOfWeek.monday,
@@ -597,50 +598,48 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
                                     return Center(
                                       child: Text(
-                                        text,
-                                        style:
-                                            const TextStyle(color: Colors.red),
-                                      ),
-                                    );
-                                  }
+                                  text,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              );
+                            }
 
-                                  return null;
-                                }, defaultBuilder: (context, day, _) {
-                                  String formattedDate =
-                                      DateFormat('dd-MM-yyyy').format(day);
-                                  bool flag = false;
-                                  for (int i = 0;
-                                      i <
-                                          (_homeDetail
-                                                  ?.data.dateIsBooked?.length ??
-                                              0);
-                                      i++) {
-                                    if (formattedDate ==
-                                        _homeDetail?.data.dateIsBooked![i]) {
-                                      flag = true;
-                                      break;
-                                    }
-                                  }
-                                  if (flag) {
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: kPrimaryColor,
-                                        borderRadius:
-                                            BorderRadius.circular(80.0),
-                                      ),
-                                      child: Text(
-                                        day.day.toString(),
-                                        style: const TextStyle(
-                                            color: Colors.black),
-                                      ),
-                                    );
-                                  }
-                                }),
-                                onFormatChanged: (format) {
-                                  CalendarFormat.month;
-                                },
-                              ),
+                            return null;
+                          }, defaultBuilder: (context, day, _) {
+                            String formattedDate =
+                                DateFormat('dd-MM-yyyy').format(day);
+                            bool flag = false;
+                            for (int i = 0;
+                                i <
+                                    (widget.homeDetail.data.dateIsBooked
+                                            ?.length ??
+                                        0);
+                                i++) {
+                              if (formattedDate ==
+                                  widget.homeDetail.data.dateIsBooked![i]) {
+                                flag = true;
+                                break;
+                              }
+                            }
+                            if (flag) {
+                              return Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: kPrimaryColor,
+                                  borderRadius: BorderRadius.circular(80.0),
+                                ),
+                                child: Text(
+                                  day.day.toString(),
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              );
+                            }
+                            return null;
+                          }),
+                          onFormatChanged: (format) {
+                            CalendarFormat.month;
+                          },
+                        ),
                             ],
                           ),
                         ),
@@ -674,23 +673,22 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                       Icons.star_border_rounded,
                                       color: kPrimaryColor,
                                     ),
-                                    full: const Icon(
-                                      Icons.star_rounded,
-                                      color: kPrimaryColor,
-                                    ),
-                                    half: const Icon(
-                                      Icons.star_half_rounded,
-                                      color: kPrimaryColor,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '5 /5',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14),
-                                ),
-                              ],
+                              full: const Icon(
+                                Icons.star_rounded,
+                                color: kPrimaryColor,
+                              ),
+                              half: const Icon(
+                                Icons.star_half_rounded,
+                                color: kPrimaryColor,
+                              ),
+                            ),
+                          ),
+                          const Text(
+                            '5 /5',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 14),
+                          ),
+                        ],
                             ),
                           ),
                         ),
@@ -739,7 +737,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   List<Widget> _buildPageIndicator() {
     List<Widget> indicators = [];
-    for (int i = 0; i < (_homeDetail?.data.imagesOfHome?.length ?? 0); i++) {
+    for (int i = 0; i < (_imagesUrl.length); i++) {
       indicators.add(
         i == _currentPage
             ? _buildPageIndicatorItem(true)
