@@ -16,16 +16,6 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<HomeInfoResponse?> _fetchDataFavouriteFromApi() async {
     try {
       final response = await favouritePageApi();

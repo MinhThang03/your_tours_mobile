@@ -1,4 +1,9 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:your_tours_mobile/apis/province_controller.dart';
+import 'package:your_tours_mobile/components/loading_api_widget.dart';
+import 'package:your_tours_mobile/components/shimmer_loading.dart';
+import 'package:your_tours_mobile/models/responses/province_response.dart';
 
 class HomeCity extends StatefulWidget {
   const HomeCity({Key? key}) : super(key: key);
@@ -8,13 +13,44 @@ class HomeCity extends StatefulWidget {
 }
 
 class _HomeCityState extends State<HomeCity> {
-  @override
-  void initState() {
-    super.initState();
+  Future<GetListProvinceResponse?> _fetchDataListProvinceApi() async {
+    try {
+      return await getListProvinceApi();
+    } on FormatException catch (error) {
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    return LoadApiWidget<GetListProvinceResponse?>(
+        successBuilder: (context, response) {
+          return successWidget(context, response!);
+        },
+        loadingBuilder: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(
+                8,
+                (index) => const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: ShimmerLoading(
+                        width: 60,
+                        height: 60,
+                      ),
+                    )),
+          ),
+        ),
+        fetchDataFunction: _fetchDataListProvinceApi());
+  }
+
+  Widget successWidget(BuildContext context, GetListProvinceResponse response) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
@@ -22,13 +58,12 @@ class _HomeCityState extends State<HomeCity> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
-          10,
+          response.data.length,
           (index) => GestureDetector(
             onTap: () {},
-            child: const CityCard(
-              icon:
-                  "https://cdn.getyourguide.com/img/location/58c9218fb83cb.jpeg/75.jpg",
-              text: "Hà Nội",
+            child: CityCard(
+              icon: response.data[index].thumbnail,
+              text: response.data[index].enName,
             ),
           ),
         ),

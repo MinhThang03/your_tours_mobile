@@ -7,6 +7,7 @@ const String activeOtpUrl = "/api/v1/auth/active-account";
 const String registerUrl = "/api/v1/auth/register";
 
 //app api
+const String getListProvince = "/api/v1/public/app/provinces/list";
 const String getUserProfile = "/api/v1/user/profile";
 const String homePageFilterUrl =
     "/api/v1/app/homes/page/filter?number=0&size=20";
