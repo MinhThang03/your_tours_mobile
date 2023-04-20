@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/favourite_controller.dart';
 
 class HomeFilterCardList extends StatefulWidget {
   const HomeFilterCardList({Key? key}) : super(key: key);
@@ -23,9 +25,9 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
           (index) => GestureDetector(
             onTap: () {},
             child: Row(
-              children: const [
+              children: [
                 HomeFilterCard(),
-                SizedBox(
+                const SizedBox(
                   width: 16,
                 )
               ],
@@ -37,22 +39,11 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
   }
 }
 
-class HomeFilterCard extends StatefulWidget {
-  const HomeFilterCard({
-    Key? key,
-  }) : super(key: key);
 
-  @override
-  State<HomeFilterCard> createState() => _HomeFilterCardState();
-}
+class HomeFilterCard extends StatelessWidget {
+  HandleFavouriteController favoriteController = HandleFavouriteController();
 
-class _HomeFilterCardState extends State<HomeFilterCard> {
-  bool _isFavourited = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  HomeFilterCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -124,37 +115,40 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
                   Positioned(
                     bottom: 0,
                     right: 12,
-                    child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(50)),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.withOpacity(0.6),
-                                blurRadius: 3,
-                                offset: const Offset(0, 3)),
-                          ],
-                        ),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: _isFavourited
-                                ? SvgPicture.asset(
-                                    'assets/icons/Heart Icon_2.svg',
-                                    width: 16,
-                                    height: 16,
-                                    color: kPrimaryColor,
-                                  )
-                                : SvgPicture.asset(
-                                    'assets/icons/Heart Icon.svg',
-                                    width: 16,
-                                    height: 16,
-                                    color: Colors.red,
-                                  ),
+                    child: GestureDetector(
+                      onTap: () {
+                        favoriteController.handleFavorite(context);
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(50)),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.withOpacity(0.6),
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 3)),
+                            ],
                           ),
-                        )),
+                          child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Obx(
+                                () => favoriteController.isFavorite.value
+                                    ? SvgPicture.asset(
+                                        'assets/icons/Heart Icon_2.svg',
+                                        width: 16,
+                                        height: 16,
+                                        color: kSecondaryColor,
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/icons/Heart Icon.svg',
+                                        width: 16,
+                                        height: 16,
+                                        color: Colors.red,
+                                      ),
+                              ))),
+                    ),
                   ),
                 ]),
               ),

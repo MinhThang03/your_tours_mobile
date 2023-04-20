@@ -1,6 +1,6 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/controllers/booking_controller.dart';
+import 'package:your_tours_mobile/apis/booking_controller.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
 
 import '../../../size_config.dart';

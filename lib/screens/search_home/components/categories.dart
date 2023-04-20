@@ -1,6 +1,6 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/controllers/amenities_controller.dart';
+import 'package:your_tours_mobile/apis/amenities_controller.dart';
 import 'package:your_tours_mobile/models/responses/amenities_filter_response.dart';
 
 import '../../../size_config.dart';

@@ -5,7 +5,7 @@ import 'package:your_tours_mobile/models/responses/user_response.dart';
 import 'package:your_tours_mobile/screens/profile/components/profile_confirm.dart';
 import 'package:your_tours_mobile/screens/profile_view/profile_view_screen.dart';
 
-import '../../../controllers/user_controller.dart';
+import '../../../apis/user_controller.dart';
 import 'profile_menu.dart';
 import 'profile_pic.dart';
 

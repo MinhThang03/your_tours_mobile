@@ -2,7 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 
-import '../../controllers/home_page_filter_controller.dart';
+import '../../apis/home_page_filter_controller.dart';
 import 'components/body.dart';
 import 'components/home_header.dart';
 

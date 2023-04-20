@@ -1,10 +1,10 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:your_tours_mobile/apis/favourite_apis.dart';
+import 'package:your_tours_mobile/apis/home_detail_controller.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
-import 'package:your_tours_mobile/controllers/favourite_controller.dart';
-import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
 import 'package:your_tours_mobile/models/requests/favourite_request.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
@@ -31,8 +31,7 @@ class _HomeCardState extends State<HomeCard> {
 
   Future<void> _handleFavourite() async {
     try {
-      await favouriteHandlerController(
-          FavouriteRequest(homeId: widget.homeInfo.id));
+      await favouriteHandlerApi(FavouriteRequest(homeId: widget.homeInfo.id));
 
       setState(() {
         _isFavourited = !_isFavourited;

@@ -1,7 +1,7 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:your_tours_mobile/apis/user_controller.dart';
 import 'package:your_tours_mobile/constants.dart';
-import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
 import 'package:your_tours_mobile/screens/complete_profile/complete_profile_screen.dart';
 import 'package:your_tours_mobile/screens/profile/components/profile_pic.dart';

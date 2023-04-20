@@ -1,15 +1,15 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:your_tours_mobile/apis/home_detail_controller.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
-import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 
+import '../../../apis/favourite_apis.dart';
 import '../../../components/rating_bar.dart';
 import '../../../constants.dart';
-import '../../../controllers/favourite_controller.dart';
 import '../../../models/requests/favourite_request.dart';
 import '../../../models/responses/register_response.dart';
 
@@ -33,7 +33,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
 
   Future<void> _handleFavourite() async {
     try {
-      SuccessResponse favouriteResponse = await favouriteHandlerController(
+      SuccessResponse favouriteResponse = await favouriteHandlerApi(
           FavouriteRequest(homeId: widget.homeInfo.id));
 
       setState(() {

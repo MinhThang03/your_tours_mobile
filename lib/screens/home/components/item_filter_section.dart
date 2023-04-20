@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/controllers/home_select_filter_controller.dart';
 
 import '../../../constants.dart';
 
@@ -17,18 +19,15 @@ class HomeListItemFilter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
           listContent.length,
-          (index) => GestureDetector(
-            onTap: () {},
-            child: Row(
-              children: [
-                HomeFilterItem(
-                  text: listContent[index].toString(),
-                ),
-                const SizedBox(
-                  width: 16,
-                )
-              ],
-            ),
+          (index) => Row(
+            children: [
+              HomeFilterItem(
+                text: listContent[index].toString(),
+              ),
+              const SizedBox(
+                width: 16,
+              )
+            ],
           ),
         ),
       ),
@@ -46,18 +45,34 @@ class HomeFilterItem extends StatefulWidget {
 }
 
 class _HomeFilterItemState extends State<HomeFilterItem> {
+  HomeSelectFilterController homeSelectFilterController =
+      Get.put(HomeSelectFilterController());
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-          color: kGray, borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: Text(
-          widget.text,
-          style: const TextStyle(color: kBody),
-        ),
-      ),
-    );
+    return GestureDetector(
+        onTap: () {
+          homeSelectFilterController.selectItem(widget.text);
+        },
+        child: Obx(
+          () => Container(
+            decoration: BoxDecoration(
+                color: homeSelectFilterController.content.value == widget.text
+                    ? kPrimaryColor
+                    : kGray,
+                borderRadius: const BorderRadius.all(Radius.circular(10))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(
+                widget.text,
+                style: TextStyle(
+                    color:
+                        homeSelectFilterController.content.value == widget.text
+                            ? kWhite
+                            : kBody),
+              ),
+            ),
+          ),
+        ));
   }
 }

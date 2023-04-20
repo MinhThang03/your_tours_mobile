@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:your_tours_mobile/constants.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
     Key? key,
   }) : super(
-          key: key,
-        );
+    key: key,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -23,38 +24,38 @@ class HomeHeader extends StatelessWidget {
         ),
         Expanded(
             child: Column(
-          children: [
-            const Text(
-              "Your location",
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(
-                  'assets/icons/location.svg',
-                  width: 18,
-                  height: 18,
-                  color: const Color(0xFFFC674E),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
                 const Text(
-                  "Ho Chi Minh",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  "Your location",
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
-                SvgPicture.asset(
-                  'assets/icons/down_arrow_icon.svg',
-                  width: 12,
-                  height: 12,
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/location.svg',
+                      width: 18,
+                      height: 18,
+                      color: const Color(0xFFFC674E),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    const Text(
+                      "Ho Chi Minh",
+                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    SvgPicture.asset(
+                      'assets/icons/down_arrow_icon.svg',
+                      width: 12,
+                      height: 12,
+                    ),
+                  ],
+                )
               ],
-            )
-          ],
-        )),
+            )),
         Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -74,7 +75,7 @@ class HomeHeader extends StatelessWidget {
               height: 45,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.green,
+                color: kPrimaryColor,
               ),
               child: const Icon(
                 Icons.notifications,
