@@ -20,27 +20,27 @@ class _BodyState extends State<Body> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
-          children: const [
-            SizedBox(
+          children: [
+            const SizedBox(
               height: 8,
             ),
-            HomeHeader(),
-            SizedBox(
+            const HomeHeader(),
+            const SizedBox(
               height: 30,
             ),
             HomeSearch(),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
-            HomeCity(),
-            SizedBox(
+            const HomeCity(),
+            const SizedBox(
               height: 25,
             ),
-            HomeFilter(),
-            SizedBox(
+            const HomeFilter(),
+            const SizedBox(
               height: 25,
             ),
-            HomeRecommend(),
+            const HomeRecommend(),
           ],
         ),
       ),

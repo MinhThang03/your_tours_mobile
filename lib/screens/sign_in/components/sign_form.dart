@@ -1,8 +1,11 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:your_tours_mobile/components/custom_surfix_icon.dart';
 import 'package:your_tours_mobile/components/form_error.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/helper/keyboard.dart';
+import 'package:your_tours_mobile/models/responses/login_response.dart';
 import 'package:your_tours_mobile/screens/forgot_password/forgot_password_screen.dart';
 
 import '../../../apis/login_controller.dart';
@@ -49,12 +52,17 @@ class _SignFormState extends State<SignForm> {
 
   Future<void> _submit() async {
     try {
-      await LoadingOverlay.of(context).during(
+      LoginResponse response = await LoadingOverlay.of(context).during(
           future: loginController(LoginRequest(
               email: _emailController.text,
               password: _passwordController.text)));
 
       if (!mounted) return;
+
+      Get.put(UserController(
+          response.data!.userInfo!.obs,
+          response.data!.userInfo!.deviceLocation!.obs));
+
       Navigator.push(
         context,
         MaterialPageRoute(

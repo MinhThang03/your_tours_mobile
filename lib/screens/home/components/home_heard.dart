@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
@@ -11,6 +13,8 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserController userController = Get.find<UserController>();
+
     return Row(
       children: [
         ClipRRect(
@@ -31,28 +35,31 @@ class HomeHeader extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/location.svg',
-                      width: 18,
-                      height: 18,
-                      color: const Color(0xFFFC674E),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    const Text(
-                      "Ho Chi Minh",
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    SvgPicture.asset(
-                      'assets/icons/down_arrow_icon.svg',
-                      width: 12,
-                      height: 12,
-                    ),
-                  ],
+                SvgPicture.asset(
+                  'assets/icons/location.svg',
+                  width: 18,
+                  height: 18,
+                  color: const Color(0xFFFC674E),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                Obx(
+                  () => Text(
+                    userController.location.value.cityName ?? '',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                SvgPicture.asset(
+                  'assets/icons/down_arrow_icon.svg',
+                  width: 12,
+                  height: 12,
+                ),
+              ],
                 )
               ],
             )),

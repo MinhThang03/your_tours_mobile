@@ -7,7 +7,7 @@ import 'package:your_tours_mobile/models/responses/error_response.dart';
 import 'package:your_tours_mobile/models/responses/login_response.dart';
 import 'package:your_tours_mobile/services/token_handler.dart';
 
-Future<void> loginController(LoginRequest requestBody) async {
+Future<LoginResponse> loginController(LoginRequest requestBody) async {
   try {
     http.Response response = await http.post(
       Uri.parse(domain + loginUrl),
@@ -24,7 +24,7 @@ Future<void> loginController(LoginRequest requestBody) async {
       LoginResponse loginResponse = LoginResponse.fromJson(responseJson);
       await saveToken(loginResponse.data?.accessToken);
       await saveUserInfo(loginResponse.data?.userInfo);
-      return;
+      return loginResponse;
     }
 
     ErrorResponse errorResponse = ErrorResponse.fromJson(responseJson);

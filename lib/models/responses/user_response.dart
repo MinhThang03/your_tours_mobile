@@ -30,6 +30,7 @@ class UserInfo {
     this.role,
     this.isOwner,
     this.owner,
+    this.deviceLocation,
   });
 
   String? id;
@@ -44,6 +45,7 @@ class UserInfo {
   String? role;
   bool? isOwner;
   bool? owner;
+  UserLocation? deviceLocation;
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
         id: json["id"],
@@ -58,6 +60,7 @@ class UserInfo {
         role: json["role"],
         isOwner: json["isOwner"],
         owner: json["owner"],
+        deviceLocation: UserLocation.fromJson(json["deviceLocation"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -73,5 +76,26 @@ class UserInfo {
         "role": role,
         "isOwner": isOwner,
         "owner": owner,
+        "deviceLocation": deviceLocation?.toJson(),
+      };
+}
+
+class UserLocation {
+  UserLocation({
+    this.cityName,
+    this.countryName,
+  });
+
+  String? cityName;
+  String? countryName;
+
+  factory UserLocation.fromJson(Map<String, dynamic> json) => UserLocation(
+        cityName: json["cityName"],
+        countryName: json["countryName"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "cityName": cityName,
+        "countryName": countryName,
       };
 }

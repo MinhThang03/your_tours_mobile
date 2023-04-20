@@ -6,16 +6,14 @@ import '../../apis/home_page_filter_controller.dart';
 import 'components/body.dart';
 import 'components/home_header.dart';
 
-class HomeScreen extends StatefulWidget {
-  static String routeName = "/search_home";
-
-  const HomeScreen({Key? key}) : super(key: key);
+class SearchHomeScreen extends StatefulWidget {
+  const SearchHomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SearchHomeScreen> createState() => _SearchHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SearchHomeScreenState extends State<SearchHomeScreen> {
   String? _amenityId;
   String? _province;
 

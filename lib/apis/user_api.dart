@@ -8,7 +8,7 @@ import 'package:your_tours_mobile/models/responses/user_response.dart';
 
 import '../services/token_handler.dart';
 
-Future<UserInfoResponse> getCurrentUserController() async {
+Future<UserInfoResponse> getCurrentUserApi() async {
   try {
     String? token = await getToken();
     if (token == null) {
