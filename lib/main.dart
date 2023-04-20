@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/routes.dart';
-import 'package:your_tours_mobile/screens/profile/profile_screen.dart';
 import 'package:your_tours_mobile/screens/splash/splash_screen.dart';
 import 'package:your_tours_mobile/theme.dart';
 
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: theme(),
-      // home: SplashScreen(),
+      // search_home: SplashScreen(),
       // We use routeName so that we dont need to remember the name
       initialRoute: SplashScreen.routeName,
       routes: routes,

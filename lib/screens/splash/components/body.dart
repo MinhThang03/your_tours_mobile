@@ -4,7 +4,6 @@ import 'package:your_tours_mobile/screens/sign_in/sign_in_screen.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
 import '../../../components/default_button.dart';
-
 // This is the best practice
 import '../components/splash_content.dart';
 
@@ -28,7 +27,8 @@ class _BodyState extends State<Body> {
       "image": "assets/images/splash_2.png"
     },
     {
-      "text": "We show the easy way to shop. \nJust stay at home with us",
+      "text":
+          "We show the easy way to shop. \nJust stay at search_home with us",
       "image": "assets/images/splash_3.png"
     },
   ];

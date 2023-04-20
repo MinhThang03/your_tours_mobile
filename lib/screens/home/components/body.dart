@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/models/responses/home_info_response.dart';
-import 'package:your_tours_mobile/screens/home/components/home_card.dart';
+
+import 'city_section.dart';
+import 'filter_section.dart';
+import 'home_heard.dart';
+import 'recommend_section.dart';
+import 'search_section.dart';
 
 class Body extends StatefulWidget {
-  final List<HomeInfo>? homeList;
-
-  const Body({Key? key, required this.homeList}) : super(key: key);
+  const Body({Key? key}) : super(key: key);
 
   @override
   State<Body> createState() => _BodyState();
@@ -14,16 +16,34 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
-    return  ListView.builder(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      itemCount: widget.homeList == null ? 0 : widget.homeList?.length,
-      itemBuilder: (context, index) {
-        return HomeCard(
-          homeInfo: widget.homeList![index],
-        );
-      },
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: const [
+            SizedBox(
+              height: 8,
+            ),
+            HomeHeader(),
+            SizedBox(
+              height: 30,
+            ),
+            HomeSearch(),
+            SizedBox(
+              height: 15,
+            ),
+            HomeCity(),
+            SizedBox(
+              height: 25,
+            ),
+            HomeFilter(),
+            SizedBox(
+              height: 25,
+            ),
+            HomeRecommend(),
+          ],
+        ),
+      ),
     );
   }
 }
