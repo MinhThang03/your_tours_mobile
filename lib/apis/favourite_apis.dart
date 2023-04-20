@@ -9,7 +9,7 @@ import 'package:your_tours_mobile/models/responses/register_response.dart';
 import '../models/responses/home_info_response.dart';
 import '../services/token_handler.dart';
 
-Future<HomeInfoResponse> favouritePageApi() async {
+Future<GetHomePageResponse> favouritePageApi() async {
   try {
     String? token = await getToken();
     if (token == null) {
@@ -27,8 +27,8 @@ Future<HomeInfoResponse> favouritePageApi() async {
         json.decode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode == 200) {
-      HomeInfoResponse homeInfoResponse =
-          HomeInfoResponse.fromJson(responseJson);
+      GetHomePageResponse homeInfoResponse =
+          GetHomePageResponse.fromJson(responseJson);
       return homeInfoResponse;
     }
 

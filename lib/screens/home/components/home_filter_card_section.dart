@@ -1,8 +1,16 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:your_tours_mobile/apis/home_page_filter_controller.dart';
+import 'package:your_tours_mobile/components/loading_api_widget.dart';
+import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/favourite_controller.dart';
+import 'package:your_tours_mobile/controllers/home_page_controller.dart';
+import 'package:your_tours_mobile/controllers/home_select_filter_controller.dart';
+import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/services/handle_province_name.dart';
 
 class HomeFilterCardList extends StatefulWidget {
   const HomeFilterCardList({Key? key}) : super(key: key);
@@ -12,8 +20,53 @@ class HomeFilterCardList extends StatefulWidget {
 }
 
 class _HomeFilterCardListState extends State<HomeFilterCardList> {
+  HomeSelectFilterController homeSelectFilterController =
+      Get.find<HomeSelectFilterController>();
+
+  HomePageController homePageController = Get.put(HomePageController());
+
+  Future<GetHomePageResponse?> _fetchDataListHomeApi(String query) async {
+    try {
+      GetHomePageResponse getHomePageResponse = await homePageApi(query);
+      homePageController.loadContent(getHomePageResponse);
+      return getHomePageResponse;
+    } on FormatException catch (error) {
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    return Obx(() => LoadApiWidget<GetHomePageResponse?>(
+        successBuilder: (context, response) {
+          return successWidget(context, response!);
+        },
+        loadingBuilder: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(
+                8,
+                (index) => const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: ShimmerLoading(
+                        width: 186,
+                        height: 156,
+                        boxShape: BoxShape.rectangle,
+                      ),
+                    )),
+          ),
+        ),
+        fetchDataFunction:
+            _fetchDataListHomeApi(homeSelectFilterController.content.value)));
+  }
+
+  Widget successWidget(BuildContext context, GetHomePageResponse response) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
@@ -21,12 +74,14 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
-          10,
+          response.data.content.length,
           (index) => GestureDetector(
             onTap: () {},
             child: Row(
               children: [
-                HomeFilterCard(),
+                HomeFilterCard(
+                  homeInfo: response.data.content[index],
+                ),
                 const SizedBox(
                   width: 16,
                 )
@@ -39,11 +94,25 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
   }
 }
 
-
 class HomeFilterCard extends StatelessWidget {
-  HandleFavouriteController favoriteController = HandleFavouriteController();
+  final HomeInfo homeInfo;
 
-  HomeFilterCard({super.key});
+  late HandleFavouriteController favoriteController =
+      HandleFavouriteController((homeInfo.isFavorite ?? false).obs);
+
+  HomeFilterCard({super.key, required this.homeInfo});
+
+  String _handleNameHome(String? name) {
+    if (name == null) {
+      return '';
+    }
+
+    if (name.length <= 11) {
+      return name;
+    }
+
+    return '${name.substring(0, 8)}...';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +143,10 @@ class HomeFilterCard extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: ClipRRect(
                       borderRadius:
-                          const BorderRadius.all(Radius.circular(12.0)),
+                      const BorderRadius.all(Radius.circular(12.0)),
                       child: Image.network(
-                        "https://pearlriverhotel.vn/wp-content/uploads/2019/07/pearl-river-hotel-home1.jpg",
+                        homeInfo.thumbnail ??
+                            "https://pearlriverhotel.vn/wp-content/uploads/2019/07/pearl-river-hotel-home1.jpg",
                         fit: BoxFit.cover,
                         height: 156,
                         width: 186,
@@ -90,7 +160,7 @@ class HomeFilterCard extends StatelessWidget {
                         decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius:
-                                BorderRadius.all(Radius.circular(12))),
+                            BorderRadius.all(Radius.circular(12))),
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Row(
@@ -123,7 +193,7 @@ class HomeFilterCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius:
-                                const BorderRadius.all(Radius.circular(50)),
+                            const BorderRadius.all(Radius.circular(50)),
                             boxShadow: [
                               BoxShadow(
                                   color: Colors.grey.withOpacity(0.6),
@@ -134,7 +204,7 @@ class HomeFilterCard extends StatelessWidget {
                           child: Padding(
                               padding: const EdgeInsets.all(8),
                               child: Obx(
-                                () => favoriteController.isFavorite.value
+                                    () => favoriteController.isFavorite.value
                                     ? SvgPicture.asset(
                                         'assets/icons/Heart Icon_2.svg',
                                         width: 16,
@@ -146,7 +216,7 @@ class HomeFilterCard extends StatelessWidget {
                                         width: 16,
                                         height: 16,
                                         color: Colors.red,
-                                      ),
+                                ),
                               ))),
                     ),
                   ),
@@ -159,11 +229,12 @@ class HomeFilterCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Blue Nature",
+                          Text(
+                            _handleNameHome(homeInfo.name),
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           Row(
@@ -177,10 +248,11 @@ class HomeFilterCard extends StatelessWidget {
                               const SizedBox(
                                 width: 4,
                               ),
-                              const Text(
-                                "Ho Chi Minh",
+                              Text(
+                                _handleNameHome(getShortProvinceName(
+                                    homeInfo.provinceName)),
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                 ),
                               ),

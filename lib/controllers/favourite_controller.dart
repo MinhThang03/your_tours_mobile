@@ -3,8 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class HandleFavouriteController extends GetxController {
-  RxBool isFavorite = false.obs;
+  final RxBool isFavorite;
+
+  RxBool first = true.obs;
   RxString error = ''.obs;
+
+  HandleFavouriteController(this.isFavorite);
 
   void handleFavorite(BuildContext context) {
     AnimatedSnackBar.material(
@@ -13,7 +17,6 @@ class HandleFavouriteController extends GetxController {
       mobileSnackBarPosition: MobileSnackBarPosition.bottom,
       desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
     ).show(context);
-
     isFavorite.value = !isFavorite.value;
   }
 }

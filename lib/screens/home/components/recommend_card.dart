@@ -1,8 +1,15 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:your_tours_mobile/apis/home_page_filter_controller.dart';
+import 'package:your_tours_mobile/components/loading_api_widget.dart';
+import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/favourite_controller.dart';
+import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/services/handle_province_name.dart';
+import 'package:your_tours_mobile/size_config.dart';
 
 class HomeRecommendCardList extends StatefulWidget {
   const HomeRecommendCardList({Key? key}) : super(key: key);
@@ -12,15 +19,54 @@ class HomeRecommendCardList extends StatefulWidget {
 }
 
 class _HomeRecommendCardListState extends State<HomeRecommendCardList> {
+  Future<GetHomePageResponse?> _fetchDataListHomeRecommendApi() async {
+    try {
+      return await homeRecommendApi();
+    } on FormatException catch (error) {
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    return LoadApiWidget<GetHomePageResponse?>(
+        successBuilder: (context, response) {
+          return successWidget(context, response!);
+        },
+        loadingBuilder: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Column(
+            children: List.generate(
+                10,
+                (index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: ShimmerLoading(
+                        width: SizeConfig.screenWidth,
+                        height: 200,
+                        boxShape: BoxShape.rectangle,
+                      ),
+                    )),
+          ),
+        ),
+        fetchDataFunction: _fetchDataListHomeRecommendApi());
+  }
+
+  Widget successWidget(BuildContext context, GetHomePageResponse response) {
     return ListView.builder(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
-      itemCount: 10,
+      itemCount: response.data.content.length,
       itemBuilder: (context, index) {
-        return HomeRecommendCard();
+        return HomeRecommendCard(
+          homeInfo: response.data.content[index],
+        );
       },
     );
   }
@@ -28,29 +74,26 @@ class _HomeRecommendCardListState extends State<HomeRecommendCardList> {
 
 class HomeRecommendCard extends StatefulWidget {
   final int index;
+  final HomeInfo homeInfo;
 
-  const HomeRecommendCard({Key? key, this.index = 0}) : super(key: key);
+  const HomeRecommendCard({Key? key, this.index = 0, required this.homeInfo})
+      : super(key: key);
 
   @override
   State<HomeRecommendCard> createState() => _HomeRecommendCardState();
 }
 
 class _HomeRecommendCardState extends State<HomeRecommendCard> {
-  HandleFavouriteController favoriteController = HandleFavouriteController();
+  late HandleFavouriteController favoriteController;
 
   late PageController _pageController;
 
   int _currentPage = 0;
-  List<String> images = [
-    'https://pix10.agoda.net/hotelImages/124/1246280/1246280_16061017110043391702.jpg?ca=6&ce=1&s=1024x768',
-    'https://pix10.agoda.net/hotelImages/124/1246280/1246280_16061017110043391702.jpg?ca=6&ce=1&s=1024x768',
-    'https://pix10.agoda.net/hotelImages/124/1246280/1246280_16061017110043391702.jpg?ca=6&ce=1&s=1024x768',
-    'https://pix10.agoda.net/hotelImages/124/1246280/1246280_16061017110043391702.jpg?ca=6&ce=1&s=1024x768',
-    'https://pix10.agoda.net/hotelImages/124/1246280/1246280_16061017110043391702.jpg?ca=6&ce=1&s=1024x768'
-  ];
 
   @override
   void initState() {
+    favoriteController =
+        HandleFavouriteController((widget.homeInfo.isFavorite ?? false).obs);
     _pageController = PageController(initialPage: _currentPage, keepPage: true);
     super.initState();
   }
@@ -88,7 +131,7 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                   child: PageView.builder(
                     controller: _pageController,
                     physics: const BouncingScrollPhysics(),
-                    itemCount: images.length,
+                    itemCount: widget.homeInfo.imagesOfHome?.length ?? 0,
                     onPageChanged: (int page) {
                       setState(() {
                         _currentPage = page;
@@ -100,7 +143,7 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                             topLeft: Radius.circular(18.0),
                             topRight: Radius.circular(18.0)),
                         child: Image.network(
-                          images[index],
+                          widget.homeInfo.imagesOfHome![index].path,
                           fit: BoxFit.cover,
                           height: 132,
                         ),
@@ -119,7 +162,7 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius:
-                              const BorderRadius.all(Radius.circular(50)),
+                          const BorderRadius.all(Radius.circular(50)),
                           boxShadow: [
                             BoxShadow(
                                 color: Colors.grey.withOpacity(0.6),
@@ -130,7 +173,7 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                         child: Padding(
                             padding: const EdgeInsets.all(8),
                             child: Obx(
-                              () => favoriteController.isFavorite.value
+                                  () => favoriteController.isFavorite.value
                                   ? SvgPicture.asset(
                                       'assets/icons/Heart Icon_2.svg',
                                       width: 16,
@@ -142,7 +185,7 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                                       width: 16,
                                       height: 16,
                                       color: Colors.red,
-                                    ),
+                              ),
                             ))),
                   ),
                 ),
@@ -162,10 +205,10 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Blue Nature",
+                  Text(
+                    widget.homeInfo.name ?? '',
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                         letterSpacing: 0,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
@@ -185,9 +228,10 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                               color: kSecondary,
                             ),
                             const SizedBox(width: 10),
-                            const Text(
-                              "Ho Chi Minh",
-                              style: TextStyle(color: Colors.black),
+                            Text(
+                              getShortProvinceName(
+                                  widget.homeInfo.provinceName),
+                              style: const TextStyle(color: Colors.black),
                             ),
                           ],
                         ),
@@ -214,8 +258,8 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                   const SizedBox(
                     height: 5,
                   ),
-                  const Text('500 VNĐ',
-                      style: TextStyle(
+                  Text('${widget.homeInfo.costPerNightDefault!.toInt()} /Night',
+                      style: const TextStyle(
                           fontSize: 18,
                           letterSpacing: 0,
                           color: kTextColor,
@@ -234,7 +278,7 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
 
   List<Widget> _buildPageIndicator() {
     List<Widget> indicators = [];
-    for (int i = 0; i < images.length; i++) {
+    for (int i = 0; i < (widget.homeInfo.imagesOfHome?.length ?? 0); i++) {
       indicators.add(
         i == _currentPage
             ? _buildPageIndicatorItem(true)

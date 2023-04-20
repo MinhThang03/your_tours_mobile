@@ -16,7 +16,7 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
 
-  Future<HomeInfoResponse?> _fetchDataFavouriteFromApi() async {
+  Future<GetHomePageResponse?> _fetchDataFavouriteFromApi() async {
     try {
       final response = await favouritePageApi();
       return response;
@@ -33,14 +33,14 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadApiWidget<HomeInfoResponse?>(
+    return LoadApiWidget<GetHomePageResponse?>(
         successBuilder: (context, response) {
           return successWidget(context, response!);
         },
         fetchDataFunction: _fetchDataFavouriteFromApi());
   }
 
-  Widget successWidget(BuildContext context, HomeInfoResponse response) {
+  Widget successWidget(BuildContext context, GetHomePageResponse response) {
     return SingleChildScrollView(
       child: response.data.content.isEmpty
           ? Container(

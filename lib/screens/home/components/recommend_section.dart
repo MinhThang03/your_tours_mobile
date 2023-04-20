@@ -40,7 +40,7 @@ class _HomeRecommendState extends State<HomeRecommend> {
         const SizedBox(
           height: 16,
         ),
-        HomeRecommendCardList()
+        const HomeRecommendCardList()
       ],
     );
   }

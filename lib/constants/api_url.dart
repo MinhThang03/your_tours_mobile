@@ -9,6 +9,9 @@ const String registerUrl = "/api/v1/auth/register";
 //app api
 const String getListProvince = "/api/v1/public/app/provinces/list";
 const String getUserProfile = "/api/v1/user/profile";
+const String getHomePage = "/api/v1/app/homes/page?number=0&size=10{sort}";
+const String getHomeRecommend =
+    "/api/v1/app/homes/page/recommend?number=0&size=10";
 const String homePageFilterUrl =
     "/api/v1/app/homes/page/filter?number=0&size=20";
 const String amenitiesFilterUrl =

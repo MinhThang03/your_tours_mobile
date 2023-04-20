@@ -1,5 +1,5 @@
-class HomeInfoResponse {
-  HomeInfoResponse({
+class GetHomePageResponse {
+  GetHomePageResponse({
     required this.success,
     required this.data,
   });
@@ -7,8 +7,8 @@ class HomeInfoResponse {
   bool success;
   Data data;
 
-  factory HomeInfoResponse.fromJson(Map<String, dynamic> json) =>
-      HomeInfoResponse(
+  factory GetHomePageResponse.fromJson(Map<String, dynamic> json) =>
+      GetHomePageResponse(
         success: json["success"],
         data: Data.fromJson(json["data"]),
       );
@@ -78,7 +78,7 @@ class HomeInfo {
     this.isFavorite,
     this.imagesOfHome,
     this.provinceName,
-  });
+    this.numberOfBooking});
 
   String id;
   String? name;
@@ -100,7 +100,7 @@ class HomeInfo {
   int? view;
   int? favorite;
   String? thumbnail;
-  int? averageRate;
+  double? averageRate;
   int? numberOfReviews;
   DateTime? lastModifiedDate;
   List<RoomsImportant>? roomsImportant;
@@ -108,6 +108,7 @@ class HomeInfo {
   bool? isFavorite;
   String? provinceName;
   List<ImagesOfHome>? imagesOfHome;
+  int? numberOfBooking;
 
   factory HomeInfo.fromJson(Map<String, dynamic> json) => HomeInfo(
         id: json["id"],
@@ -150,6 +151,7 @@ class HomeInfo {
             ? List<ImagesOfHome>.from(
                 json["imagesOfHome"].map((x) => ImagesOfHome.fromJson(x)))
             : null,
+        numberOfBooking: json["numberOfBooking"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -185,6 +187,7 @@ class HomeInfo {
         "imagesOfHome": imagesOfHome != null
             ? List<dynamic>.from(imagesOfHome!.map((x) => x.toJson()))
             : null,
+        "numberOfBooking": numberOfBooking,
       };
 }
 

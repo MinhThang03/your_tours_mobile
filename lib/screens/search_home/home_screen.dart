@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _amenityId;
   String? _province;
 
-  HomeInfoResponse? _homeList;
+  GetHomePageResponse? _homeList;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchDataHomesFromApi() async {
     try {
-      final response = await homePageController(_amenityId, _province);
+      final response = await homePageFilterController(_amenityId, _province);
       setState(() {
         _homeList = response;
       });

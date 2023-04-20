@@ -7,7 +7,13 @@ import '../../../constants.dart';
 class HomeListItemFilter extends StatelessWidget {
   HomeListItemFilter({Key? key}) : super(key: key);
 
-  final List<String> listContent = ['New', 'Popular', 'Top Rates', 'Trending'];
+  final List<String> listContent = [
+    'New',
+    'Top Views',
+    'Top Rates',
+    'Top Booking',
+    'Top Like'
+  ];
 
   @override
   Widget build(BuildContext context) {
