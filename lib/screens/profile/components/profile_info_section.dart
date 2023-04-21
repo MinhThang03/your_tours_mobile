@@ -5,6 +5,7 @@ import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
 
+import 'profile_confirm.dart';
 import 'profile_pic.dart';
 
 class ProfileInfoSection extends StatelessWidget {
@@ -38,26 +39,28 @@ class ProfileInfoSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const ProfilePic(),
+              Obx(() => ProfilePic(
+                    avatar: userController.userInfo.value.avatar,
+                  )),
               const SizedBox(
                 width: 10,
               ),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Hoang Minh Thang Hoang Minh Thang Hoang Minh Thang',
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'noone@gmail.com',
-                      style: TextStyle(color: kSmoke),
-                    )
-                  ],
-                ),
+                child: Obx(() => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          userController.userInfo.value.fullName!,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          userController.userInfo.value.email!,
+                          style: const TextStyle(color: kSmoke),
+                        )
+                      ],
+                    )),
               ),
               const SizedBox(
                 width: 5,
@@ -69,8 +72,11 @@ class ProfileInfoSection extends StatelessWidget {
               ),
             ],
           ),
-          // Size
-          // ProfileConfirm(active: true),
+          const SizedBox(
+            height: 12,
+          ),
+          Obx(() => ProfileConfirm(
+              active: _getStatusOfUser(userController.userInfo.value))),
         ],
       ),
     );

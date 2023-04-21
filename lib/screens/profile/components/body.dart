@@ -3,12 +3,10 @@ import 'package:get/get.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
-import 'package:your_tours_mobile/screens/profile/components/profile_confirm.dart';
 import 'package:your_tours_mobile/screens/profile_view/profile_view_screen.dart';
 
 import 'profile_info_section.dart';
 import 'profile_menu.dart';
-import 'profile_pic.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -40,12 +38,6 @@ class _BodyState extends State<Body> {
       child: Column(
         children: [
           ProfileInfoSection(),
-          Obx(() => ProfilePic(
-                avatar: userController.userInfo.value.avatar,
-              )),
-          const SizedBox(height: 10),
-          Obx(() => ProfileConfirm(
-              active: _getStatusOfUser(userController.userInfo.value))),
           const SizedBox(height: 20),
           Obx(() => _getStatusOfUser(userController.userInfo.value)
               ? Container()
