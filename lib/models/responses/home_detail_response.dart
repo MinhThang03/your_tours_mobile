@@ -85,7 +85,7 @@ class Data {
   int? view;
   bool? favorite;
   String? thumbnail;
-  int? averageRate;
+  double? averageRate;
   int? numberOfReviews;
   DateTime? lastModifiedDate;
   List<RoomsImportant>? roomsImportant;

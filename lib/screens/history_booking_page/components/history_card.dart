@@ -1,16 +1,15 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:your_tours_mobile/apis/booking_controller.dart';
-import 'package:your_tours_mobile/models/enums/booking_status.dart';
 import 'package:your_tours_mobile/models/requests/cancel_booking_request.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
+import 'package:your_tours_mobile/services/handle_date_time.dart';
+import 'package:your_tours_mobile/services/handle_province_name.dart';
 
 import '../../../components/loading_overlay.dart';
 import '../../../constants.dart';
-import 'booking_info_row.dart';
 
 class HistoryCard extends StatefulWidget {
   final BookingInfo bookingInfo;
@@ -22,10 +21,6 @@ class HistoryCard extends StatefulWidget {
 }
 
 class _HistoryCardState extends State<HistoryCard> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<void> _handleCancelBookingApi() async {
     try {
@@ -52,99 +47,86 @@ class _HistoryCardState extends State<HistoryCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0, left: 16, top: 8),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: Padding(
-                    padding:
-                    const EdgeInsets.only(left: 8.0, top: 20, right: 10),
-                    child: Stack(children: [
-                      ClipRRect(
-                        borderRadius:
-                        const BorderRadius.all(Radius.circular(4.0)),
-                        child: Image.network(
-                          widget.bookingInfo.thumbnail,
-                          fit: BoxFit.cover,
-                          height: 136,
-                          width: 128,
-                        ),
-                      ),
-                    ]),
-                  ),
-                ),
-                Flexible(
-                  flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(widget.bookingInfo.homeName,
-                            style:
-                            const TextStyle(fontWeight: FontWeight.w600)),
-                        BookingCardInfoRow(
-                          icon: 'assets/icons/price.svg',
-                          title: 'Số tiền:',
-                          content: '${widget.bookingInfo.cost.toString()}đ',
-                        ),
-                        BookingCardInfoRow(
-                          icon: 'assets/icons/check_in.svg',
-                          title: 'Ngày đến:',
-                          content: DateFormat('dd-MM-yyyy')
-                              .format(widget.bookingInfo.dateStart),
-                        ),
-                        BookingCardInfoRow(
-                          icon: 'assets/icons/check_out.svg',
-                          title: 'Ngày đi:',
-                          content: DateFormat('dd-MM-yyyy')
-                              .format(widget.bookingInfo.dateEnd),
-                        ),
-                        BookingCardInfoRow(
-                          icon: 'assets/icons/status_lock.svg',
-                          title: 'Tình trạng:',
-                          content: getDescriptionBookingStatus(
-                              widget.bookingInfo.status),
-                        ),
-                        Text(getRefundPolicy(widget.bookingInfo.refundPolicy),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.italic,
-                            )),
-                        widget.bookingInfo.status != 'WAITING'
-                            ? Container()
-                            : Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                showPopupCancel(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: kPrimaryColor,
-                              ),
-                              child: const Text('Hủy đặt'),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18.0),
+        border: Border.all(color: kPrimaryColor, width: 1),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(18.0)),
+            child: Image.network(
+              widget.bookingInfo.thumbnail,
+              fit: BoxFit.cover,
+              height: 120,
+              width: 100,
             ),
           ),
-        ),
-      ],
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: SizedBox(
+              height: 120,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.bookingInfo.homeName,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/location_fill_icon.svg',
+                        width: 18,
+                        height: 18,
+                        color: kSmoke,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        getShortProvinceName("Ho Chi Minh"),
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+
+                  Text(
+                    '${getDayMonthFormat(widget.bookingInfo.dateStart.toString())} - ${getDayMonthFormat(widget.bookingInfo.dateEnd.toString())}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+
+                  Text(
+                    '${widget.bookingInfo.cost.toInt()} VNĐ',
+                    style: const TextStyle(
+                        color: kSecondaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+
+                  // BookingCardInfoRow(
+                  //   icon: 'assets/icons/check_out.svg',
+                  //   title: 'Ngày đi:',
+                  //   content: DateFormat('dd-MM-yyyy')
+                  //       .format(widget.bookingInfo.dateEnd),
+                  // ),
+                ],
+              ),
+            ),
+          ),
+          SvgPicture.asset(
+            'assets/icons/arrow_forward_right_icon.svg',
+            color: kSecondaryColor,
+            width: 22,
+          ),
+        ],
+      ),
     );
   }
 

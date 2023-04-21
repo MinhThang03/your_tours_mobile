@@ -6,9 +6,9 @@ import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
+import 'package:your_tours_mobile/services/handle_province_name.dart';
 
 import '../../../apis/favourite_apis.dart';
-import '../../../components/rating_bar.dart';
 import '../../../constants.dart';
 import '../../../models/requests/favourite_request.dart';
 import '../../../models/responses/register_response.dart';
@@ -116,123 +116,119 @@ class _FavoriteCardState extends State<FavoriteCard> {
       onTap: () {
         _callHomeDetailFromApi();
       },
-      child: Padding(
-        padding: const EdgeInsets.only(right: 16.0, left: 16, top: 8),
-        child: Container(
-          height: 168,
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 8.0, bottom: 20, top: 20, right: 10),
-                  child: Stack(children: [
-                    ClipRRect(
-                      borderRadius:
-                      const BorderRadius.all(Radius.circular(4.0)),
-                      child: Image.network(
-                        widget.homeInfo.thumbnail!,
-                        fit: BoxFit.cover,
-                        height: 136,
-                        width: 128,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18.0),
+          border: Border.all(color: kPrimaryColor, width: 1),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(18.0)),
+              child: Image.network(
+                widget.homeInfo.thumbnail!,
+                fit: BoxFit.cover,
+                height: 110,
+                width: 110,
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(widget.homeInfo.name!,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
-                    ),
-                    Positioned(
-                      top: -10,
-                      right: -6,
-                      child: IconButton(
+                      IconButton(
                         icon: _isFavourited
                             ? SvgPicture.asset(
-                          'assets/icons/Heart Icon_2.svg',
-                          width: 20,
-                          height: 20,
-                          color: kPrimaryColor,
-                        )
+                                'assets/icons/Heart Icon_2.svg',
+                                width: 16,
+                                height: 16,
+                                color: kSecondaryColor,
+                              )
                             : SvgPicture.asset(
-                          'assets/icons/Heart Icon.svg',
-                          width: 20,
-                          height: 20,
-                          color: Colors.red,
-                        ),
+                                'assets/icons/Heart Icon.svg',
+                                width: 16,
+                                height: 16,
+                                color: Colors.red,
+                              ),
                         onPressed: () {
                           _handleFavourite();
                         },
                       ),
-                    ),
-                  ]),
-                ),
-              ),
-              Flexible(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20.0, bottom: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
                     children: [
-                      Text(widget.homeInfo.name!,
-                          style: const TextStyle(fontWeight: FontWeight.w600)),
-                      const RatingBarCommon(
-                        maxRating: 5,
-                        minRating: 5,
-                        initialRating: 5,
-                      ),
-                      Row(
-                        children: [
-                          Text('${widget.homeInfo.costPerNightDefault}VNĐ'),
-                          const Text('/đêm')
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      // Row(
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: [
-                      //     SvgPicture.asset(
-                      //       'assets/icons/homeCard.svg',
-                      //       width: 18,
-                      //       height: 18,
-                      //     ),
-                      //     const SizedBox(width: 4),
-                      //     Text('50'),
-                      //     const Text(
-                      //       ' m²',
-                      //       style: TextStyle(fontSize: 12),
-                      //     )
-                      //   ],
-                      // ),
                       Expanded(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SvgPicture.asset(
-                              'assets/icons/location.svg',
+                              'assets/icons/location_fill_icon.svg',
+                              width: 18,
+                              height: 18,
+                              color: kSmoke,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              getShortProvinceName(
+                                  widget.homeInfo.provinceName),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/Star Icon.svg',
                               width: 18,
                               height: 18,
                             ),
                             const SizedBox(width: 4),
-                            Flexible(
-                              flex: 3,
-                              child: Text(
-                                widget.homeInfo.provinceName ?? '',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            )
+                            const Text(
+                              '5.0',
+                              style: TextStyle(fontSize: 12),
+                            ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
-                ),
-              )
-            ],
-          ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        '${widget.homeInfo.costPerNightDefault!.toInt()} VNĐ',
+                        style: const TextStyle(
+                            color: kSecondaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                      const Text('/Night')
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/controllers/home_select_filter_controller.dart';
 
 import 'home_filter_card_section.dart';
 import 'item_filter_section.dart';
@@ -11,6 +13,9 @@ class HomeFilter extends StatefulWidget {
 }
 
 class _HomeFilterState extends State<HomeFilter> {
+  HomeSelectFilterController homeSelectFilterController =
+      Get.put(HomeSelectFilterController());
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -19,7 +24,9 @@ class _HomeFilterState extends State<HomeFilter> {
         const SizedBox(
           height: 16,
         ),
-        HomeFilterCardList(),
+        Obx(() => HomeFilterCardList(
+              topic: homeSelectFilterController.content.value,
+            )),
       ],
     );
   }

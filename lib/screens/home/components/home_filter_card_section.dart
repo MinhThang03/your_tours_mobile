@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,13 +9,14 @@ import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/favourite_controller.dart';
-import 'package:your_tours_mobile/controllers/home_page_controller.dart';
 import 'package:your_tours_mobile/controllers/home_select_filter_controller.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/services/handle_province_name.dart';
 
 class HomeFilterCardList extends StatefulWidget {
-  const HomeFilterCardList({Key? key}) : super(key: key);
+  final String topic;
+
+  const HomeFilterCardList({Key? key, required this.topic}) : super(key: key);
 
   @override
   State<HomeFilterCardList> createState() => _HomeFilterCardListState();
@@ -21,15 +24,15 @@ class HomeFilterCardList extends StatefulWidget {
 
 class _HomeFilterCardListState extends State<HomeFilterCardList> {
   HomeSelectFilterController homeSelectFilterController =
-      Get.find<HomeSelectFilterController>();
+  Get.find<HomeSelectFilterController>();
 
-  HomePageController homePageController = Get.put(HomePageController());
 
-  Future<GetHomePageResponse?> _fetchDataListHomeApi(String query) async {
+  Future<GetHomePageResponse?> _fetchDataListHomeApi(String topic) async {
     try {
-      GetHomePageResponse getHomePageResponse = await homePageApi(query);
-      homePageController.loadContent(getHomePageResponse);
-      return getHomePageResponse;
+      print("TOPIC:    " + topic);
+      GetHomePageResponse response = await homePageApi(topic);
+      log(name: 'RESPONSE 111:', response.toJson().toString());
+      return response;
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
         error.message,
@@ -43,7 +46,7 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => LoadApiWidget<GetHomePageResponse?>(
+    return LoadApiWidget<GetHomePageResponse?>(
         successBuilder: (context, response) {
           return successWidget(context, response!);
         },
@@ -62,11 +65,12 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
                     )),
           ),
         ),
-        fetchDataFunction:
-            _fetchDataListHomeApi(homeSelectFilterController.content.value)));
+        fetchDataFunction: _fetchDataListHomeApi(widget.topic));
   }
 
   Widget successWidget(BuildContext context, GetHomePageResponse response) {
+    log(name: 'RESPONSE:', response.toJson().toString());
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
@@ -77,17 +81,17 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
           response.data.content.length,
           (index) => GestureDetector(
             onTap: () {},
-            child: Row(
-              children: [
-                HomeFilterCard(
-                  homeInfo: response.data.content[index],
+                child: Row(
+                  children: [
+                    HomeFilterCard(
+                      homeInfo: response.data.content[index],
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    )
+                  ],
                 ),
-                const SizedBox(
-                  width: 16,
-                )
-              ],
-            ),
-          ),
+              ),
         ),
       ),
     );
@@ -98,7 +102,7 @@ class HomeFilterCard extends StatelessWidget {
   final HomeInfo homeInfo;
 
   late HandleFavouriteController favoriteController =
-      HandleFavouriteController((homeInfo.isFavorite ?? false).obs);
+  HandleFavouriteController((homeInfo.isFavorite ?? false).obs);
 
   HomeFilterCard({super.key, required this.homeInfo});
 
@@ -206,16 +210,16 @@ class HomeFilterCard extends StatelessWidget {
                               child: Obx(
                                     () => favoriteController.isFavorite.value
                                     ? SvgPicture.asset(
-                                        'assets/icons/Heart Icon_2.svg',
-                                        width: 16,
-                                        height: 16,
-                                        color: kSecondaryColor,
-                                      )
+                                  'assets/icons/Heart Icon_2.svg',
+                                  width: 16,
+                                  height: 16,
+                                  color: kSecondaryColor,
+                                )
                                     : SvgPicture.asset(
-                                        'assets/icons/Heart Icon.svg',
-                                        width: 16,
-                                        height: 16,
-                                        color: Colors.red,
+                                  'assets/icons/Heart Icon.svg',
+                                  width: 16,
+                                  height: 16,
+                                  color: Colors.red,
                                 ),
                               ))),
                     ),

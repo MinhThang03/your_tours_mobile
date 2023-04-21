@@ -52,7 +52,7 @@ class HomeFilterItem extends StatefulWidget {
 
 class _HomeFilterItemState extends State<HomeFilterItem> {
   HomeSelectFilterController homeSelectFilterController =
-      Get.put(HomeSelectFilterController());
+      Get.find<HomeSelectFilterController>();
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
+import 'package:your_tours_mobile/components/shimmer_loading.dart';
 
 import '../../../apis/favourite_apis.dart';
 import '../../../models/responses/home_info_response.dart';
@@ -18,8 +19,7 @@ class _BodyState extends State<Body> {
 
   Future<GetHomePageResponse?> _fetchDataFavouriteFromApi() async {
     try {
-      final response = await favouritePageApi();
-      return response;
+      return await favouritePageApi();
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
         error.message,
@@ -37,6 +37,20 @@ class _BodyState extends State<Body> {
         successBuilder: (context, response) {
           return successWidget(context, response!);
         },
+        loadingBuilder: SingleChildScrollView(
+          child: Column(
+            children: List.generate(
+                5,
+                (index) => const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: ShimmerLoadingFavorite(
+                        width: 120,
+                        height: 120,
+                        boxShape: BoxShape.rectangle,
+                      ),
+                    )),
+          ),
+        ),
         fetchDataFunction: _fetchDataFavouriteFromApi());
   }
 
@@ -51,22 +65,29 @@ class _BodyState extends State<Body> {
                 style: TextStyle(fontSize: getProportionateScreenWidth(16)),
               ),
             )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: getProportionateScreenWidth(10)),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: response.data.content.length,
-                  itemBuilder: (context, index) {
-                    return FavoriteCard(homeInfo: response.data.content[index]);
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: getProportionateScreenWidth(10)),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: response.data.content.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          FavoriteCard(homeInfo: response.data.content[index]),
+                          const SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
     );
   }

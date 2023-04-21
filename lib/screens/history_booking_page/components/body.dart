@@ -1,6 +1,8 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/apis/booking_controller.dart';
+import 'package:your_tours_mobile/components/loading_api_widget.dart';
+import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
 
 import '../../../size_config.dart';
@@ -14,26 +16,10 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  BookHomePageResponse? _bookingPageResponse;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchDataBookingPageFromApi();
-  }
-
-  @override
-  void dispose() {
-    _bookingPageResponse = null;
-    super.dispose();
-  }
-
-  Future<void> _fetchDataBookingPageFromApi() async {
+  Future<BookHomePageResponse?> _fetchDataBookingPageFromApi() async {
     try {
-      final response = await bookingPageController();
-      setState(() {
-        _bookingPageResponse = response;
-      });
+      return await bookingPageController();
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
         error.message,
@@ -46,8 +32,33 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
+    return LoadApiWidget<BookHomePageResponse?>(
+        successBuilder: (context, response) {
+          return successWidget(context, response!);
+        },
+        loadingBuilder: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Column(
+              children: List.generate(
+                  3,
+                  (index) => const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: ShimmerLoadingFavorite(
+                          width: 120,
+                          height: 120,
+                          boxShape: BoxShape.rectangle,
+                        ),
+                      )),
+            ),
+          ),
+        ),
+        fetchDataFunction: _fetchDataBookingPageFromApi());
+  }
+
+  Widget successWidget(BuildContext context, BookHomePageResponse response) {
     return SingleChildScrollView(
-      child: (_bookingPageResponse?.data.content.length ?? 0) == 0
+      child: response.data.content.isEmpty
           ? Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               alignment: Alignment.center,
@@ -59,21 +70,27 @@ class _BodyState extends State<Body> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: getProportionateScreenWidth(10)),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: _bookingPageResponse?.data.content.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return HistoryCard(
-                        bookingInfo: _bookingPageResponse!.data.content[index]);
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: response.data.content.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          HistoryCard(
+                              bookingInfo: response.data.content[index]),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ],
-            ),
+      ),
     );
   }
 }
