@@ -9,7 +9,7 @@ class BookHomePageResponse {
 
   factory BookHomePageResponse.fromJson(Map<String, dynamic> json) =>
       BookHomePageResponse(
-        success: json["success"],
+        success: json["success"] ?? false,
         data: Data.fromJson(json["data"]),
       );
 
@@ -55,27 +55,27 @@ class BookingInfo {
     required this.dateEnd,
     this.phoneNumber,
     this.email,
-    required this.cost,
-    required this.paymentMethod,
+    this.cost,
+    this.paymentMethod,
     this.visaAccount,
     required this.homeId,
     required this.userId,
     required this.status,
     required this.homeName,
-    required this.customerName,
+    this.customerName,
     required this.thumbnail,
-    required this.owner,
+    this.owner,
     required this.totalCost,
-    required this.numberOfGuests,
+    this.numberOfGuests,
     required this.homeAddressDetail,
-    required this.homeProvinceCode,
-    required this.percent,
-    required this.surcharges,
-    required this.guests,
-    required this.costOfHost,
-    required this.costOfAdmin,
-    required this.refundPolicy,
-    required this.moneyPayed,
+    this.homeProvinceCode,
+    this.percent,
+    this.surcharges,
+    this.guests,
+    this.costOfHost,
+    this.costOfAdmin,
+    this.refundPolicy,
+    this.moneyPayed,
   });
 
   String id;
@@ -83,27 +83,27 @@ class BookingInfo {
   DateTime dateEnd;
   String? phoneNumber;
   String? email;
-  double cost;
-  String paymentMethod;
+  double? cost;
+  String? paymentMethod;
   String? visaAccount;
-  String homeId;
-  String userId;
+  String? homeId;
+  String? userId;
   String status;
   String homeName;
-  String customerName;
+  String? customerName;
   String thumbnail;
-  String owner;
+  String? owner;
   double totalCost;
-  int numberOfGuests;
-  String? homeAddressDetail;
-  String homeProvinceCode;
+  int? numberOfGuests;
+  String homeAddressDetail;
+  String? homeProvinceCode;
   double? percent;
   List<Surcharge>? surcharges;
   List<Guest>? guests;
-  double costOfHost;
-  double costOfAdmin;
-  String refundPolicy;
-  double moneyPayed;
+  double? costOfHost;
+  double? costOfAdmin;
+  String? refundPolicy;
+  double? moneyPayed;
 
   factory BookingInfo.fromJson(Map<String, dynamic> json) => BookingInfo(
         id: json["id"],

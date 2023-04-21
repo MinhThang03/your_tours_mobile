@@ -6,8 +6,8 @@ import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
+import 'package:your_tours_mobile/models/responses/location_response.dart';
 import 'package:your_tours_mobile/models/responses/province_response.dart';
-import 'package:your_tours_mobile/models/responses/user_response.dart';
 
 class HomeCity extends StatefulWidget {
   const HomeCity({Key? key}) : super(key: key);
@@ -34,6 +34,7 @@ class _HomeCityState extends State<HomeCity> {
   @override
   Widget build(BuildContext context) {
     return LoadApiWidget<GetListProvinceResponse?>(
+        autoCache: true,
         successBuilder: (context, response) {
           return successWidget(context, response!);
         },

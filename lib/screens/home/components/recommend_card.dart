@@ -2,7 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:your_tours_mobile/apis/home_page_filter_controller.dart';
+import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
@@ -12,7 +12,9 @@ import 'package:your_tours_mobile/services/handle_province_name.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
 class HomeRecommendCardList extends StatefulWidget {
-  const HomeRecommendCardList({Key? key}) : super(key: key);
+  final String? city;
+
+  const HomeRecommendCardList({Key? key, this.city}) : super(key: key);
 
   @override
   State<HomeRecommendCardList> createState() => _HomeRecommendCardListState();
@@ -21,7 +23,7 @@ class HomeRecommendCardList extends StatefulWidget {
 class _HomeRecommendCardListState extends State<HomeRecommendCardList> {
   Future<GetHomePageResponse?> _fetchDataListHomeRecommendApi() async {
     try {
-      return await homeRecommendApi();
+      return await homeRecommendApi(widget.city);
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
         error.message,
@@ -36,6 +38,7 @@ class _HomeRecommendCardListState extends State<HomeRecommendCardList> {
   @override
   Widget build(BuildContext context) {
     return LoadApiWidget<GetHomePageResponse?>(
+        autoRefresh: true,
         successBuilder: (context, response) {
           return successWidget(context, response!);
         },

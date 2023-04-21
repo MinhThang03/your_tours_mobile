@@ -6,7 +6,7 @@ import 'package:your_tours_mobile/models/responses/error_response.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 import 'package:your_tours_mobile/services/token_handler.dart';
 
-Future<GetHomePageResponse> homePageFilterController(
+Future<GetHomePageResponse> homePageFilterApi(
     String? amenityId, String? province) async {
   try {
     String? token = await getToken();
@@ -102,16 +102,21 @@ Future<GetHomePageResponse> homePageApi(String sort) async {
   }
 }
 
-Future<GetHomePageResponse> homeRecommendApi() async {
+Future<GetHomePageResponse> homeRecommendApi(String? city) async {
   try {
     String? token = await getToken();
     if (token == null) {
       throw const FormatException("Lỗi chưa đăng nhập");
     }
 
+    String cityParam = '';
+    if (city != null) {
+      cityParam = '&city=$city';
+    }
+
     http.Response response = await http.get(headers: <String, String>{
       'Authorization': 'Bearer $token',
-    }, Uri.parse(domain + getHomeRecommend));
+    }, Uri.parse(domain + getHomeRecommend + cityParam));
 
     Map<String, dynamic> responseJson =
         json.decode(utf8.decode(response.bodyBytes));

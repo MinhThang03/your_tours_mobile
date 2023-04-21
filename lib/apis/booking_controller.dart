@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:your_tours_mobile/constants/api_url.dart';
@@ -76,15 +77,22 @@ Future<CreateBookingResponse> createBookingController(
   }
 }
 
-Future<BookHomePageResponse> bookingPageController() async {
+Future<BookHomePageResponse> bookingPageController(String? status) async {
   try {
     String? token = await getToken();
     if (token == null) {
       throw const FormatException("Lỗi chưa đăng nhập");
     }
 
+    String statusParam = '';
+    if (status != null) {
+      statusParam = '&status=$status';
+    }
+
+    log(name: 'REQUEST JSON:', '$domain $getPageBookingUrl $statusParam');
+
     http.Response response = await http.get(
-      Uri.parse(domain + getPageBookingUrl),
+      Uri.parse(domain + getPageBookingUrl + statusParam),
       headers: <String, String>{
         'Authorization': 'Bearer $token',
       },
@@ -92,6 +100,8 @@ Future<BookHomePageResponse> bookingPageController() async {
 
     Map<String, dynamic> responseJson =
         json.decode(utf8.decode(response.bodyBytes));
+
+    log(name: 'RESPONSE JSON:', responseJson.toString());
 
     if (response.statusCode == 200) {
       return BookHomePageResponse.fromJson(responseJson);

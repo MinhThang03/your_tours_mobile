@@ -1,3 +1,5 @@
+import 'package:your_tours_mobile/models/responses/location_response.dart';
+
 class UserInfoResponse {
   UserInfoResponse({required this.success, this.data});
 
@@ -60,7 +62,6 @@ class UserInfo {
         role: json["role"],
         isOwner: json["isOwner"],
         owner: json["owner"],
-        deviceLocation: UserLocation.fromJson(json["deviceLocation"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -76,26 +77,6 @@ class UserInfo {
         "role": role,
         "isOwner": isOwner,
         "owner": owner,
-        "deviceLocation": deviceLocation?.toJson(),
       };
 }
 
-class UserLocation {
-  UserLocation({
-    this.cityName,
-    this.countryName,
-  });
-
-  String? cityName;
-  String? countryName;
-
-  factory UserLocation.fromJson(Map<String, dynamic> json) => UserLocation(
-        cityName: json["cityName"],
-        countryName: json["countryName"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "cityName": cityName,
-        "countryName": countryName,
-      };
-}

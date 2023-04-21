@@ -103,7 +103,7 @@ class _HistoryCardState extends State<HistoryCard> {
                   ),
 
                   Text(
-                    '${widget.bookingInfo.cost.toInt()} VNĐ',
+                    '${widget.bookingInfo.totalCost.toInt()} VNĐ',
                     style: const TextStyle(
                         color: kSecondaryColor,
                         fontWeight: FontWeight.bold,

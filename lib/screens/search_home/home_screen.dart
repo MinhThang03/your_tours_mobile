@@ -2,7 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
 
-import '../../apis/home_page_filter_controller.dart';
+import '../../apis/home_page_filter_api.dart';
 import 'components/body.dart';
 import 'components/home_header.dart';
 
@@ -35,7 +35,7 @@ class _SearchHomeScreenState extends State<SearchHomeScreen> {
 
   Future<void> _fetchDataHomesFromApi() async {
     try {
-      final response = await homePageFilterController(_amenityId, _province);
+      final response = await homePageFilterApi(_amenityId, _province);
       setState(() {
         _homeList = response;
       });

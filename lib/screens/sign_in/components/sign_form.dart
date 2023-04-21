@@ -8,7 +8,7 @@ import 'package:your_tours_mobile/helper/keyboard.dart';
 import 'package:your_tours_mobile/models/responses/login_response.dart';
 import 'package:your_tours_mobile/screens/forgot_password/forgot_password_screen.dart';
 
-import '../../../apis/login_controller.dart';
+import '../../../apis/login_api.dart';
 import '../../../components/default_button.dart';
 import '../../../components/loading_overlay.dart';
 import '../../../constants.dart';
@@ -53,14 +53,17 @@ class _SignFormState extends State<SignForm> {
   Future<void> _submit() async {
     try {
       LoginResponse response = await LoadingOverlay.of(context).during(
-          future: loginController(LoginRequest(
+          future: loginApi(LoginRequest(
               email: _emailController.text,
               password: _passwordController.text)));
 
       if (!mounted) return;
 
-      Get.put(UserController(
-          response.data!.userInfo!.obs,
+      if (response.data!.deviceLocation != null) {
+        response.data!.userInfo!.deviceLocation = response.data!.deviceLocation;
+      }
+
+      Get.put(UserController(response.data!.userInfo!.obs,
           response.data!.userInfo!.deviceLocation!.obs));
 
       Navigator.push(

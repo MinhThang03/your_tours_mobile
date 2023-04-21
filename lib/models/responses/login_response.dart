@@ -1,3 +1,4 @@
+import 'package:your_tours_mobile/models/responses/location_response.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
 
 class LoginResponse {
@@ -32,6 +33,7 @@ class Data {
     this.errorDescription,
     this.errorUri,
     this.userInfo,
+    this.deviceLocation,
   });
 
   String? accessToken;
@@ -47,6 +49,7 @@ class Data {
   String? errorDescription;
   String? errorUri;
   UserInfo? userInfo;
+  UserLocation? deviceLocation;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         accessToken: json["access_token"],
@@ -62,6 +65,9 @@ class Data {
         errorDescription: json["error_description"],
         errorUri: json["error_uri"],
         userInfo: UserInfo.fromJson(json["userInfo"]),
+        deviceLocation: json["deviceLocation"] == null
+            ? null
+            : UserLocation.fromJson(json["deviceLocation"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -78,6 +84,7 @@ class Data {
         "error_description": errorDescription,
         "error_uri": errorUri,
         "userInfo": userInfo?.toJson(),
+        "deviceLocation": deviceLocation?.toJson
       };
 }
 

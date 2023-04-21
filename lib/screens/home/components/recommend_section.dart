@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
 
 import 'recommend_card.dart';
 
@@ -11,6 +13,8 @@ class HomeRecommend extends StatefulWidget {
 }
 
 class _HomeRecommendState extends State<HomeRecommend> {
+  UserController userController = Get.find<UserController>();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,7 +44,9 @@ class _HomeRecommendState extends State<HomeRecommend> {
         const SizedBox(
           height: 16,
         ),
-        const HomeRecommendCardList()
+        Obx(() => HomeRecommendCardList(
+              city: userController.location.value.cityName,
+            ))
       ],
     );
   }

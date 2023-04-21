@@ -8,6 +8,8 @@ class LoadApiWidget<T> extends StatefulWidget {
   final Widget? loadingBuilder;
   final Future<T> fetchDataFunction;
   final String? errorMessage;
+  final bool autoRefresh;
+  final bool autoCache;
 
   const LoadApiWidget(
       {Key? key,
@@ -15,6 +17,8 @@ class LoadApiWidget<T> extends StatefulWidget {
       this.errorBuilder,
       this.loadingBuilder,
       required this.fetchDataFunction,
+      this.autoRefresh = false,
+      this.autoCache = false,
       this.errorMessage})
       : super(key: key);
 
@@ -22,7 +26,8 @@ class LoadApiWidget<T> extends StatefulWidget {
   State<LoadApiWidget<T>> createState() => _LoadApiWidgetState<T>();
 }
 
-class _LoadApiWidgetState<T> extends State<LoadApiWidget<T>> {
+class _LoadApiWidgetState<T> extends State<LoadApiWidget<T>>
+    with AutomaticKeepAliveClientMixin {
   late Future<T> _fetch;
 
   @override
@@ -38,8 +43,9 @@ class _LoadApiWidgetState<T> extends State<LoadApiWidget<T>> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return FutureBuilder<T>(
-        future: _fetch,
+        future: widget.autoRefresh ? widget.fetchDataFunction : _fetch,
         builder: (context, snapshot) {
           T? response = snapshot.data;
           if (response != null &&
@@ -59,4 +65,7 @@ class _LoadApiWidgetState<T> extends State<LoadApiWidget<T>> {
           }
         });
   }
+
+  @override
+  bool get wantKeepAlive => widget.autoCache;
 }

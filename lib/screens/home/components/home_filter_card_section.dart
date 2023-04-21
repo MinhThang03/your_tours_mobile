@@ -4,7 +4,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:your_tours_mobile/apis/home_page_filter_controller.dart';
+import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
@@ -47,6 +47,7 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
   @override
   Widget build(BuildContext context) {
     return LoadApiWidget<GetHomePageResponse?>(
+        autoRefresh: true,
         successBuilder: (context, response) {
           return successWidget(context, response!);
         },
@@ -58,11 +59,11 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
                 (index) => const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child: ShimmerLoading(
-                        width: 186,
-                        height: 156,
-                        boxShape: BoxShape.rectangle,
-                      ),
-                    )),
+                    width: 186,
+                    height: 156,
+                    boxShape: BoxShape.rectangle,
+                  ),
+                )),
           ),
         ),
         fetchDataFunction: _fetchDataListHomeApi(widget.topic));

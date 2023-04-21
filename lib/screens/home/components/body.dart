@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
 
 import 'city_section.dart';
 import 'filter_section.dart';
@@ -14,6 +16,14 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  UserController userController = Get.find<UserController>();
+
+  @override
+  void initState() {
+    userController.setLocation(userController.userInfo.value.deviceLocation!);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

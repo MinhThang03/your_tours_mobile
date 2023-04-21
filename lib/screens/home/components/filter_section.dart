@@ -17,6 +17,12 @@ class _HomeFilterState extends State<HomeFilter> {
       Get.put(HomeSelectFilterController());
 
   @override
+  void initState() {
+    homeSelectFilterController.selectItem('New');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [

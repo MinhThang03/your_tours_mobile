@@ -3,8 +3,34 @@ import 'package:flutter/material.dart';
 import 'components/body.dart';
 import 'components/filter_section.dart';
 
-class HistoryBookingScreen extends StatelessWidget {
+class HistoryBookingScreen extends StatefulWidget {
   const HistoryBookingScreen({super.key});
+
+  @override
+  State<HistoryBookingScreen> createState() => _HistoryBookingScreenState();
+}
+
+class _HistoryBookingScreenState extends State<HistoryBookingScreen>
+    with TickerProviderStateMixin {
+  final List<String> listContent = [
+    'Active',
+    'Completed',
+    'Cancelled',
+  ];
+
+  late TabController tabController;
+
+  @override
+  void initState() {
+    tabController = TabController(length: listContent.length, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +57,15 @@ class HistoryBookingScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.black, fontSize: 25),
               ),
             ),
-            HistoryFilterSection(),
-            const Body(),
+            HistoryFilterSection(
+              tabController: tabController,
+              listContent: listContent,
+            ),
+            Expanded(
+                child: Body(
+              tabController: tabController,
+              listContent: listContent,
+            )),
           ],
         ),
       ),

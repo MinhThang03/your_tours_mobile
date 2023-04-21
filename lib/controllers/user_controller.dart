@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:your_tours_mobile/models/responses/location_response.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
 
 class UserController extends GetxController {
