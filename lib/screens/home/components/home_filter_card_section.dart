@@ -33,7 +33,7 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
 
   Future<GetHomePageResponse?> _fetchDataListHomeApi(String topic) async {
     try {
-      print("TOPIC:    " + topic);
+      print("TOPIC:    $topic");
       GetHomePageResponse response = await homePageApi(topic);
       log(name: 'RESPONSE 111:', response.toJson().toString());
       return response;
@@ -245,14 +245,37 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
                     bottom: 0,
                     right: 12,
                     child: GestureDetector(
-                      onTap: () {
-                        favoriteController.handleFavorite(context);
+                      onTap: () async {
+                        await favoriteController.handleFavorite(
+                            context, widget.homeInfo.id);
+
+                        if (!mounted) return;
+
+                        if (favoriteController.message.value != '') {
+                          AnimatedSnackBar.material(
+                            favoriteController.message.value,
+                            type: AnimatedSnackBarType.success,
+                            mobileSnackBarPosition:
+                                MobileSnackBarPosition.bottom,
+                            desktopSnackBarPosition:
+                                DesktopSnackBarPosition.topRight,
+                          ).show(context);
+                        } else {
+                          AnimatedSnackBar.material(
+                            favoriteController.errorMessage.value,
+                            type: AnimatedSnackBarType.error,
+                            mobileSnackBarPosition:
+                                MobileSnackBarPosition.bottom,
+                            desktopSnackBarPosition:
+                                DesktopSnackBarPosition.topRight,
+                          ).show(context);
+                        }
                       },
                       child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius:
-                            const BorderRadius.all(Radius.circular(50)),
+                                const BorderRadius.all(Radius.circular(50)),
                             boxShadow: [
                               BoxShadow(
                                   color: Colors.grey.withOpacity(0.6),

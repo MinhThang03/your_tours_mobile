@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:your_tours_mobile/constants/api_url.dart';
@@ -60,6 +61,8 @@ Future<SuccessResponse> favouriteHandlerApi(
 
     Map<String, dynamic> responseJson =
         json.decode(utf8.decode(response.bodyBytes));
+
+    log(name: 'RESPONSE HANDLE FAVORITE:', responseJson.toString());
 
     if (response.statusCode == 200) {
       return SuccessResponse.fromJson(responseJson);
