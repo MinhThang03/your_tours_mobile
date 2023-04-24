@@ -348,401 +348,488 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, size: 20),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-        title: const Text(
-          'Chi tiết nhà',
-          style: TextStyle(fontSize: 20.0, color: Colors.black),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 3,
-              child: Stack(children: [
-                PageView.builder(
+      // appBar: AppBar(
+      //   iconTheme: const IconThemeData(color: Colors.black),
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios, size: 20),
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //   ),
+      //   backgroundColor: Colors.white,
+      //   elevation: 1,
+      //   centerTitle: true,
+      //   title: const Text(
+      //     'Chi tiết nhà',
+      //     style: TextStyle(fontSize: 20.0, color: Colors.black),
+      //   ),
+      // ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
-                  controller: _pageController,
-                  itemCount: _imagesUrl.length,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    return Image.network(
-                      _imagesUrl[index],
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
-                Positioned(
-                  bottom: 20,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: _buildPageIndicator(),
-                  ),
-                )
-              ]),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: 200,
-                              child: Text(
-                                widget.homeDetail.data.name,
-                                softWrap: true,
-                                textAlign: TextAlign.start,
-                                maxLines: 2,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Chip(
-                                label: const Text('Còn phòng',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        color: kPrimaryColor)),
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                    color: kPrimaryColor, // Border color
-                                    width: 1.0, // Border width
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ))
-                          ],
-                        ),
-                        Text(
-                          '${widget.homeDetail.data.descriptionHomeDetail} ',
-                        ),
-                        Text(
-                          '${widget.homeDetail.data.costPerNightDefault.toString()} / 1 đêm',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/homeCard.svg',
-                              width: 18,
-                              height: 18,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                                'Chủ nhà: ${widget.homeDetail.data.ownerName}'),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/location.svg',
-                              width: 18,
-                              height: 18,
-                            ),
-                            const SizedBox(width: 6),
-                            SizedBox(
-                              width: 300,
-                              child: Text(
-                                widget.homeDetail.data.provinceName ?? '',
-                                softWrap: true,
-                                maxLines: 3,
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            const Text('Tiện ích',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600)),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.topRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    showAmenityPopup(context);
-                                  },
-                                  child: const Text('Xem thêm ...',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.w400)),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                                child: Column(
-                                  children: [
-                                    ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      physics: const ClampingScrollPhysics(),
-                                      itemCount: _amenitiesLeft.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(
-                                          children: [
-                                            AmenityRow(
-                                              amenity: _amenitiesLeft[index],
-                                            ),
-                                            const SizedBox(
-                                              height: 4,
-                                            )
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                )),
-                            Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      physics: const ClampingScrollPhysics(),
-                                      itemCount: _amenitiesRight.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(
-                                          children: [
-                                            AmenityRow(
-                                              amenity: _amenitiesRight[index],
-                                            ),
-                                            const SizedBox(
-                                              height: 4,
-                                            )
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ))
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text('Mô tả',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
-                        Text(
-                          widget.homeDetail.data.description ?? '',
-                          textAlign: TextAlign.justify,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Lịch',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
-                        TableCalendar(
-                          daysOfWeekHeight: 24,
-                          startingDayOfWeek: StartingDayOfWeek.monday,
-                          firstDay: DateTime.now(),
-                          lastDay: DateTime.utc(2030, 3, 14),
-                          focusedDay: DateTime.now(),
-                          calendarBuilders: CalendarBuilders(
-                              dowBuilder: (context, day) {
-                                if (day.weekday == DateTime.sunday) {
-                                  final text = DateFormat.E().format(day);
-
-                                  return Center(
-                                    child: Text(
-                                      text,
-                                      style: const TextStyle(color: Colors.red),
-                                    ),
-                                  );
-                                }
-
-                                return null;
-                              }, defaultBuilder: (context, day, _) {
-                            String formattedDate =
-                            DateFormat('dd-MM-yyyy').format(day);
-                            bool flag = false;
-                            for (int i = 0;
-                            i <
-                                (widget.homeDetail.data.dateIsBooked
-                                    ?.length ??
-                                    0);
-                            i++) {
-                              if (formattedDate ==
-                                  widget.homeDetail.data.dateIsBooked![i]) {
-                                flag = true;
-                                break;
-                              }
-                            }
-                            if (flag) {
-                              return Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: kPrimaryColor,
-                                  borderRadius: BorderRadius.circular(80.0),
-                                ),
-                                child: Text(
-                                  day.day.toString(),
-                                  style: const TextStyle(color: Colors.black),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 2,
+                        child: Stack(children: [
+                          PageView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            controller: _pageController,
+                            itemCount: _imagesUrl.length,
+                            onPageChanged: (int page) {
+                              setState(() {
+                                _currentPage = page;
+                              });
+                            },
+                            itemBuilder: (BuildContext context, int index) {
+                              return ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(20.0)),
+                                child: Image.network(
+                                  _imagesUrl[index],
+                                  fit: BoxFit.cover,
                                 ),
                               );
-                            }
-                            return null;
-                          }),
-                          onFormatChanged: (format) {
-                            CalendarFormat.month;
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showRatingPopup(context);
-                    },
-                    child: Container(
-                      height: 60,
-                      color: Colors.white,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          const Text('Đánh giá',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400)),
-                          RatingBar(
-                            itemSize: 25,
-                            maxRating: 5.0,
-                            minRating: 0.0,
-                            initialRating: 5,
-                            onRatingUpdate: (double rating) => {},
-                            ignoreGestures: true,
-                            allowHalfRating: true,
-                            ratingWidget: RatingWidget(
-                              empty: const Icon(
-                                Icons.star_border_rounded,
-                                color: kPrimaryColor,
-                              ),
-                              full: const Icon(
-                                Icons.star_rounded,
-                                color: kPrimaryColor,
-                              ),
-                              half: const Icon(
-                                Icons.star_half_rounded,
-                                color: kPrimaryColor,
-                              ),
+                            },
+                          ),
+                          Positioned(
+                            bottom: 20,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: _buildPageIndicator(),
                             ),
                           ),
-                          const Text(
-                            '5 /5',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 14),
-                          ),
-                        ],
+                          Positioned(
+                            top: 0,
+                            left: 12,
+                            right: 12,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      color: Colors.white.withOpacity(0.4),
+                                    ),
+                                    child: SvgPicture.asset(
+                                      'assets/icons/arrow_left_direction_icon.svg',
+                                      width: 16,
+                                      height: 16,
+                                      color: kWhite,
+                                    ),
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: Text(
+                                    'Details',
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        TextStyle(color: kWhite, fontSize: 25),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8.0)),
+                                    color: Colors.white.withOpacity(0.4),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/icons/Heart Icon.svg',
+                                    width: 16,
+                                    height: 16,
+                                    color: kWhite,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ]),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          widget.homeDetail.data.name,
+                                          softWrap: true,
+                                          textAlign: TextAlign.start,
+                                          maxLines: 2,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            letterSpacing: 0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icons/Star Icon.svg',
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          const Text(
+                                            "5.0",
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    '${widget.homeDetail.data.descriptionHomeDetail} ',
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/homeCard.svg',
+                                        width: 18,
+                                        height: 18,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                          'Chủ nhà: ${widget.homeDetail.data.ownerName}'),
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/location.svg',
+                                        width: 18,
+                                        height: 18,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      SizedBox(
+                                        width: 300,
+                                        child: Text(
+                                          widget.homeDetail.data.provinceName ??
+                                              '',
+                                          softWrap: true,
+                                          maxLines: 3,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text('Tiện ích',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600)),
+                                      Expanded(
+                                        child: Container(
+                                          alignment: Alignment.topRight,
+                                          child: TextButton(
+                                            onPressed: () {
+                                              showAmenityPopup(context);
+                                            },
+                                            child: const Text('Xem thêm ...',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                          child: Column(
+                                        children: [
+                                          ListView.builder(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            physics:
+                                                const ClampingScrollPhysics(),
+                                            itemCount: _amenitiesLeft.length,
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                children: [
+                                                  AmenityRow(
+                                                    amenity:
+                                                        _amenitiesLeft[index],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 4,
+                                                  )
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      )),
+                                      Expanded(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          ListView.builder(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            physics:
+                                                const ClampingScrollPhysics(),
+                                            itemCount: _amenitiesRight.length,
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                children: [
+                                                  AmenityRow(
+                                                    amenity:
+                                                        _amenitiesRight[index],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 4,
+                                                  )
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ))
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const Text('Mô tả',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600)),
+                                  Text(
+                                    widget.homeDetail.data.description ?? '',
+                                    textAlign: TextAlign.justify,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              color: Colors.white,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Lịch',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600)),
+                                  TableCalendar(
+                                    daysOfWeekHeight: 24,
+                                    startingDayOfWeek: StartingDayOfWeek.monday,
+                                    firstDay: DateTime.now(),
+                                    lastDay: DateTime.utc(2030, 3, 14),
+                                    focusedDay: DateTime.now(),
+                                    calendarBuilders: CalendarBuilders(
+                                        dowBuilder: (context, day) {
+                                      if (day.weekday == DateTime.sunday) {
+                                        final text = DateFormat.E().format(day);
+
+                                        return Center(
+                                          child: Text(
+                                            text,
+                                            style: const TextStyle(
+                                                color: Colors.red),
+                                          ),
+                                        );
+                                      }
+
+                                      return null;
+                                    }, defaultBuilder: (context, day, _) {
+                                      String formattedDate =
+                                          DateFormat('dd-MM-yyyy').format(day);
+                                      bool flag = false;
+                                      for (int i = 0;
+                                          i <
+                                              (widget.homeDetail.data
+                                                      .dateIsBooked?.length ??
+                                                  0);
+                                          i++) {
+                                        if (formattedDate ==
+                                            widget.homeDetail.data
+                                                .dateIsBooked![i]) {
+                                          flag = true;
+                                          break;
+                                        }
+                                      }
+                                      if (flag) {
+                                        return Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: kPrimaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(80.0),
+                                          ),
+                                          child: Text(
+                                            day.day.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.black),
+                                          ),
+                                        );
+                                      }
+                                      return null;
+                                    }),
+                                    onFormatChanged: (format) {
+                                      CalendarFormat.month;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                showRatingPopup(context);
+                              },
+                              child: Container(
+                                height: 60,
+                                color: Colors.white,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text('Đánh giá',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400)),
+                                    RatingBar(
+                                      itemSize: 25,
+                                      maxRating: 5.0,
+                                      minRating: 0.0,
+                                      initialRating: 5,
+                                      onRatingUpdate: (double rating) => {},
+                                      ignoreGestures: true,
+                                      allowHalfRating: true,
+                                      ratingWidget: RatingWidget(
+                                        empty: const Icon(
+                                          Icons.star_border_rounded,
+                                          color: kPrimaryColor,
+                                        ),
+                                        full: const Icon(
+                                          Icons.star_rounded,
+                                          color: kPrimaryColor,
+                                        ),
+                                        half: const Icon(
+                                          Icons.star_half_rounded,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                    const Text(
+                                      '5 /5',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const Text('Gợi ý cho bạn',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(20),
+        height: 100,
+        color: const Color(0xffE8EEF1),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(NumberFormat('#,##0' + ' VNĐ').format(widget.homeDetail.data.costPerNightDefault!.toInt()),
+                  style: const TextStyle(color: kTextColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20
+                  )),
+            ),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  showBookingPopup(context);
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24.0),
                     ),
                   ),
-
-                  const Text('Gợi ý cho bạn',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600)),
-                  // SizedBox(
-                  //         height: 310,
-                  //         child: ListView.builder(
-                  //           scrollDirection: Axis.horizontal,
-                  //           itemBuilder: (context, index) {
-                  //             return  NearByRoomCard(
-                  //               indexRoom: index,
-                  //               title: RoomList.rooms[index].title,
-                  //               imagePath: RoomList.rooms[index].imagePath.first,
-                  //               rating: RoomList.rooms[index].rating,
-                  //               price: RoomList.rooms[index].price,
-                  //               area: RoomList.rooms[index].area,
-                  //               address: RoomList.rooms[index].address,
-                  //               isFavorite: RoomList.rooms[index].isFavorite,);
-                  //           },
-                  //           itemCount: RoomList.rooms.length,
-                  //         ),
-                  //       ),
-                ],
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    kPrimaryColor,
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text("Book Now",
+                      style: TextStyle(color: kWhite)),
+                ),
               ),
             ),
           ],
-        ),
-      ),
-      bottomNavigationBar: SizedBox(
-        height: 50,
-        child: ElevatedButton(
-          onPressed: () {
-            showBookingPopup(context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: kPrimaryLightColor,
-          ),
-          child: const Text("Đặt lịch", style: TextStyle(color: kPrimaryColor)),
         ),
       ),
     );
