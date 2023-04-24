@@ -64,12 +64,9 @@ class _HomeCityState extends State<HomeCity> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
           response.data.length,
-          (index) => GestureDetector(
-            onTap: () {},
-            child: CityCard(
-              icon: response.data[index].thumbnail,
-              text: response.data[index].enName,
-            ),
+          (index) => CityCard(
+            icon: response.data[index].thumbnail,
+            text: response.data[index].enName,
           ),
         ),
       ),

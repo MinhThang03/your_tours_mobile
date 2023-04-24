@@ -2,12 +2,16 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:your_tours_mobile/apis/home_detail_controller.dart';
 import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/favourite_controller.dart';
+import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 import 'package:your_tours_mobile/services/handle_province_name.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
@@ -107,10 +111,53 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
     super.dispose();
   }
 
+  Future<void> callHomeDetailFromApi(String homeId) async {
+    try {
+      HomeDetailResponse response = await LoadingOverlay.of(context)
+          .during(future: homeDetailController(homeId));
+
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: timeNavigatorPush,
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return RoomDetailScreen(
+              homeDetail: response,
+            );
+          },
+        ),
+      );
+    } on FormatException catch (error) {
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => {callHomeDetailFromApi(widget.homeInfo.id)},
       child: Container(
         margin: const EdgeInsets.only(bottom: 24),
         decoration: BoxDecoration(

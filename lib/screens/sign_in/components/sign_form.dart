@@ -5,6 +5,7 @@ import 'package:your_tours_mobile/components/custom_surfix_icon.dart';
 import 'package:your_tours_mobile/components/form_error.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/helper/keyboard.dart';
+import 'package:your_tours_mobile/models/responses/location_response.dart';
 import 'package:your_tours_mobile/models/responses/login_response.dart';
 import 'package:your_tours_mobile/screens/forgot_password/forgot_password_screen.dart';
 
@@ -61,6 +62,13 @@ class _SignFormState extends State<SignForm> {
 
       if (response.data!.deviceLocation != null) {
         response.data!.userInfo!.deviceLocation = response.data!.deviceLocation;
+
+        if (response.data!.userInfo!.deviceLocation!.cityName == null) {
+          response.data!.userInfo!.deviceLocation!.cityName = 'Ho Chi Minh';
+        }
+      } else {
+        response.data!.userInfo!.deviceLocation =
+            UserLocation(cityName: 'Ho Chi Minh');
       }
 
       Get.put(UserController(response.data!.userInfo!.obs,

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/controllers/search_controller.dart';
 
 import '../../../size_config.dart';
 
 class SearchField extends StatelessWidget {
-  final ValueChanged<String?> onChangeSearch;
-
-  const SearchField({
+  SearchField({
     Key? key,
-    required this.onChangeSearch,
   }) : super(key: key);
+
+  SearchController searchController = Get.find<SearchController>();
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class SearchField extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
@@ -27,8 +28,8 @@ class SearchField extends StatelessWidget {
         ],
       ),
       child: TextField(
-        onChanged: (value) {
-          onChangeSearch(value);
+        onSubmitted: (value) {
+          searchController.setKeyword(value);
         },
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(

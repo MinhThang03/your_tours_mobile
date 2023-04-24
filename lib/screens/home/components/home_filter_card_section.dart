@@ -4,13 +4,17 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:your_tours_mobile/apis/home_detail_controller.dart';
 import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/favourite_controller.dart';
 import 'package:your_tours_mobile/controllers/home_select_filter_controller.dart';
+import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 import 'package:your_tours_mobile/services/handle_province_name.dart';
 
 class HomeFilterCardList extends StatefulWidget {
@@ -92,20 +96,25 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
                     )
                   ],
                 ),
-              ),
+          ),
         ),
       ),
     );
   }
 }
 
-class HomeFilterCard extends StatelessWidget {
+class HomeFilterCard extends StatefulWidget {
   final HomeInfo homeInfo;
 
-  late HandleFavouriteController favoriteController =
-  HandleFavouriteController((homeInfo.isFavorite ?? false).obs);
+  const HomeFilterCard({super.key, required this.homeInfo});
 
-  HomeFilterCard({super.key, required this.homeInfo});
+  @override
+  State<HomeFilterCard> createState() => _HomeFilterCardState();
+}
+
+class _HomeFilterCardState extends State<HomeFilterCard> {
+  late HandleFavouriteController favoriteController =
+      HandleFavouriteController((widget.homeInfo.isFavorite ?? false).obs);
 
   String _handleNameHome(String? name) {
     if (name == null) {
@@ -119,12 +128,57 @@ class HomeFilterCard extends StatelessWidget {
     return '${name.substring(0, 8)}...';
   }
 
+  Future<void> callHomeDetailFromApi(String homeId) async {
+    try {
+      HomeDetailResponse response = await LoadingOverlay.of(context)
+          .during(future: homeDetailController(homeId));
+
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: timeNavigatorPush,
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return RoomDetailScreen(
+              homeDetail: response,
+            );
+          },
+        ),
+      );
+    } on FormatException catch (error) {
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          callHomeDetailFromApi(widget.homeInfo.id);
+        },
         child: Container(
           height: 236,
           decoration: BoxDecoration(
@@ -150,7 +204,7 @@ class HomeFilterCard extends StatelessWidget {
                       borderRadius:
                       const BorderRadius.all(Radius.circular(12.0)),
                       child: Image.network(
-                        homeInfo.thumbnail ??
+                        widget.homeInfo.thumbnail ??
                             "https://pearlriverhotel.vn/wp-content/uploads/2019/07/pearl-river-hotel-home1.jpg",
                         fit: BoxFit.cover,
                         height: 156,
@@ -237,7 +291,7 @@ class HomeFilterCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _handleNameHome(homeInfo.name),
+                            _handleNameHome(widget.homeInfo.name),
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
@@ -255,7 +309,7 @@ class HomeFilterCard extends StatelessWidget {
                               ),
                               Text(
                                 _handleNameHome(getShortProvinceName(
-                                    homeInfo.provinceName)),
+                                    widget.homeInfo.provinceName)),
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontSize: 12,

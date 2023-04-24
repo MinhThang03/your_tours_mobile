@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
-import 'package:your_tours_mobile/screens/profile_view/profile_view_screen.dart';
 
 import 'profile_info_section.dart';
 import 'profile_menu.dart';
@@ -46,35 +44,6 @@ class _BodyState extends State<Body> {
                   icon: "assets/icons/active_user_icon.svg",
                   press: () => {},
                 )),
-          ProfileMenu(
-            text: "My Account",
-            icon: "assets/icons/User Icon.svg",
-            press: () => {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: timeNavigatorPush,
-                  transitionsBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation,
-                      Widget child) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(1.0, 0.0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: child,
-                    );
-                  },
-                  pageBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation) {
-                    return ProfileViewScreen();
-                  },
-                ),
-              )
-            },
-          ),
           ProfileMenu(
             text: "Notifications",
             icon: "assets/icons/Bell.svg",

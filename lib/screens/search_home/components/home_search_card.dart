@@ -13,16 +13,16 @@ import '../../../constants.dart';
 import '../../../models/requests/favourite_request.dart';
 import '../../../models/responses/register_response.dart';
 
-class FavoriteCard extends StatefulWidget {
+class HomeSearchCard extends StatefulWidget {
   final HomeInfo homeInfo;
 
-  const FavoriteCard({Key? key, required this.homeInfo}) : super(key: key);
+  const HomeSearchCard({Key? key, required this.homeInfo}) : super(key: key);
 
   @override
-  State<FavoriteCard> createState() => _FavoriteCardState();
+  State<HomeSearchCard> createState() => _HomeSearchCardState();
 }
 
-class _FavoriteCardState extends State<FavoriteCard> {
+class _HomeSearchCardState extends State<HomeSearchCard> {
   bool _isFavourited = false;
 
   @override
@@ -121,7 +121,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18.0),
-          border: Border.all(color: kPrimaryColor, width: 1),
+          border: Border.all(color: kSmoke, width: 1),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
