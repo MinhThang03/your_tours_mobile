@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
-import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/models/responses/home_page_response.dart';
 
 import 'home_search_card.dart';
 
@@ -19,7 +19,7 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  Future<GetHomePageResponse?> _fetchDataHomesFromApi() async {
+  Future<HomePageResponse?> _fetchDataHomesFromApi() async {
     try {
       String? amenityId = widget.amenityId == '' ? null : widget.amenityId;
       String? keyword = widget.keyword == '' ? null : widget.keyword;
@@ -38,7 +38,7 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadApiWidget<GetHomePageResponse?>(
+    return LoadApiWidget<HomePageResponse?>(
         autoRefresh: true,
         successBuilder: (context, response) {
           return successWidget(context, response!);
@@ -60,7 +60,7 @@ class _BodyState extends State<Body> {
         fetchDataFunction: _fetchDataHomesFromApi());
   }
 
-  Widget successWidget(BuildContext context, GetHomePageResponse response) {
+  Widget successWidget(BuildContext context, HomePageResponse response) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: ListView.builder(

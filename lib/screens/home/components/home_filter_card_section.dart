@@ -13,7 +13,7 @@ import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/favourite_controller.dart';
 import 'package:your_tours_mobile/controllers/home_select_filter_controller.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
-import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/models/responses/home_page_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 import 'package:your_tours_mobile/services/handle_province_name.dart';
 
@@ -31,11 +31,9 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
   Get.find<HomeSelectFilterController>();
 
 
-  Future<GetHomePageResponse?> _fetchDataListHomeApi(String topic) async {
+  Future<HomePageResponse?> _fetchDataListHomeApi(String topic) async {
     try {
-      print("TOPIC:    $topic");
-      GetHomePageResponse response = await homePageApi(topic);
-      log(name: 'RESPONSE 111:', response.toJson().toString());
+      HomePageResponse response = await homePageApi(topic);
       return response;
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
@@ -50,7 +48,7 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadApiWidget<GetHomePageResponse?>(
+    return LoadApiWidget<HomePageResponse?>(
         autoRefresh: true,
         successBuilder: (context, response) {
           return successWidget(context, response!);
@@ -73,7 +71,7 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
         fetchDataFunction: _fetchDataListHomeApi(widget.topic));
   }
 
-  Widget successWidget(BuildContext context, GetHomePageResponse response) {
+  Widget successWidget(BuildContext context, HomePageResponse response) {
     log(name: 'RESPONSE:', response.toJson().toString());
 
     return SingleChildScrollView(
@@ -104,7 +102,7 @@ class _HomeFilterCardListState extends State<HomeFilterCardList> {
 }
 
 class HomeFilterCard extends StatefulWidget {
-  final HomeInfo homeInfo;
+  final MobileHomeInfo homeInfo;
 
   const HomeFilterCard({super.key, required this.homeInfo});
 
@@ -114,7 +112,7 @@ class HomeFilterCard extends StatefulWidget {
 
 class _HomeFilterCardState extends State<HomeFilterCard> {
   late HandleFavouriteController favoriteController =
-      HandleFavouriteController((widget.homeInfo.isFavorite ?? false).obs);
+      HandleFavouriteController(widget.homeInfo.isFavorite.obs);
 
   String _handleNameHome(String? name) {
     if (name == null) {
@@ -204,8 +202,7 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
                       borderRadius:
                       const BorderRadius.all(Radius.circular(12.0)),
                       child: Image.network(
-                        widget.homeInfo.thumbnail ??
-                            "https://pearlriverhotel.vn/wp-content/uploads/2019/07/pearl-river-hotel-home1.jpg",
+                        widget.homeInfo.thumbnail,
                         fit: BoxFit.cover,
                         height: 156,
                         width: 186,

@@ -6,14 +6,14 @@ import 'package:your_tours_mobile/apis/home_detail_controller.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/controllers/favourite_controller.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
-import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/models/responses/home_page_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 import 'package:your_tours_mobile/services/handle_province_name.dart';
 
 import '../../../constants.dart';
 
 class FavoriteCard extends StatefulWidget {
-  final HomeInfo homeInfo;
+  final MobileHomeInfo homeInfo;
 
   const FavoriteCard({Key? key, required this.homeInfo}) : super(key: key);
 
@@ -27,7 +27,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
   @override
   void initState() {
     favoriteController =
-        HandleFavouriteController((widget.homeInfo.isFavorite ?? false).obs);
+        HandleFavouriteController(widget.homeInfo.isFavorite.obs);
     super.initState();
   }
 
@@ -93,7 +93,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
             ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(18.0)),
               child: Image.network(
-                widget.homeInfo.thumbnail!,
+                widget.homeInfo.thumbnail,
                 fit: BoxFit.cover,
                 height: 110,
                 width: 110,
@@ -110,7 +110,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(widget.homeInfo.name!,
+                        child: Text(widget.homeInfo.name,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
@@ -203,7 +203,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                   Row(
                     children: [
                       Text(
-                        '${widget.homeInfo.costPerNightDefault!.toInt()} VNĐ',
+                        '${widget.homeInfo.costPerNightDefault.toInt()} VNĐ',
                         style: const TextStyle(
                             color: kSecondaryColor,
                             fontWeight: FontWeight.bold,

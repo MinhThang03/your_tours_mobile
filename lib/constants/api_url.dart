@@ -1,5 +1,6 @@
 //domain
 const String domain = "https://your-tours.herokuapp.com";
+// const String domain = "http://10.20.1.168:9080";
 
 //auth api
 const String loginUrl = "/api/v1/auth/login";
@@ -26,3 +27,11 @@ const String createBookingUrl = "/api/v1/app/booking/create";
 const String getPageBookingUrl = "/api/v1/mobile/booking/page?number=0&size=20";
 const String cancelBookingUrl = "/api/v1/app/booking/cancel";
 const String getLocation = "/api/v1/public/location";
+
+//mobile api
+const String getMobileHomePage =
+    "/api/v1/mobile/homes/page?number=0&size=10{sort}";
+const String getMobileHomeFavorite =
+    "/api/v1/mobile/homes/favorites?number=0&size=10";
+const String getMobileHomePageFilter =
+    "/api/v1/mobile/homes/page/filter?number=0&size=10";

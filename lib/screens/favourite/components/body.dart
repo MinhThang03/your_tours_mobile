@@ -1,10 +1,10 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
+import 'package:your_tours_mobile/models/responses/home_page_response.dart';
 
-import '../../../apis/favourite_apis.dart';
-import '../../../models/responses/home_info_response.dart';
 import '../../../size_config.dart';
 import 'favorite_card.dart';
 
@@ -17,9 +17,9 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
 
-  Future<GetHomePageResponse?> _fetchDataFavouriteFromApi() async {
+  Future<HomePageResponse?> _fetchDataFavouriteFromApi() async {
     try {
-      return await favouritePageApi();
+      return await homeFavoriteApi();
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
         error.message,
@@ -33,7 +33,7 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadApiWidget<GetHomePageResponse?>(
+    return LoadApiWidget<HomePageResponse?>(
         successBuilder: (context, response) {
           return successWidget(context, response!);
         },
@@ -54,7 +54,7 @@ class _BodyState extends State<Body> {
         fetchDataFunction: _fetchDataFavouriteFromApi());
   }
 
-  Widget successWidget(BuildContext context, GetHomePageResponse response) {
+  Widget successWidget(BuildContext context, HomePageResponse response) {
     return SingleChildScrollView(
       child: response.data.content.isEmpty
           ? Container(
