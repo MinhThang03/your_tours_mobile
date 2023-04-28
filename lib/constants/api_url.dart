@@ -27,6 +27,7 @@ const String createBookingUrl = "/api/v1/app/booking/create";
 const String getPageBookingUrl = "/api/v1/mobile/booking/page?number=0&size=20";
 const String cancelBookingUrl = "/api/v1/app/booking/cancel";
 const String getLocation = "/api/v1/public/location";
+const String getBookingDetail = "/api/v1/app/booking/{id}/detail";
 
 //mobile api
 const String getMobileHomePage =

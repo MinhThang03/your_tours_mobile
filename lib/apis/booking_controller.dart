@@ -147,3 +147,39 @@ Future<SuccessResponse> cancelBookingPageController(
     throw FormatException(error.toString());
   }
 }
+
+Future<GetBookHomeDetailResponse> getBookingDetailApi(String id) async {
+  try {
+    String? token = await getToken();
+    if (token == null) {
+      throw const FormatException("Lỗi chưa đăng nhập");
+    }
+
+    String urlParam = getBookingDetail.replaceAll("{id}", id);
+
+    log(name: 'REQUEST JSON:', '$domain $urlParam ');
+
+    http.Response response = await http.get(
+      Uri.parse(domain + urlParam),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    Map<String, dynamic> responseJson =
+        json.decode(utf8.decode(response.bodyBytes));
+
+    log(name: 'RESPONSE JSON:', responseJson.toString());
+
+    if (response.statusCode == 200) {
+      return GetBookHomeDetailResponse.fromJson(responseJson);
+    }
+
+    ErrorResponse errorResponse = ErrorResponse.fromJson(responseJson);
+    throw FormatException(errorResponse.message);
+  } on FormatException {
+    rethrow;
+  } catch (error) {
+    throw FormatException(error.toString());
+  }
+}

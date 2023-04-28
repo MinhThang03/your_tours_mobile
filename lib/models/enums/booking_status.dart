@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:your_tours_mobile/constants.dart';
+
 enum BookingStatusEnum { WAITING, CHECK_IN, CHECK_OUT, CANCELED }
 
 extension BookingStatusEnumExtension on BookingStatusEnum {
@@ -20,7 +24,7 @@ extension BookingStatusEnumExtension on BookingStatusEnum {
 String getDescriptionBookingStatus(String status) {
   switch (status) {
     case 'WAITING':
-      return 'Đang chờ';
+      return 'Chờ nhận phòng';
     case 'CHECK_IN':
       return 'Đã nhận phòng';
     case 'CHECK_OUT':
@@ -29,5 +33,20 @@ String getDescriptionBookingStatus(String status) {
       return 'Đã hủy';
     default:
       return '';
+  }
+}
+
+Color getColorDescriptionBookingStatus(String status) {
+  switch (status) {
+    case 'WAITING':
+      return const Color(0xFF43b0f1);
+    case 'CHECK_IN':
+      return kPrimaryColor;
+    case 'CHECK_OUT':
+      return kPrimaryColor;
+    case 'CANCELED':
+      return kSecondaryColor;
+    default:
+      return kPrimaryColor;
   }
 }

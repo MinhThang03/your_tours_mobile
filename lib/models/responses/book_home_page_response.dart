@@ -49,34 +49,36 @@ class Data {
 }
 
 class BookingInfo {
-  BookingInfo({
-    required this.id,
-    required this.dateStart,
-    required this.dateEnd,
-    this.phoneNumber,
-    this.email,
-    this.cost,
-    this.paymentMethod,
-    this.visaAccount,
-    required this.homeId,
-    required this.userId,
-    required this.status,
-    required this.homeName,
-    this.customerName,
-    required this.thumbnail,
-    this.owner,
-    required this.totalCost,
-    this.numberOfGuests,
-    required this.homeAddressDetail,
-    this.homeProvinceCode,
-    this.percent,
-    this.surcharges,
-    this.guests,
-    this.costOfHost,
-    this.costOfAdmin,
-    this.refundPolicy,
-    this.moneyPayed,
-  });
+  BookingInfo(
+      {required this.id,
+      required this.dateStart,
+      required this.dateEnd,
+      this.phoneNumber,
+      this.email,
+      this.cost,
+      this.paymentMethod,
+      this.visaAccount,
+      required this.homeId,
+      required this.userId,
+      required this.status,
+      required this.homeName,
+      this.customerName,
+      this.thumbnail,
+      this.owner,
+      required this.totalCost,
+      this.numberOfGuests,
+      this.homeAddressDetail,
+      this.homeProvinceCode,
+      this.percent,
+      this.surcharges,
+      this.guests,
+      this.costOfHost,
+      this.costOfAdmin,
+      this.refundPolicy,
+      this.moneyPayed,
+      this.baseCost,
+      this.createdDate,
+      this.homeProvinceName});
 
   String id;
   DateTime dateStart;
@@ -91,12 +93,13 @@ class BookingInfo {
   String status;
   String homeName;
   String? customerName;
-  String thumbnail;
+  String? thumbnail;
   String? owner;
   double totalCost;
   int? numberOfGuests;
-  String homeAddressDetail;
+  String? homeAddressDetail;
   String? homeProvinceCode;
+  String? homeProvinceName;
   double? percent;
   List<Surcharge>? surcharges;
   List<Guest>? guests;
@@ -104,6 +107,8 @@ class BookingInfo {
   double? costOfAdmin;
   String? refundPolicy;
   double? moneyPayed;
+  double? baseCost;
+  String? createdDate;
 
   factory BookingInfo.fromJson(Map<String, dynamic> json) => BookingInfo(
         id: json["id"],
@@ -137,6 +142,9 @@ class BookingInfo {
         costOfAdmin: json["costOfAdmin"],
         refundPolicy: json["refundPolicy"],
         moneyPayed: json["moneyPayed"],
+        baseCost: json["baseCost"],
+        homeProvinceName: json["homeProvinceName"],
+        createdDate: json["createdDate"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -172,6 +180,9 @@ class BookingInfo {
         "costOfAdmin": costOfAdmin,
         "refundPolicy": refundPolicy,
         "moneyPayed": moneyPayed,
+        "baseCost": baseCost,
+        "homeProvinceName": homeProvinceName,
+        "createdDate": createdDate,
       };
 }
 
@@ -228,5 +239,26 @@ class Surcharge {
         "surchargeId": surchargeId,
         "booking": booking,
         "costOfSurcharge": costOfSurcharge,
+      };
+}
+
+class GetBookHomeDetailResponse {
+  GetBookHomeDetailResponse({
+    required this.success,
+    required this.data,
+  });
+
+  bool success;
+  BookingInfo data;
+
+  factory GetBookHomeDetailResponse.fromJson(Map<String, dynamic> json) =>
+      GetBookHomeDetailResponse(
+        success: json["success"] ?? false,
+        data: BookingInfo.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": data.toJson(),
       };
 }
