@@ -2,7 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:your_tours_mobile/apis/booking_controller.dart';
+import 'package:your_tours_mobile/apis/booking_apis.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/models/requests/booking_request.dart';
@@ -34,13 +34,13 @@ class _BookingPageState extends State<BookingPage> {
       double cost = widget.priceResponse.data.percent == null
           ? widget.priceResponse.data.totalCostWithSurcharge
           : widget.priceResponse.data.totalCostWithSurcharge *
-          (widget.priceResponse.data.percent! / 100);
+              (widget.priceResponse.data.percent! / 100);
 
       widget.bookingRequest.moneyPayed = cost;
       widget.bookingRequest.paymentMethod = 'PAY_IN_FULL';
 
       await LoadingOverlay.of(context)
-          .during(future: createBookingController(widget.bookingRequest));
+          .during(future: createBookingApi(widget.bookingRequest));
 
       if (!mounted) {
         return;

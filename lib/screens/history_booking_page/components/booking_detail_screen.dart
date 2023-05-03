@@ -1,14 +1,19 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:your_tours_mobile/apis/booking_controller.dart';
+import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
+import 'package:your_tours_mobile/apis/booking_apis.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/view_comment_controller.dart';
 import 'package:your_tours_mobile/models/enums/booking_status.dart';
 import 'package:your_tours_mobile/models/requests/cancel_booking_request.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
+import 'package:your_tours_mobile/screens/history_booking_page/components/booking_evaluate.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/booking_info_row.dart';
+import 'package:your_tours_mobile/size_config.dart';
 
 class BookingDetailScreen extends StatefulWidget {
   final BookingInfo bookingDetail;
@@ -32,6 +37,18 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       default:
         return '';
     }
+  }
+
+  HandleViewCommentController handleViewCommentController =
+      HandleViewCommentController();
+
+  @override
+  void initState() {
+    if (widget.bookingDetail.rates != null) {
+      handleViewCommentController.setView(
+          widget.bookingDetail.rates!, widget.bookingDetail.comment ?? '');
+    }
+    super.initState();
   }
 
   Future<void> _handleCancelBookingApi() async {
@@ -171,422 +188,511 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: 15, bottom: 30, left: 20, right: 20),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
+        child: Builder(builder: (context) {
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 15, bottom: 30, left: 20, right: 20),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8.0)),
+                          border: Border.all(color: kSmoke, width: 1),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 1,
+                            )
+                          ],
+                        ),
+                        child: SvgPicture.asset(
+                          'assets/icons/arrow_left_direction_icon.svg',
+                          width: 16,
+                          height: 16,
+                        ),
+                      ),
+                    ),
+                    const Expanded(
+                      child: Text(
+                        'My Booking',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.black, fontSize: 25),
+                      ),
+                    ),
+                    Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8.0)),
-                        border: Border.all(color: kSmoke, width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 1,
-                          )
-                        ],
+                        border: Border.all(color: Colors.white, width: 0),
                       ),
                       child: SvgPicture.asset(
                         'assets/icons/arrow_left_direction_icon.svg',
                         width: 16,
                         height: 16,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'My Booking',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black, fontSize: 25),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 0),
-                    ),
-                    child: SvgPicture.asset(
-                      'assets/icons/arrow_left_direction_icon.svg',
-                      width: 16,
-                      height: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, right: 20, bottom: 20),
-                  child: Column(
-                    children: [
-                      Column(
-                        children: [
-                          const Text(
-                            'Thông tin nhà',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: kSmoke, width: 1),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  blurRadius: 2,
-                                  offset: const Offset(
-                                      -1, 2), // Đặt shadow theo chiều dọc
-                                ),
-                              ],
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 20, bottom: 20),
+                    child: Column(
+                      children: [
+                        Column(
+                          children: [
+                            const Text(
+                              'Thông tin nhà',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
                             ),
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                BookingInfoRow(
-                                    title: "Tên nhà",
-                                    content: widget.bookingDetail.homeName),
-                                BookingInfoRow(
-                                    title: "Chủ nhà",
-                                    content: widget.bookingDetail.owner!),
-                                BookingInfoRow(
-                                    title: "Địa chỉ",
-                                    content:
-                                        widget.bookingDetail.homeProvinceName!),
-                                BookingInfoRow(
-                                    title: "Giá cơ bản",
-                                    content:
-                                        "${NumberFormat('#,##0' ' đ').format(widget.bookingDetail.baseCost!.toInt())}/1đêm"),
-                              ],
+                            const SizedBox(
+                              height: 10,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Column(
-                        children: [
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          const Text(
-                            'Thông tin khách hàng',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: kSmoke, width: 1),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  blurRadius: 2,
-                                  offset: const Offset(
-                                      -1, 2), // Đặt shadow theo chiều dọc
-                                ),
-                              ],
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: kSmoke, width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    blurRadius: 2,
+                                    offset: const Offset(
+                                        -1, 2), // Đặt shadow theo chiều dọc
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: Column(
+                                children: [
+                                  BookingInfoRow(
+                                      title: "Tên nhà",
+                                      content: widget.bookingDetail.homeName),
+                                  BookingInfoRow(
+                                      title: "Chủ nhà",
+                                      content: widget.bookingDetail.owner!),
+                                  BookingInfoRow(
+                                      title: "Địa chỉ",
+                                      content: widget
+                                          .bookingDetail.homeProvinceName!),
+                                  BookingInfoRow(
+                                      title: "Giá cơ bản",
+                                      content:
+                                          "${NumberFormat('#,##0' ' đ').format(widget.bookingDetail.baseCost!.toInt())}/1đêm"),
+                                ],
+                              ),
                             ),
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                BookingInfoRow(
-                                    title: "Khách hàng",
-                                    content:
-                                        widget.bookingDetail.customerName!),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Column(
-                        children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Text(
-                            'Thông tin đặt nhà',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: kSmoke, width: 1),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  blurRadius: 2,
-                                  offset: const Offset(
-                                      -1, 2), // Đặt shadow theo chiều dọc
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: const [
-                                    Text(
-                                      'Số lượng khách',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                                BookingInfoRow(
-                                    title: "Người lớn:",
-                                    content: widget
-                                        .bookingDetail.guests![0].number
-                                        .toString()),
-                                BookingInfoRow(
-                                    title: "Trẻ em:",
-                                    content: widget
-                                        .bookingDetail.guests![2].number
-                                        .toString()),
-                                BookingInfoRow(
-                                    title: "Em bé:",
-                                    content: widget
-                                        .bookingDetail.guests![1].number
-                                        .toString()),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Row(
-                                  children: const [
-                                    Text(
-                                      'Ngày hẹn',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                                BookingInfoRow(
-                                    title: "Ngày nhận phòng:",
-                                    content: DateFormat('dd-MM-yyyy').format(
-                                        widget.bookingDetail.dateStart)),
-                                BookingInfoRow(
-                                    title: "Ngày trả phòng:",
-                                    content: DateFormat('dd-MM-yyyy')
-                                        .format(widget.bookingDetail.dateEnd)),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: const [
-                                          Text(
-                                            "Ngày đặt",
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                          SizedBox(
-                                            width: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        widget.bookingDetail.createdDate!,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: const [
-                                          Text(
-                                            "Tổng tiền",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16),
-                                          ),
-                                          SizedBox(
-                                            width: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        NumberFormat('#,##0' ' đ').format(widget
-                                            .bookingDetail.totalCost
-                                            .toInt()),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: const [
-                                          Text(
-                                            "Trạng thái",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16),
-                                          ),
-                                          SizedBox(
-                                            width: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        getDescriptionBookingStatus(
-                                            widget.bookingDetail.status),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color:
-                                                getColorDescriptionBookingStatus(
-                                                    widget
-                                                        .bookingDetail.status),
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Align(
-                        alignment: AlignmentDirectional.bottomStart,
-                        child: Text(
-                          'Chính sách trả phòng',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
+                          ],
                         ),
-                      ),
-                      Align(
-                        alignment: AlignmentDirectional.bottomStart,
-                        child: Text(
-                          getRefundPolicy(widget.bookingDetail.refundPolicy!),
-                          style: const TextStyle(
-                              fontSize: 12, color: kSecondaryColor),
+                        const SizedBox(
+                          height: 20,
                         ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Column(
+                        Column(
                           children: [
                             const SizedBox(
                               height: 16,
                             ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
-                                Text('Phương thức thanh toán:',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Text('Trực tuyến',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold))
-                              ],
+                            const Text(
+                              'Thông tin khách hàng',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Số tiền đã thanh toán:',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Text(
-                                    NumberFormat('#,##0' ' đ').format(widget
-                                        .bookingDetail.moneyPayed!
-                                        .toInt()),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: kSecondaryColor))
-                              ],
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: kSmoke, width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    blurRadius: 2,
+                                    offset: const Offset(
+                                        -1, 2), // Đặt shadow theo chiều dọc
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: Column(
+                                children: [
+                                  BookingInfoRow(
+                                      title: "Khách hàng",
+                                      content:
+                                          widget.bookingDetail.customerName!),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                      widget.bookingDetail.status == 'WAITING'
-                          ? Container(
-                              width: double.infinity,
-                              height: 50,
-                              margin: const EdgeInsets.only(
-                                  left: 2, right: 2, bottom: 25, top: 25),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          kSecondaryColor),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              'Thông tin đặt nhà',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: kSmoke, width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    blurRadius: 2,
+                                    offset: const Offset(
+                                        -1, 2), // Đặt shadow theo chiều dọc
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        'Số lượng khách',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                  BookingInfoRow(
+                                      title: "Người lớn:",
+                                      content: widget
+                                          .bookingDetail.guests![0].number
+                                          .toString()),
+                                  BookingInfoRow(
+                                      title: "Trẻ em:",
+                                      content: widget
+                                          .bookingDetail.guests![2].number
+                                          .toString()),
+                                  BookingInfoRow(
+                                      title: "Em bé:",
+                                      content: widget
+                                          .bookingDetail.guests![1].number
+                                          .toString()),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        'Ngày hẹn',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                  BookingInfoRow(
+                                      title: "Ngày nhận phòng:",
+                                      content: DateFormat('dd-MM-yyyy').format(
+                                          widget.bookingDetail.dateStart)),
+                                  BookingInfoRow(
+                                      title: "Ngày trả phòng:",
+                                      content: DateFormat('dd-MM-yyyy').format(
+                                          widget.bookingDetail.dateEnd)),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: const [
+                                            Text(
+                                              "Ngày đặt",
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            SizedBox(
+                                              width: 12,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          widget.bookingDetail.createdDate!,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: const [
+                                            Text(
+                                              "Tổng tiền",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16),
+                                            ),
+                                            SizedBox(
+                                              width: 12,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          NumberFormat('#,##0' ' đ').format(
+                                              widget.bookingDetail.totalCost
+                                                  .toInt()),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: const [
+                                            Text(
+                                              "Trạng thái",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16),
+                                            ),
+                                            SizedBox(
+                                              width: 12,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          getDescriptionBookingStatus(
+                                              widget.bookingDetail.status),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color:
+                                                  getColorDescriptionBookingStatus(
+                                                      widget.bookingDetail
+                                                          .status),
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Align(
+                          alignment: AlignmentDirectional.bottomStart,
+                          child: Text(
+                            'Chính sách trả phòng',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Align(
+                          alignment: AlignmentDirectional.bottomStart,
+                          child: Text(
+                            getRefundPolicy(widget.bookingDetail.refundPolicy!),
+                            style: const TextStyle(
+                                fontSize: 12, color: kSecondaryColor),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: const [
+                                  Text('Phương thức thanh toán:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text('Trực tuyến',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Số tiền đã thanh toán:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                      NumberFormat('#,##0' ' đ').format(widget
+                                          .bookingDetail.moneyPayed!
+                                          .toInt()),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: kSecondaryColor))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Obx(() => (handleViewCommentController.view.value)
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Bạn đã đánh giá',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600),
                                     ),
+                                    SmoothStarRating(
+                                        allowHalfRating: true,
+                                        starCount: 5,
+                                        rating: handleViewCommentController
+                                            .rates.value,
+                                        size: 24.0,
+                                        color: kPrimaryColor,
+                                        borderColor: kPrimaryColor,
+                                        spacing: 0.0),
+                                  ],
+                                ),
+                              )
+                            : Container()),
+                        Obx(() => (handleViewCommentController.view.value)
+                            ? Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Nhận xét: ${handleViewCommentController.comment.value}",
+                                  textAlign: TextAlign.justify,
+                                  style: const TextStyle(
+                                    fontSize: 13,
                                   ),
                                 ),
-                                onPressed: () {
-                                  showPopupCancel(context);
-                                },
-                                child: const Text('Hủy đặt phòng',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white)),
+                              )
+                            : Container()),
+                        if (widget.bookingDetail.status == 'WAITING')
+                          Container(
+                            width: double.infinity,
+                            height: 50,
+                            margin: const EdgeInsets.only(
+                                left: 2, right: 2, bottom: 25, top: 25),
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        kSecondaryColor),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
                               ),
-                            )
-                          : Container(),
-                    ],
+                              onPressed: () {
+                                showPopupCancel(context);
+                              },
+                              child: const Text('Hủy đặt phòng',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white)),
+                            ),
+                          ),
+                        if (widget.bookingDetail.status == 'CHECK_OUT')
+                          Container(
+                            width: double.infinity,
+                            height: 50,
+                            margin: const EdgeInsets.only(
+                                left: 2, right: 2, bottom: 25, top: 25),
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        kPrimaryColor),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(25.0))),
+                                    backgroundColor: Colors.white,
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) => Padding(
+                                          padding:
+                                              MediaQuery.of(context).viewInsets,
+                                          child: SizedBox(
+                                              height:
+                                                  SizeConfig.screenHeight / 2,
+                                              child: BookingEvaluateScreen(
+                                                bookingId:
+                                                    widget.bookingDetail.id,
+                                                handleViewCommentController:
+                                                    handleViewCommentController,
+                                              )),
+                                        ));
+                              },
+                              child: const Text('Đánh giá',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white)),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }

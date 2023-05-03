@@ -4,7 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:your_tours_mobile/apis/booking_controller.dart';
+import 'package:your_tours_mobile/apis/booking_apis.dart';
 import 'package:your_tours_mobile/apis/price_home_controller.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
@@ -85,17 +85,16 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         return;
       }
 
-      PriceOfHomeResponse priceResponse = await getPriceOfHome(
-          widget.homeDetail.data.id,
-          DateFormat('yyyy-MM-dd').format(_startDateBooking),
-          DateFormat('yyyy-MM-dd').format(_endDateBooking));
+      List<Object> response = await LoadingOverlay.of(context).during(
+          future: Future.wait([
+        getPriceOfHome(
+            widget.homeDetail.data.id,
+            DateFormat('yyyy-MM-dd').format(_startDateBooking),
+            DateFormat('yyyy-MM-dd').format(_endDateBooking)),
+        checkBookingApi(request),
+      ]));
 
-      if (!mounted) {
-        return;
-      }
-
-      await LoadingOverlay.of(context)
-          .during(future: checkBookingController(request));
+      PriceOfHomeResponse priceResponse = response.first as PriceOfHomeResponse;
 
       if (!mounted) {
         return;
@@ -801,11 +800,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         child: Row(
           children: [
             Expanded(
-              child: Text(NumberFormat('#,##0' + ' VNĐ').format(widget.homeDetail.data.costPerNightDefault!.toInt()),
-                  style: const TextStyle(color: kTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20
-                  )),
+              child: Text(
+                  NumberFormat('#,##0' ' VNĐ').format(
+                      widget.homeDetail.data.costPerNightDefault!.toInt()),
+                  style: const TextStyle(
+                      color: kTextColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20)),
             ),
             Expanded(
               child: ElevatedButton(

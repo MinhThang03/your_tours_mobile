@@ -125,6 +125,8 @@ class _CityCardState extends State<CityCard> {
                           widget.text == userController.location.value.cityName
                               ? 56
                               : 60,
+                      cacheHeight: 700,
+                      cacheWidth: 1180,
                     ),
                   ),
                 ),

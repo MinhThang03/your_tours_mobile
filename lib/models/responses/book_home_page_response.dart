@@ -78,6 +78,8 @@ class BookingInfo {
       this.moneyPayed,
       this.baseCost,
       this.createdDate,
+      this.comment,
+      this.rates,
       this.homeProvinceName});
 
   String id;
@@ -109,43 +111,46 @@ class BookingInfo {
   double? moneyPayed;
   double? baseCost;
   String? createdDate;
+  double? rates;
+  String? comment;
 
   factory BookingInfo.fromJson(Map<String, dynamic> json) => BookingInfo(
-        id: json["id"],
-        dateStart: DateTime.parse(json["dateStart"]),
-        dateEnd: DateTime.parse(json["dateEnd"]),
-        phoneNumber: json["phoneNumber"],
-        email: json["email"],
-        cost: json["cost"],
-        paymentMethod: json["paymentMethod"],
-        visaAccount: json["visaAccount"],
-        homeId: json["homeId"],
-        userId: json["userId"],
-        status: json["status"],
-        homeName: json["homeName"],
-        customerName: json["customerName"],
-        thumbnail: json["thumbnail"],
-        owner: json["owner"],
-        totalCost: json["totalCost"],
-        numberOfGuests: json["numberOfGuests"],
-        homeAddressDetail: json["homeAddressDetail"],
-        homeProvinceCode: json["homeProvinceCode"],
-        percent: json["percent"],
-        surcharges: json["surcharges"] == null
-            ? null
-            : List<Surcharge>.from(
-                json["surcharges"].map((x) => Surcharge.fromJson(x))),
-        guests: json["guests"] == null
-            ? null
-            : List<Guest>.from(json["guests"].map((x) => Guest.fromJson(x))),
-        costOfHost: json["costOfHost"],
-        costOfAdmin: json["costOfAdmin"],
-        refundPolicy: json["refundPolicy"],
-        moneyPayed: json["moneyPayed"],
-        baseCost: json["baseCost"],
-        homeProvinceName: json["homeProvinceName"],
-        createdDate: json["createdDate"],
-      );
+      id: json["id"],
+      dateStart: DateTime.parse(json["dateStart"]),
+      dateEnd: DateTime.parse(json["dateEnd"]),
+      phoneNumber: json["phoneNumber"],
+      email: json["email"],
+      cost: json["cost"],
+      paymentMethod: json["paymentMethod"],
+      visaAccount: json["visaAccount"],
+      homeId: json["homeId"],
+      userId: json["userId"],
+      status: json["status"],
+      homeName: json["homeName"],
+      customerName: json["customerName"],
+      thumbnail: json["thumbnail"],
+      owner: json["owner"],
+      totalCost: json["totalCost"],
+      numberOfGuests: json["numberOfGuests"],
+      homeAddressDetail: json["homeAddressDetail"],
+      homeProvinceCode: json["homeProvinceCode"],
+      percent: json["percent"],
+      surcharges: json["surcharges"] == null
+          ? null
+          : List<Surcharge>.from(
+              json["surcharges"].map((x) => Surcharge.fromJson(x))),
+      guests: json["guests"] == null
+          ? null
+          : List<Guest>.from(json["guests"].map((x) => Guest.fromJson(x))),
+      costOfHost: json["costOfHost"],
+      costOfAdmin: json["costOfAdmin"],
+      refundPolicy: json["refundPolicy"],
+      moneyPayed: json["moneyPayed"],
+      baseCost: json["baseCost"],
+      homeProvinceName: json["homeProvinceName"],
+      createdDate: json["createdDate"],
+      rates: json["rates"],
+      comment: json["comment"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -183,6 +188,8 @@ class BookingInfo {
         "baseCost": baseCost,
         "homeProvinceName": homeProvinceName,
         "createdDate": createdDate,
+        "rates": rates,
+        "comment": comment
       };
 }
 
@@ -253,6 +260,27 @@ class GetBookHomeDetailResponse {
 
   factory GetBookHomeDetailResponse.fromJson(Map<String, dynamic> json) =>
       GetBookHomeDetailResponse(
+        success: json["success"] ?? false,
+        data: BookingInfo.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": data.toJson(),
+      };
+}
+
+class GetBookingDetailResponse {
+  GetBookingDetailResponse({
+    required this.success,
+    required this.data,
+  });
+
+  bool success;
+  BookingInfo data;
+
+  factory GetBookingDetailResponse.fromJson(Map<String, dynamic> json) =>
+      GetBookingDetailResponse(
         success: json["success"] ?? false,
         data: BookingInfo.fromJson(json["data"]),
       );

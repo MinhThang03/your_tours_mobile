@@ -47,6 +47,9 @@ dependencies:
   animated_snack_bar: ^0.3.0
   get: ^4.6.5
   shimmer: ^2.0.0
+  cached_network_image: ^3.2.3
+  smooth_star_rating_null_safety: ^1.0.4+2
+  modal_bottom_sheet: ^3.0.0-pre
 
 
 

@@ -36,3 +36,5 @@ const String getMobileHomeFavorite =
     "/api/v1/mobile/homes/favorites?number=0&size=10";
 const String getMobileHomePageFilter =
     "/api/v1/mobile/homes/page/filter?number=0&size=10";
+
+const String createComment = "/api/v1/app/booking/comment";

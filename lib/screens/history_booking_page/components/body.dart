@@ -1,6 +1,6 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/apis/booking_controller.dart';
+import 'package:your_tours_mobile/apis/booking_apis.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
@@ -24,7 +24,7 @@ class _BodyState extends State<Body> {
   Future<BookHomePageResponse?> _fetchDataBookingPageFromApi(
       String? status) async {
     try {
-      return await bookingPageController(status);
+      return await bookingPageApi(status);
     } on FormatException catch (error) {
       if (!mounted) return null;
 
