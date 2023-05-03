@@ -4,12 +4,26 @@ import 'package:your_tours_mobile/controllers/search_controller.dart';
 
 import '../../../size_config.dart';
 
-class SearchField extends StatelessWidget {
-  SearchField({
-    Key? key,
-  }) : super(key: key);
+class SearchField extends StatefulWidget {
+  const SearchField({Key? key}) : super(key: key);
 
+  @override
+  State<SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState extends State<SearchField> {
   SearchController searchController = Get.find<SearchController>();
+
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (searchController.keyword.value.isNotEmpty) {
+      _textController.text = searchController.keyword.value;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +45,7 @@ class SearchField extends StatelessWidget {
         onSubmitted: (value) {
           searchController.setKeyword(value);
         },
+        controller: _textController,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(20),

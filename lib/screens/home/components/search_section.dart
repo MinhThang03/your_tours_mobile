@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:your_tours_mobile/controllers/search_controller.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/screens/search_home/home_screen.dart';
 
@@ -12,6 +13,7 @@ class HomeSearch extends StatelessWidget {
   }) : super(key: key);
 
   UserController userController = Get.find<UserController>();
+  SearchController searchController = Get.find<SearchController>();
 
   String _getShortName(String? fullName) {
     if (fullName == null) {
@@ -53,7 +55,30 @@ class HomeSearch extends StatelessWidget {
           ),
           child: TextField(
             onSubmitted: (value) {
-              print(value);
+              searchController.setKeyword(value);
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: timeNavigatorPush,
+                  transitionsBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                      Widget child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    );
+                  },
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation) {
+                    return const SearchHomeScreen();
+                  },
+                ),
+              );
             },
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
