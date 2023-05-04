@@ -5,14 +5,17 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:your_tours_mobile/apis/booking_apis.dart';
+import 'package:your_tours_mobile/apis/home_detail_apis.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/controllers/view_comment_controller.dart';
 import 'package:your_tours_mobile/models/enums/booking_status.dart';
 import 'package:your_tours_mobile/models/requests/cancel_booking_request.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
+import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/screens/history_booking_page/components/booking_evaluate.dart';
 import 'package:your_tours_mobile/screens/room_detail/components/booking_info_row.dart';
+import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
 class BookingDetailScreen extends StatefulWidget {
@@ -64,6 +67,49 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       }
       Navigator.of(context).pop();
       showPopupSuccess(context);
+    } on FormatException catch (error) {
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    }
+  }
+
+  Future<void> callHomeDetailFromApi(String homeId) async {
+    try {
+      HomeDetailResponse response = await LoadingOverlay.of(context)
+          .during(future: homeDetailApi(homeId));
+
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: timeNavigatorPush,
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return RoomDetailScreen(
+              homeDetail: response,
+            );
+          },
+        ),
+      );
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
         error.message,
@@ -260,38 +306,57 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             const SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: kSmoke, width: 1),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.3),
-                                    blurRadius: 2,
-                                    offset: const Offset(
-                                        -1, 2), // Đặt shadow theo chiều dọc
-                                  ),
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(15),
-                              child: Column(
-                                children: [
-                                  BookingInfoRow(
-                                      title: "Tên nhà",
-                                      content: widget.bookingDetail.homeName),
-                                  BookingInfoRow(
-                                      title: "Chủ nhà",
-                                      content: widget.bookingDetail.owner!),
-                                  BookingInfoRow(
-                                      title: "Địa chỉ",
-                                      content: widget
-                                          .bookingDetail.homeProvinceName!),
-                                  BookingInfoRow(
-                                      title: "Giá cơ bản",
-                                      content:
-                                          "${NumberFormat('#,##0' ' đ').format(widget.bookingDetail.baseCost!.toInt())}/1đêm"),
-                                ],
+                            GestureDetector(
+                              onTap: () {
+                                callHomeDetailFromApi(
+                                    widget.bookingDetail.homeId ?? '');
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: kSmoke, width: 1),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      blurRadius: 2,
+                                      offset: const Offset(
+                                          -1, 2), // Đặt shadow theo chiều dọc
+                                    ),
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(15),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          BookingInfoRow(
+                                              title: "Tên nhà",
+                                              content: widget
+                                                  .bookingDetail.homeName),
+                                          BookingInfoRow(
+                                              title: "Chủ nhà",
+                                              content:
+                                                  widget.bookingDetail.owner!),
+                                          BookingInfoRow(
+                                              title: "Địa chỉ",
+                                              content: widget.bookingDetail
+                                                  .homeProvinceName!),
+                                          BookingInfoRow(
+                                              title: "Giá cơ bản",
+                                              content:
+                                                  "${NumberFormat('#,##0' ' đ').format(widget.bookingDetail.baseCost!.toInt())}/1đêm"),
+                                        ],
+                                      ),
+                                    ),
+                                    SvgPicture.asset(
+                                      'assets/icons/arrow_forward_right_icon.svg',
+                                      color: kSecondaryColor,
+                                      width: 22,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

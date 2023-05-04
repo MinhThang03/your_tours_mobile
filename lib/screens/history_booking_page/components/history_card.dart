@@ -1,6 +1,7 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:your_tours_mobile/apis/booking_apis.dart';
 import 'package:your_tours_mobile/models/responses/book_home_page_response.dart';
 import 'package:your_tours_mobile/screens/history_booking_page/components/booking_detail_screen.dart';
@@ -124,19 +125,13 @@ class _HistoryCardState extends State<HistoryCard> {
                     ),
 
                     Text(
-                      '${widget.bookingInfo.totalCost.toInt()} VNĐ',
+                      NumberFormat('#,##0' ' đ')
+                          .format(widget.bookingInfo.totalCost.toInt()),
                       style: const TextStyle(
                           color: kSecondaryColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16),
                     ),
-
-                    // BookingCardInfoRow(
-                    //   icon: 'assets/icons/check_out.svg',
-                    //   title: 'Ngày đi:',
-                    //   content: DateFormat('dd-MM-yyyy')
-                    //       .format(widget.bookingInfo.dateEnd),
-                    // ),
                   ],
                 ),
               ),
