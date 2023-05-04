@@ -2,7 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:your_tours_mobile/apis/favourite_apis.dart';
-import 'package:your_tours_mobile/apis/home_detail_controller.dart';
+import 'package:your_tours_mobile/apis/home_detail_apis.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/models/requests/favourite_request.dart';
@@ -69,7 +69,7 @@ class _HomeCardState extends State<HomeCard> {
   Future<void> _callHomeDetailFromApi() async {
     try {
       HomeDetailResponse response = await LoadingOverlay.of(context)
-          .during(future: homeDetailController(widget.homeInfo.id));
+          .during(future: homeDetailApi(widget.homeInfo.id));
 
       if (!mounted) {
         return;

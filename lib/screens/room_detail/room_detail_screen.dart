@@ -1,8 +1,10 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/favourite_controller.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
 import 'package:your_tours_mobile/size_config.dart';
@@ -25,28 +27,24 @@ class RoomDetailScreen extends StatefulWidget {
 }
 
 class _RoomDetailScreenState extends State<RoomDetailScreen> {
-  final myController = TextEditingController();
-  final myController2 = TextEditingController();
-
   late PageController _pageController;
   int _currentPage = 0;
 
   final List<String> _imagesUrl = [];
-
+  late HandleFavouriteController favoriteController;
 
   @override
   void dispose() {
     _pageController.dispose();
-    myController.dispose();
-    myController2.dispose();
     super.dispose();
   }
-
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentPage);
+    favoriteController = HandleFavouriteController(
+        (widget.homeDetail.data.isFavorite ?? false).obs);
     _fetchDataHomeDetailFromApi();
   }
 
@@ -154,20 +152,60 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                         TextStyle(color: kWhite, fontSize: 25),
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8.0)),
-                                    color: Colors.white.withOpacity(0.4),
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/icons/Heart Icon.svg',
-                                    width: 16,
-                                    height: 16,
-                                    color: kWhite,
-                                  ),
-                                ),
+                                Obx(() => GestureDetector(
+                                      onTap: () async {
+                                        await favoriteController.handleFavorite(
+                                            context, widget.homeDetail.data.id);
+
+                                        if (!mounted) return;
+
+                                        if (favoriteController.message.value !=
+                                            '') {
+                                          AnimatedSnackBar.material(
+                                            favoriteController.message.value,
+                                            type: AnimatedSnackBarType.success,
+                                            mobileSnackBarPosition:
+                                                MobileSnackBarPosition.bottom,
+                                            desktopSnackBarPosition:
+                                                DesktopSnackBarPosition
+                                                    .topRight,
+                                          ).show(context);
+                                        } else {
+                                          AnimatedSnackBar.material(
+                                            favoriteController
+                                                .errorMessage.value,
+                                            type: AnimatedSnackBarType.error,
+                                            mobileSnackBarPosition:
+                                                MobileSnackBarPosition.bottom,
+                                            desktopSnackBarPosition:
+                                                DesktopSnackBarPosition
+                                                    .topRight,
+                                          ).show(context);
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(8.0)),
+                                          color: Colors.white.withOpacity(0.4),
+                                        ),
+                                        child:
+                                            favoriteController.isFavorite.value
+                                                ? SvgPicture.asset(
+                                                    'assets/icons/Heart Icon_2.svg',
+                                                    width: 16,
+                                                    height: 16,
+                                                    color: kSecondaryColor,
+                                                  )
+                                                : SvgPicture.asset(
+                                                    'assets/icons/Heart Icon.svg',
+                                                    width: 16,
+                                                    height: 16,
+                                                    color: kWhite,
+                                                  ),
+                                      ),
+                                    )),
                               ],
                             ),
                           )
@@ -422,13 +460,21 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                  NumberFormat('#,##0' ' VNĐ').format(
-                      widget.homeDetail.data.costPerNightDefault!.toInt()),
-                  style: const TextStyle(
-                      color: kTextColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20)),
+              child: Column(
+                children: [
+                  Text(
+                      NumberFormat('#,##0' ' VNĐ').format(
+                          widget.homeDetail.data.costPerNightDefault!.toInt()),
+                      style: const TextStyle(
+                          color: kTextColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20)),
+                  const Text("Per Night",
+                      style: TextStyle(
+                        color: kTextColor,
+                      )),
+                ],
+              ),
             ),
             Expanded(
               child: ElevatedButton(
