@@ -5,9 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:your_tours_mobile/constants.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
 import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
-import 'package:your_tours_mobile/screens/room_detail/components/amenity_row.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
+import 'components/amenity_bottom_sheet.dart';
+import 'components/amenity_card.dart';
 import 'components/booking_bottom_sheet.dart';
 import 'components/comment_bottom_sheet.dart';
 import 'components/comment_section.dart';
@@ -30,90 +31,17 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   late PageController _pageController;
   int _currentPage = 0;
 
-  List<AmenitiesView> _amenitiesRight = [];
-  List<AmenitiesView> _amenitiesLeft = [];
   final List<String> _imagesUrl = [];
 
 
   @override
   void dispose() {
-    _amenitiesRight = [];
-    _amenitiesLeft = [];
     _pageController.dispose();
     myController.dispose();
     myController2.dispose();
     super.dispose();
   }
 
-  void showAmenityPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: SingleChildScrollView(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  children: [
-                    const Text(
-                      'Tiện ích',
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
-                      itemCount:
-                      widget.homeDetail.data.amenitiesView?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            AmenityRow(
-                              amenity:
-                              widget.homeDetail.data.amenitiesView![index],
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            )
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    SizedBox(
-                      height: 45,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryLightColor,
-                        ),
-                        child: const Text("Đóng",
-                            style: TextStyle(color: kPrimaryColor)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -133,20 +61,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         for (int i = 0; i < len; i++) {
           _imagesUrl.add(widget.homeDetail.data.imagesOfHome![i].path);
         }
-
-        if ((widget.homeDetail.data.amenitiesView?.length ?? 0) >= 3) {
-          _amenitiesLeft = widget.homeDetail.data.amenitiesView!.sublist(0, 2);
-          if ((widget.homeDetail.data.amenitiesView?.length ?? 0) >= 4) {
-            _amenitiesRight =
-                widget.homeDetail.data.amenitiesView!.sublist(2, 4);
-          } else {
-            _amenitiesRight = widget.homeDetail.data.amenitiesView!
-                .sublist(2, widget.homeDetail.data.amenitiesView?.length);
-          }
-        } else if ((widget.homeDetail.data.amenitiesView?.length ?? 0) > 0 &&
-            (widget.homeDetail.data.amenitiesView?.length ?? 0) <= 2) {
-          _amenitiesLeft = widget.homeDetail.data.amenitiesView!.sublist(0, 2);
-        }
       });
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
@@ -163,28 +77,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   iconTheme: const IconThemeData(color: Colors.black),
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back_ios, size: 20),
-      //     onPressed: () {
-      //       Navigator.pop(context);
-      //     },
-      //   ),
-      //   backgroundColor: Colors.white,
-      //   elevation: 1,
-      //   centerTitle: true,
-      //   title: const Text(
-      //     'Chi tiết nhà',
-      //     style: TextStyle(fontSize: 20.0, color: Colors.black),
-      //   ),
-      // ),
       body: Column(
         children: [
           Expanded(
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Column(
@@ -377,9 +275,36 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                           alignment: Alignment.topRight,
                                           child: TextButton(
                                             onPressed: () {
-                                              showAmenityPopup(context);
+                                              // showAmenityPopup(context);
+                                              showModalBottomSheet(
+                                                  shape: const RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.vertical(
+                                                              top: Radius
+                                                                  .circular(
+                                                                      25.0))),
+                                                  backgroundColor: Colors.white,
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  builder: (context) => Padding(
+                                                        padding: MediaQuery.of(
+                                                                context)
+                                                            .viewInsets,
+                                                        child: SizedBox(
+                                                            height: SizeConfig
+                                                                    .screenHeight *
+                                                                (2 / 3),
+                                                            child:
+                                                                AmenityBottomSheet(
+                                                              amenitiesViews: widget
+                                                                      .homeDetail
+                                                                      .data
+                                                                      .amenitiesView ??
+                                                                  [],
+                                                            )),
+                                                      ));
                                             },
-                                            child: const Text('Xem thêm ...',
+                                            child: const Text('Chi tiết ...',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontStyle: FontStyle.italic,
@@ -391,65 +316,31 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 4),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          child: Column(
-                                        children: [
-                                          ListView.builder(
-                                            padding: EdgeInsets.zero,
-                                            shrinkWrap: true,
-                                            physics:
-                                                const ClampingScrollPhysics(),
-                                            itemCount: _amenitiesLeft.length,
-                                            itemBuilder: (context, index) {
-                                              return Column(
-                                                children: [
-                                                  AmenityRow(
-                                                    amenity:
-                                                        _amenitiesLeft[index],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 4,
-                                                  )
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      )),
-                                      Expanded(
-                                          child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          ListView.builder(
-                                            padding: EdgeInsets.zero,
-                                            shrinkWrap: true,
-                                            physics:
-                                                const ClampingScrollPhysics(),
-                                            itemCount: _amenitiesRight.length,
-                                            itemBuilder: (context, index) {
-                                              return Column(
-                                                children: [
-                                                  AmenityRow(
-                                                    amenity:
-                                                        _amenitiesRight[index],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 4,
-                                                  )
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ))
-                                    ],
+                                  SingleChildScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: List.generate(
+                                        widget.homeDetail.data.amenitiesView
+                                                ?.length ??
+                                            0,
+                                        (index) => Row(
+                                          children: [
+                                            AmenityCard(
+                                              amenitiesView: widget.homeDetail
+                                                  .data.amenitiesView![index],
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -542,7 +433,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  // showBookingPopup(context);
                   showModalBottomSheet(
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(

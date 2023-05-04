@@ -20,7 +20,7 @@ class _AmenityRowState extends State<AmenityRow> {
           fit: BoxFit.cover,
         ),
         const SizedBox(
-          width: 4,
+          width: 10,
         ),
         Expanded(child: Text(widget.amenity.name,
           overflow: TextOverflow.ellipsis,
