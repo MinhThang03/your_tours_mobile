@@ -40,3 +40,6 @@ const String getMobileHomePageFilter =
     "/api/v1/mobile/homes/page/filter?number=0&size=10";
 
 const String createComment = "/api/v1/app/booking/comment";
+
+const String getPageComment =
+    "/api/v1/public/homes/page/evaluates?homeId={homeId}&number=0&size={size}";
