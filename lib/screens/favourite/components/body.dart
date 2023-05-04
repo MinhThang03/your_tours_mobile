@@ -65,29 +65,21 @@ class _BodyState extends State<Body> {
                 style: TextStyle(fontSize: getProportionateScreenWidth(16)),
               ),
             )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: getProportionateScreenWidth(10)),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: response.data.content.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          FavoriteCard(homeInfo: response.data.content[index]),
-                          const SizedBox(
-                            height: 20,
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              physics: const BouncingScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: response.data.content.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    FavoriteCard(homeInfo: response.data.content[index]),
+                    const SizedBox(
+                      height: 20,
+                    )
+                  ],
+                );
+              },
             ),
     );
   }

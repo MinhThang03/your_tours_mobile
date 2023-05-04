@@ -29,7 +29,7 @@ class FavouriteScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.black, fontSize: 25),
               ),
             ),
-            Body(),
+            Expanded(child: Body()),
           ],
         ),
       ),

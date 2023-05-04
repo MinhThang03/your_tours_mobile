@@ -4,6 +4,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:your_tours_mobile/apis/home_detail_controller.dart';
 import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
@@ -342,15 +343,10 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
                       const SizedBox(
                         width: 8,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          Text(
-                            '80đ',
-                            style: TextStyle(color: kSecondary),
-                          ),
-                          Text('/Night'),
-                        ],
+                      Text(
+                        NumberFormat('#,##0' ' đ').format(
+                            widget.homeInfo.costPerNightDefault.toInt()),
+                        style: const TextStyle(color: kSecondary),
                       )
                     ],
                   ),

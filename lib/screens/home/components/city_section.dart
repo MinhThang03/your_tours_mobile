@@ -5,9 +5,10 @@ import 'package:your_tours_mobile/apis/province_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
 import 'package:your_tours_mobile/components/shimmer_loading.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/search_controller.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
-import 'package:your_tours_mobile/models/responses/location_response.dart';
 import 'package:your_tours_mobile/models/responses/province_response.dart';
+import 'package:your_tours_mobile/screens/search_home/home_screen.dart';
 
 class HomeCity extends StatefulWidget {
   const HomeCity({Key? key}) : super(key: key);
@@ -17,9 +18,9 @@ class HomeCity extends StatefulWidget {
 }
 
 class _HomeCityState extends State<HomeCity> {
-  Future<GetListProvinceResponse?> _fetchDataListProvinceApi() async {
+  Future<GetPageProvinceResponse?> _fetchDataPageProvinceApi() async {
     try {
-      return await getListProvinceApi();
+      return await getPageProvinceApi();
     } on FormatException catch (error) {
       AnimatedSnackBar.material(
         error.message,
@@ -33,7 +34,7 @@ class _HomeCityState extends State<HomeCity> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadApiWidget<GetListProvinceResponse?>(
+    return LoadApiWidget<GetPageProvinceResponse?>(
         autoCache: true,
         successBuilder: (context, response) {
           return successWidget(context, response!);
@@ -52,10 +53,10 @@ class _HomeCityState extends State<HomeCity> {
                     )),
           ),
         ),
-        fetchDataFunction: _fetchDataListProvinceApi());
+        fetchDataFunction: _fetchDataPageProvinceApi());
   }
 
-  Widget successWidget(BuildContext context, GetListProvinceResponse response) {
+  Widget successWidget(BuildContext context, GetPageProvinceResponse response) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
@@ -63,10 +64,10 @@ class _HomeCityState extends State<HomeCity> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List.generate(
-          response.data.length,
+          response.data.content.length,
           (index) => CityCard(
-            icon: response.data[index].thumbnail,
-            text: response.data[index].enName,
+            icon: response.data.content[index].thumbnail,
+            text: response.data.content[index].enName,
           ),
         ),
       ),
@@ -89,6 +90,7 @@ class CityCard extends StatefulWidget {
 
 class _CityCardState extends State<CityCard> {
   UserController userController = Get.find<UserController>();
+  SearchController searchController = Get.find<SearchController>();
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +99,30 @@ class _CityCardState extends State<CityCard> {
         child: Obx(
           () => GestureDetector(
             onTap: () {
-              userController.setLocation(UserLocation(cityName: widget.text));
+              searchController.setKeyword(widget.text);
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: timeNavigatorPush,
+                  transitionsBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                      Widget child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    );
+                  },
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation) {
+                    return const SearchHomeScreen();
+                  },
+                ),
+              );
             },
             child: Column(
               children: [

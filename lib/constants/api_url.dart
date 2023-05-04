@@ -28,6 +28,8 @@ const String getPageBookingUrl = "/api/v1/mobile/booking/page?number=0&size=20";
 const String cancelBookingUrl = "/api/v1/app/booking/cancel";
 const String getLocation = "/api/v1/public/location";
 const String getBookingDetail = "/api/v1/app/booking/{id}/detail";
+const String getPageProvince =
+    "/api/v1/public/app/provinces/page?number=0&size=5";
 
 //mobile api
 const String getMobileHomePage =

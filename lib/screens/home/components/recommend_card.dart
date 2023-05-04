@@ -2,6 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:your_tours_mobile/apis/home_detail_controller.dart';
 import 'package:your_tours_mobile/apis/home_page_filter_api.dart';
 import 'package:your_tours_mobile/components/loading_api_widget.dart';
@@ -329,7 +330,8 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                   const SizedBox(
                     height: 5,
                   ),
-                  Text('${widget.homeInfo.costPerNightDefault!.toInt()} /Night',
+                  Text(
+                      '${NumberFormat('#,##0' ' đ').format(widget.homeInfo.costPerNightDefault!.toInt())} /Night',
                       style: const TextStyle(
                           fontSize: 18,
                           letterSpacing: 0,

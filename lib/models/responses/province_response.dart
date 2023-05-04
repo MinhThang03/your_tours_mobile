@@ -25,7 +25,7 @@ class Province {
     this.id,
     required this.codeName,
     required this.name,
-    required this.divisionType,
+    this.divisionType,
     required this.thumbnail,
     required this.enName,
   });
@@ -33,7 +33,7 @@ class Province {
   int? id;
   String codeName;
   String name;
-  String divisionType;
+  String? divisionType;
   String thumbnail;
   String enName;
 
@@ -53,5 +53,55 @@ class Province {
         "divisionType": divisionType,
         "thumbnail": thumbnail,
         "enName": enName,
+      };
+}
+
+class GetPageProvinceResponse {
+  GetPageProvinceResponse({
+    required this.success,
+    required this.data,
+  });
+
+  bool success;
+  Data data;
+
+  factory GetPageProvinceResponse.fromJson(Map<String, dynamic> json) =>
+      GetPageProvinceResponse(
+        success: json["success"],
+        data: Data.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": data.toJson(),
+      };
+}
+
+class Data {
+  Data({
+    required this.content,
+    required this.pageNumber,
+    required this.pageSize,
+    required this.totalElements,
+  });
+
+  List<Province> content;
+  int pageNumber;
+  int pageSize;
+  int totalElements;
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        content: List<Province>.from(
+            json["content"].map((x) => Province.fromJson(x))),
+        pageNumber: json["pageNumber"],
+        pageSize: json["pageSize"],
+        totalElements: json["totalElements"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "content": List<dynamic>.from(content.map((x) => x.toJson())),
+        "pageNumber": pageNumber,
+        "pageSize": pageSize,
+        "totalElements": totalElements,
       };
 }
