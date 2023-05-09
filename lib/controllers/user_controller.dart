@@ -11,4 +11,8 @@ class UserController extends GetxController {
   void setLocation(UserLocation value) {
     location.value = value;
   }
+
+  void setUserInfo(UserInfo value) {
+    userInfo.value = value;
+  }
 }

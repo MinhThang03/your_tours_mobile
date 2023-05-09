@@ -76,7 +76,7 @@ class ProfileInfoSection extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            userController.userInfo.value.fullName!,
+                            userController.userInfo.value.fullName ?? '',
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),

@@ -43,3 +43,6 @@ const String createComment = "/api/v1/app/booking/comment";
 
 const String getPageComment =
     "/api/v1/public/homes/page/evaluates?homeId={homeId}&number=0&size={size}";
+
+const String updateImage = "/api/v1/media/public/upload";
+const String updateCurrentUser = "/api/v1/user/update/current-user";

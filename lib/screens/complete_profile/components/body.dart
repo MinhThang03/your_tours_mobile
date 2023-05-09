@@ -17,8 +17,7 @@ class Body extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: SizeConfig.screenHeight * 0.03),
-                CompleteProfileForm(),
+                const CompleteProfileForm(),
                 SizedBox(height: getProportionateScreenHeight(30)),
                 Text(
                   "By continuing your confirm that you agree \nwith our Term and Condition",

@@ -19,12 +19,13 @@ class HomeHeader extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(50.0)),
-          child: Image.network(
-            "https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-            fit: BoxFit.cover,
-            height: 50,
-            width: 50,
-          ),
+          child: Obx(() => Image.network(
+                userController.userInfo.value.avatar ??
+                    "https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
+                fit: BoxFit.cover,
+                height: 50,
+                width: 50,
+              )),
         ),
         Expanded(
             child: Column(

@@ -8,17 +8,6 @@ class FavouriteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //     automaticallyImplyLeading: false,
-      //     backgroundColor: Colors.white,
-      //     iconTheme: const IconThemeData(
-      //       color: Colors.black, //change your color here
-      //     ),
-      //     centerTitle: true,
-      //     title: Text(
-      //       'Love',
-      //       style: TextStyle(color: Colors.black, fontSize: 25),
-      //     )),
       body: SafeArea(
         child: Column(
           children: const [

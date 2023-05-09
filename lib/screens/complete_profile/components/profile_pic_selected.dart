@@ -3,19 +3,33 @@ import 'dart:io';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
 
 import '../../../constants.dart';
 
 class ProfilePicSelected extends StatefulWidget {
-  const ProfilePicSelected({Key? key}) : super(key: key);
+  final ValueChanged<String?> selectedImage;
+
+  const ProfilePicSelected({Key? key, required this.selectedImage})
+      : super(key: key);
 
   @override
   State<ProfilePicSelected> createState() => _ProfilePicSelectedState();
 }
 
 class _ProfilePicSelectedState extends State<ProfilePicSelected> {
+  UserController userController = Get.find<UserController>();
+
   String _path = '';
+  late String? origin;
+
+  @override
+  void initState() {
+    origin = userController.userInfo.value.avatar;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +43,9 @@ class _ProfilePicSelectedState extends State<ProfilePicSelected> {
           ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(50.0)),
             child: _path == ''
-                ? Image.asset(
-                    'assets/images/Profile Image.png',
+                ? Image.network(
+                    userController.userInfo.value.avatar ??
+                        'https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg',
                     fit: BoxFit.cover,
                   )
                 : Image.file(File(_path), fit: BoxFit.cover),
@@ -104,6 +119,7 @@ class _ProfilePicSelectedState extends State<ProfilePicSelected> {
                             }
 
                             if (_path != '') {
+                              widget.selectedImage(_path);
                               Navigator.pop(context);
                               setState(() {});
                             } else {
@@ -141,6 +157,7 @@ class _ProfilePicSelectedState extends State<ProfilePicSelected> {
                             }
 
                             if (_path != '') {
+                              widget.selectedImage(_path);
                               Navigator.pop(context);
                               setState(() {});
                             } else {
