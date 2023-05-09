@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
+import 'package:your_tours_mobile/screens/sign_in/sign_in_screen.dart';
+import 'package:your_tours_mobile/services/token_handler.dart';
 
 import 'profile_info_section.dart';
 import 'profile_menu.dart';
@@ -27,6 +29,16 @@ class _BodyState extends State<Body> {
     }
 
     return false;
+  }
+
+  Future<void> handleLogOut() async {
+    await deleteToken();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const SignInScreen()),
+    );
   }
 
   @override
@@ -62,7 +74,9 @@ class _BodyState extends State<Body> {
           ProfileMenu(
             text: "Log Out",
             icon: "assets/icons/Log out.svg",
-            press: () {},
+            press: () {
+              handleLogOut();
+            },
           ),
         ],
       ),
