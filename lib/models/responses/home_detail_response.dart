@@ -83,7 +83,7 @@ class Data {
   String? status;
   int? numberOfGuests;
   int? view;
-  bool? favorite;
+  int? favorite;
   String? thumbnail;
   double? averageRate;
   int? numberOfReviews;
