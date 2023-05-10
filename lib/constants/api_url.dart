@@ -46,3 +46,6 @@ const String getPageComment =
 
 const String updateImage = "/api/v1/media/public/upload";
 const String updateCurrentUser = "/api/v1/user/update/current-user";
+
+const String forgotPassword = "/api/v1/auth/forgot-password";
+const String resetPassword = "/api/v1/auth/otp/reset-password";
