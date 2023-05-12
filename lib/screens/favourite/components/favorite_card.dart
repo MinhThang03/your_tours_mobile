@@ -190,9 +190,9 @@ class _FavoriteCardState extends State<FavoriteCard> {
                               height: 18,
                             ),
                             const SizedBox(width: 4),
-                            const Text(
-                              '5.0',
-                              style: TextStyle(fontSize: 12),
+                            Text(
+                              (widget.homeInfo.averageRate).toString(),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ],
                         ),

@@ -245,10 +245,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                             height: 18,
                                           ),
                                           const SizedBox(width: 5),
-                                          const Text(
-                                            "5.0",
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                          Text(
+                                            (widget.homeDetail.data
+                                                        .averageRate ??
+                                                    0)
+                                                .toString(),
+                                            style: const TextStyle(
+                                                color: Colors.black),
                                           ),
                                         ],
                                       ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:your_tours_mobile/constants/api_url.dart';
@@ -21,6 +22,8 @@ Future<PriceOfHomeResponse> getPriceOfHome(
         .replaceAll("{dateFrom}", dateFrom)
         .replaceAll("{dateTo}", dateTo);
 
+    log(name: 'REQUEST PRICE HOME:', url);
+
     http.Response response = await http.get(
       Uri.parse(domain + url),
       headers: <String, String>{
@@ -30,6 +33,8 @@ Future<PriceOfHomeResponse> getPriceOfHome(
 
     Map<String, dynamic> responseJson =
         json.decode(utf8.decode(response.bodyBytes));
+
+    log(name: 'RESPONSE PRICE HOME:', responseJson.toString());
 
     if (response.statusCode == 200) {
       return PriceOfHomeResponse.fromJson(responseJson);

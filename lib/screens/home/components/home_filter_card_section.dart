@@ -222,18 +222,18 @@ class _HomeFilterCardState extends State<HomeFilterCard> {
                           padding: const EdgeInsets.all(4.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Icons.star_purple500_outlined,
                                 size: 18,
                                 color: Colors.orange,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 3,
                               ),
                               Text(
-                                "5.0",
-                                style: TextStyle(fontSize: 12),
+                                widget.homeInfo.averageRate.toString(),
+                                style: const TextStyle(fontSize: 12),
                               )
                             ],
                           ),

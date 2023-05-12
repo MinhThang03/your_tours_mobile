@@ -430,7 +430,7 @@ class Config {
   });
 
   String id;
-  int? percent;
+  double? percent;
   int? numberDateStay;
   int? numberMonthAdvance;
   String? homeId;
@@ -617,13 +617,13 @@ class Surcharge {
     required this.surchargeCategoryId,
     required this.surchargeCategoryName,
     required this.cost,
-    required this.description,
+    this.description,
   });
 
   String surchargeCategoryId;
   String surchargeCategoryName;
-  int cost;
-  String description;
+  double cost;
+  String? description;
 
   factory Surcharge.fromJson(Map<String, dynamic> json) => Surcharge(
         surchargeCategoryId: json["surchargeCategoryId"],

@@ -318,9 +318,9 @@ class _HomeRecommendCardState extends State<HomeRecommendCard> {
                               height: 20,
                             ),
                             const SizedBox(width: 10),
-                            const Text(
-                              "5.0",
-                              style: TextStyle(color: Colors.black),
+                            Text(
+                              (widget.homeInfo.averageRate ?? 0).toString(),
+                              style: const TextStyle(color: Colors.black),
                             ),
                           ],
                         ),

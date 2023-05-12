@@ -18,11 +18,12 @@ class BookingInfoRow extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    overflow: TextOverflow.fade,
+                    maxLines: 2,
                     style: const TextStyle(
-                        fontWeight: FontWeight.w400, fontSize: 16),
-                  ),
-                  const SizedBox(
-                    width: 12,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),

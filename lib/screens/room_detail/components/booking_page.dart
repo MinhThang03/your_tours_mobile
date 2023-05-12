@@ -408,32 +408,32 @@ class _BookingPageState extends State<BookingPage> {
                                     ),
                                   ],
                                 ),
-                                widget.priceResponse.data.discountName == null
-                                    ? Container()
-                                    : Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Row(
-                                          children: const [
-                                            Text(
-                                              'Khuyến mãi',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
                                 const SizedBox(
                                   height: 10,
                                 ),
                                 widget.priceResponse.data.discountName == null
                                     ? Container()
+                                    : Row(
+                                  children: const [
+                                    Text(
+                                      'Khuyến mãi',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                                widget.priceResponse.data.discountName == null
+                                    ? Container()
                                     : BookingInfoRow(
-                                        title: widget
-                                            .priceResponse.data.discountName!,
-                                        content:
-                                            "${widget.priceResponse.data.percent!}%"),
+                                    title: widget
+                                        .priceResponse.data.discountName!,
+                                    content:
+                                    "${widget.priceResponse.data.percent ??
+                                        0}%"),
+                                const SizedBox(
+                                  height: 10,
+                                ),
                                 Column(
                                   children: [
                                     Row(
