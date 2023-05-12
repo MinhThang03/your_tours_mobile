@@ -31,10 +31,7 @@ class BookingPage extends StatefulWidget {
 class _BookingPageState extends State<BookingPage> {
   Future<void> _callCreateBookingApi() async {
     try {
-      double cost = widget.priceResponse.data.percent == null
-          ? widget.priceResponse.data.totalCostWithSurcharge
-          : widget.priceResponse.data.totalCostWithSurcharge *
-              (widget.priceResponse.data.percent! / 100);
+      double cost = widget.priceResponse.data.totalCostWithSurcharge;
 
       widget.bookingRequest.moneyPayed = cost;
       widget.bookingRequest.paymentMethod = 'PAY_IN_FULL';
@@ -397,7 +394,7 @@ class _BookingPageState extends State<BookingPage> {
                                           child: Text(
                                             NumberFormat('#,##0' ' đ').format(
                                                 widget.priceResponse.data
-                                                    .totalCostWithSurcharge
+                                                    .totalCostWithNoDiscount
                                                     .toInt()),
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -455,18 +452,7 @@ class _BookingPageState extends State<BookingPage> {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            NumberFormat('#,##0' ' đ').format(widget
-                                                        .priceResponse
-                                                        .data
-                                                        .percent ==
-                                                    null
-                                                ? widget.priceResponse.data
-                                                    .totalCostWithSurcharge
-                                                : widget.priceResponse.data
-                                                        .totalCostWithSurcharge *
-                                                    (widget.priceResponse.data
-                                                            .percent! /
-                                                        100)),
+                                            NumberFormat('#,##0' ' đ').format(widget.priceResponse.data.totalCostWithSurcharge),
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 16),
@@ -530,15 +516,7 @@ class _BookingPageState extends State<BookingPage> {
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 Text(
                                     NumberFormat('#,##0' ' đ').format(
-                                        widget.priceResponse.data.percent ==
-                                                null
-                                            ? widget.priceResponse.data
-                                                .totalCostWithSurcharge
-                                            : widget.priceResponse.data
-                                                    .totalCostWithSurcharge *
-                                                (widget.priceResponse.data
-                                                        .percent! /
-                                                    100)),
+                                        widget.priceResponse.data.totalCostWithSurcharge),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: kSecondaryColor))
