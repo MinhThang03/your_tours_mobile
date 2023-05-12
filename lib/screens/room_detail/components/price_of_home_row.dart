@@ -15,42 +15,38 @@ class PriceOfHomeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 0, top: 0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          color: especially ? kPrimaryColor : null),
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                  ],
-                ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        color: especially ? kPrimaryColor : null),
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                ],
               ),
-              Expanded(
-                child: Text(
-                  content,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: especially ? kPrimaryColor : null),
-                ),
+            ),
+            Expanded(
+              child: Text(
+                content,
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: especially ? kPrimaryColor : null),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -1,11 +1,17 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/apis/aws_apis.dart';
+import 'package:your_tours_mobile/apis/user_api.dart';
 import 'package:your_tours_mobile/components/custom_surfix_icon.dart';
 import 'package:your_tours_mobile/components/default_button.dart';
 import 'package:your_tours_mobile/components/form_error.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
+import 'package:your_tours_mobile/models/responses/aws_response.dart';
+import 'package:your_tours_mobile/models/responses/user_response.dart';
 import 'package:your_tours_mobile/screens/complete_profile/components/profile_pic_selected.dart';
-import 'package:your_tours_mobile/screens/otp/otp_screen.dart';
 
-import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class CompleteProfileForm extends StatefulWidget {
@@ -16,12 +22,34 @@ class CompleteProfileForm extends StatefulWidget {
 }
 
 class _CompleteProfileFormState extends State<CompleteProfileForm> {
+  UserController userController = Get.find<UserController>();
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    nameController.text = userController.userInfo.value.fullName ?? '';
+    phoneController.text = userController.userInfo.value.phoneNumber ?? '';
+    addressController.text = userController.userInfo.value.address ?? '';
+    super.initState();
+  }
+
   final _formKey = GlobalKey<FormState>();
   final List<String?> errors = [];
-  String? firstName;
-  String? lastName;
+  String? name;
   String? phoneNumber;
   String? address;
+  String? pathImage;
 
   void addError({String? error}) {
     if (!errors.contains(error)) {
@@ -39,17 +67,65 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
     }
   }
 
+  Future<void> _submit() async {
+    try {
+      String? avatar = userController.userInfo.value.avatar;
+
+      if (pathImage != null && pathImage != '') {
+        UpdateImageResponse responseImage = await LoadingOverlay.of(context)
+            .during(future: uploadImageApi(pathImage!));
+        avatar = responseImage.data.previewUrl;
+        pathImage = null;
+      }
+
+      UserInfo currentUser = userController.userInfo.value;
+      currentUser.avatar = avatar;
+      currentUser.fullName =
+          nameController.text.isEmpty ? null : nameController.text;
+      currentUser.address =
+          addressController.text.isEmpty ? null : addressController.text;
+      currentUser.phoneNumber =
+          phoneController.text.isEmpty ? null : phoneController.text;
+
+      if (!mounted) return;
+
+      await LoadingOverlay.of(context)
+          .during(future: updateProfileApi(currentUser));
+
+      userController.setUserInfo(currentUser);
+
+      if (!mounted) return;
+
+      AnimatedSnackBar.material(
+        "Cập nhật thông tin thành công",
+        type: AnimatedSnackBarType.success,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    } on FormatException catch (error) {
+      AnimatedSnackBar.material(
+        error.message,
+        type: AnimatedSnackBarType.error,
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
+      ).show(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(
         children: [
-          ProfilePicSelected(),
+          ProfilePicSelected(
+            selectedImage: (value) {
+              pathImage = value;
+            },
+          ),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildFirstNameFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildLastNameFormField(),
+          buildNameFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
           buildPhoneNumberFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
@@ -60,7 +136,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
             text: "Lưu",
             press: () {
               if (_formKey.currentState!.validate()) {
-                Navigator.pushNamed(context, OtpScreen.routeName);
+                _submit();
               }
             },
           ),
@@ -71,23 +147,11 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
 
   TextFormField buildAddressFormField() {
     return TextFormField(
+      controller: addressController,
       onSaved: (newValue) => address = newValue,
-      onChanged: (value) {
-        if (value.isNotEmpty) {
-          removeError(error: kAddressNullError);
-        }
-        return;
-      },
-      validator: (value) {
-        if (value!.isEmpty) {
-          addError(error: kAddressNullError);
-          return "";
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: "Address",
-        hintText: "Enter your phone address",
+      decoration: const InputDecoration(
+        labelText: "Địa chỉ",
+        hintText: "Nhập địa chỉ của bạn",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon:
             CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
@@ -97,67 +161,51 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
 
   TextFormField buildPhoneNumberFormField() {
     return TextFormField(
+      controller: phoneController,
       keyboardType: TextInputType.phone,
       onSaved: (newValue) => phoneNumber = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
-          removeError(error: kPhoneNumberNullError);
+          removeError(error: "Nhập số điện thoại");
         }
         return;
       },
       validator: (value) {
         if (value!.isEmpty) {
-          addError(error: kPhoneNumberNullError);
+          addError(error: "Nhập số điện thoại");
           return "";
         }
         return null;
       },
-      decoration: InputDecoration(
-        labelText: "Phone Number",
-        hintText: "Enter your phone number",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
+      decoration: const InputDecoration(
+        labelText: "Số điện thoại",
+        hintText: "Nhập số điện thoại của bạn",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Phone.svg"),
       ),
     );
   }
 
-  TextFormField buildLastNameFormField() {
+  TextFormField buildNameFormField() {
     return TextFormField(
-      onSaved: (newValue) => lastName = newValue,
-      decoration: InputDecoration(
-        labelText: "Last Name",
-        hintText: "Enter your last name",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
-      ),
-    );
-  }
-
-  TextFormField buildFirstNameFormField() {
-    return TextFormField(
-      onSaved: (newValue) => firstName = newValue,
+      controller: nameController,
+      onSaved: (newValue) => name = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
-          removeError(error: kNamelNullError);
+          removeError(error: "Nhập họ và tên");
         }
         return;
       },
       validator: (value) {
         if (value!.isEmpty) {
-          addError(error: kNamelNullError);
+          addError(error: "Nhập họ và tên");
           return "";
         }
         return null;
       },
-      decoration: InputDecoration(
-        labelText: "First Name",
-        hintText: "Enter your first name",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
+      decoration: const InputDecoration(
+        labelText: "Họ và tên",
+        hintText: "Nhập tên của bạn",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
       ),

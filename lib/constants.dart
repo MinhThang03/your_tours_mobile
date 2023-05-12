@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
-const kPrimaryColor = Color(0xFFFF7643);
+const kPrimaryColor = Color(0xFF32D1CC);
 const kPrimaryLightColor = Color(0xFFFFECDF);
 const kPrimaryGradientColor = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [Color(0xFFFFA53E), Color(0xFFFF7643)],
 );
-const kSecondaryColor = Color(0xFF979797);
-const kTextColor = Color(0xFF757575);
+const kSecondaryColor = Color(0xFFFC674E);
+const kTextColor = Color(0xff2a2a2a);
+const kSmoke = Color(0xFF979797);
+
+const kWhite = Color(0xffffffff);
+const kGray = Color(0xFFF1F4F6);
+const kStroke = Color(0xFFF7F9FA);
+const kBody = Color(0xFF8b939f);
+const kSecondary = Color(0xFFFC674E);
 
 const kAnimationDuration = Duration(milliseconds: 200);
 
@@ -30,7 +37,7 @@ const String kInvalidEmailError = "Please Enter Valid Email";
 const String kPassNullError = "Please Enter your password";
 const String kShortPassError = "Password is too short";
 const String kMatchPassError = "Passwords don't match";
-const String kNamelNullError = "Please Enter your name";
+const String kNameNullError = "Please Enter your name";
 const String kPhoneNumberNullError = "Please Enter your phone number";
 const String kAddressNullError = "Please Enter your address";
 

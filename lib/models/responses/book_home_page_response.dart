@@ -9,7 +9,7 @@ class BookHomePageResponse {
 
   factory BookHomePageResponse.fromJson(Map<String, dynamic> json) =>
       BookHomePageResponse(
-        success: json["success"],
+        success: json["success"] ?? false,
         data: Data.fromJson(json["data"]),
       );
 
@@ -49,95 +49,108 @@ class Data {
 }
 
 class BookingInfo {
-  BookingInfo({
-    required this.id,
-    required this.dateStart,
-    required this.dateEnd,
-    this.phoneNumber,
-    this.email,
-    required this.cost,
-    required this.paymentMethod,
-    this.visaAccount,
-    required this.homeId,
-    required this.userId,
-    required this.status,
-    required this.homeName,
-    required this.customerName,
-    required this.thumbnail,
-    required this.owner,
-    required this.totalCost,
-    required this.numberOfGuests,
-    required this.homeAddressDetail,
-    required this.homeProvinceCode,
-    required this.percent,
-    required this.surcharges,
-    required this.guests,
-    required this.costOfHost,
-    required this.costOfAdmin,
-    required this.refundPolicy,
-    required this.moneyPayed,
-  });
+  BookingInfo(
+      {required this.id,
+      required this.dateStart,
+      required this.dateEnd,
+      this.phoneNumber,
+      this.email,
+      this.cost,
+      this.paymentMethod,
+      this.visaAccount,
+      required this.homeId,
+      required this.userId,
+      required this.status,
+      required this.homeName,
+      this.customerName,
+      this.thumbnail,
+      this.owner,
+      required this.totalCost,
+      this.numberOfGuests,
+      this.homeAddressDetail,
+      this.homeProvinceCode,
+      this.percent,
+      this.surcharges,
+      this.guests,
+      this.costOfHost,
+      this.costOfAdmin,
+      this.refundPolicy,
+      this.moneyPayed,
+      this.baseCost,
+      this.createdDate,
+      this.comment,
+      this.rates,
+      this.homeProvinceName});
 
   String id;
   DateTime dateStart;
   DateTime dateEnd;
   String? phoneNumber;
   String? email;
-  double cost;
-  String paymentMethod;
+  double? cost;
+  String? paymentMethod;
   String? visaAccount;
-  String homeId;
-  String userId;
+  String? homeId;
+  String? userId;
   String status;
   String homeName;
-  String customerName;
-  String thumbnail;
-  String owner;
+  String? customerName;
+  String? thumbnail;
+  String? owner;
   double totalCost;
-  int numberOfGuests;
+  int? numberOfGuests;
   String? homeAddressDetail;
-  String homeProvinceCode;
+  String? homeProvinceCode;
+  String? homeProvinceName;
   double? percent;
   List<Surcharge>? surcharges;
   List<Guest>? guests;
-  double costOfHost;
-  double costOfAdmin;
-  String refundPolicy;
-  double moneyPayed;
+  double? costOfHost;
+  double? costOfAdmin;
+  String? refundPolicy;
+  double? moneyPayed;
+  double? baseCost;
+  String? createdDate;
+  double? rates;
+  String? comment;
 
   factory BookingInfo.fromJson(Map<String, dynamic> json) => BookingInfo(
-        id: json["id"],
-        dateStart: DateTime.parse(json["dateStart"]),
-        dateEnd: DateTime.parse(json["dateEnd"]),
-        phoneNumber: json["phoneNumber"],
-        email: json["email"],
-        cost: json["cost"],
-        paymentMethod: json["paymentMethod"],
-        visaAccount: json["visaAccount"],
-        homeId: json["homeId"],
-        userId: json["userId"],
-        status: json["status"],
-        homeName: json["homeName"],
-        customerName: json["customerName"],
-        thumbnail: json["thumbnail"],
-        owner: json["owner"],
-        totalCost: json["totalCost"],
-        numberOfGuests: json["numberOfGuests"],
-        homeAddressDetail: json["homeAddressDetail"],
-        homeProvinceCode: json["homeProvinceCode"],
-        percent: json["percent"],
-        surcharges: json["surcharges"] == null
-            ? null
-            : List<Surcharge>.from(
-                json["surcharges"].map((x) => Surcharge.fromJson(x))),
-        guests: json["guests"] == null
-            ? null
-            : List<Guest>.from(json["guests"].map((x) => Guest.fromJson(x))),
-        costOfHost: json["costOfHost"],
-        costOfAdmin: json["costOfAdmin"],
-        refundPolicy: json["refundPolicy"],
-        moneyPayed: json["moneyPayed"],
-      );
+      id: json["id"],
+      dateStart: DateTime.parse(json["dateStart"]),
+      dateEnd: DateTime.parse(json["dateEnd"]),
+      phoneNumber: json["phoneNumber"],
+      email: json["email"],
+      cost: json["cost"],
+      paymentMethod: json["paymentMethod"],
+      visaAccount: json["visaAccount"],
+      homeId: json["homeId"],
+      userId: json["userId"],
+      status: json["status"],
+      homeName: json["homeName"],
+      customerName: json["customerName"],
+      thumbnail: json["thumbnail"],
+      owner: json["owner"],
+      totalCost: json["totalCost"],
+      numberOfGuests: json["numberOfGuests"],
+      homeAddressDetail: json["homeAddressDetail"],
+      homeProvinceCode: json["homeProvinceCode"],
+      percent: json["percent"],
+      surcharges: json["surcharges"] == null
+          ? null
+          : List<Surcharge>.from(
+              json["surcharges"].map((x) => Surcharge.fromJson(x))),
+      guests: json["guests"] == null
+          ? null
+          : List<Guest>.from(json["guests"].map((x) => Guest.fromJson(x))),
+      costOfHost: json["costOfHost"],
+      costOfAdmin: json["costOfAdmin"],
+      refundPolicy: json["refundPolicy"],
+      moneyPayed: json["moneyPayed"],
+      baseCost: json["baseCost"],
+      homeProvinceName: json["homeProvinceName"],
+      createdDate: json["createdDate"],
+      rates: json["rates"],
+      comment: json["comment"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -172,6 +185,11 @@ class BookingInfo {
         "costOfAdmin": costOfAdmin,
         "refundPolicy": refundPolicy,
         "moneyPayed": moneyPayed,
+        "baseCost": baseCost,
+        "homeProvinceName": homeProvinceName,
+        "createdDate": createdDate,
+        "rates": rates,
+        "comment": comment
       };
 }
 
@@ -228,5 +246,47 @@ class Surcharge {
         "surchargeId": surchargeId,
         "booking": booking,
         "costOfSurcharge": costOfSurcharge,
+      };
+}
+
+class GetBookHomeDetailResponse {
+  GetBookHomeDetailResponse({
+    required this.success,
+    required this.data,
+  });
+
+  bool success;
+  BookingInfo data;
+
+  factory GetBookHomeDetailResponse.fromJson(Map<String, dynamic> json) =>
+      GetBookHomeDetailResponse(
+        success: json["success"] ?? false,
+        data: BookingInfo.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": data.toJson(),
+      };
+}
+
+class GetBookingDetailResponse {
+  GetBookingDetailResponse({
+    required this.success,
+    required this.data,
+  });
+
+  bool success;
+  BookingInfo data;
+
+  factory GetBookingDetailResponse.fromJson(Map<String, dynamic> json) =>
+      GetBookingDetailResponse(
+        success: json["success"] ?? false,
+        data: BookingInfo.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "success": success,
+        "data": data.toJson(),
       };
 }

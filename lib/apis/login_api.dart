@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:your_tours_mobile/constants/api_url.dart';
@@ -7,7 +8,7 @@ import 'package:your_tours_mobile/models/responses/error_response.dart';
 import 'package:your_tours_mobile/models/responses/login_response.dart';
 import 'package:your_tours_mobile/services/token_handler.dart';
 
-Future<void> loginController(LoginRequest requestBody) async {
+Future<LoginResponse> loginApi(LoginRequest requestBody) async {
   try {
     http.Response response = await http.post(
       Uri.parse(domain + loginUrl),
@@ -20,11 +21,13 @@ Future<void> loginController(LoginRequest requestBody) async {
     Map<String, dynamic> responseJson =
         json.decode(utf8.decode(response.bodyBytes));
 
+    log(name: 'RESPONSE LOGIN:', responseJson.toString());
+
     if (response.statusCode == 200) {
       LoginResponse loginResponse = LoginResponse.fromJson(responseJson);
       await saveToken(loginResponse.data?.accessToken);
       await saveUserInfo(loginResponse.data?.userInfo);
-      return;
+      return loginResponse;
     }
 
     ErrorResponse errorResponse = ErrorResponse.fromJson(responseJson);

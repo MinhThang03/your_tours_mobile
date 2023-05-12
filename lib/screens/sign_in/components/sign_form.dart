@@ -1,14 +1,18 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:your_tours_mobile/components/custom_surfix_icon.dart';
 import 'package:your_tours_mobile/components/form_error.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/helper/keyboard.dart';
+import 'package:your_tours_mobile/models/responses/location_response.dart';
+import 'package:your_tours_mobile/models/responses/login_response.dart';
 import 'package:your_tours_mobile/screens/forgot_password/forgot_password_screen.dart';
 
+import '../../../apis/login_api.dart';
 import '../../../components/default_button.dart';
 import '../../../components/loading_overlay.dart';
 import '../../../constants.dart';
-import '../../../controllers/login_controller.dart';
 import '../../../models/requests/login_request.dart';
 import '../../../size_config.dart';
 import '../../main_screen/main_screen.dart';
@@ -49,12 +53,27 @@ class _SignFormState extends State<SignForm> {
 
   Future<void> _submit() async {
     try {
-      await LoadingOverlay.of(context).during(
-          future: loginController(LoginRequest(
+      LoginResponse response = await LoadingOverlay.of(context).during(
+          future: loginApi(LoginRequest(
               email: _emailController.text,
               password: _passwordController.text)));
 
       if (!mounted) return;
+
+      if (response.data!.deviceLocation != null) {
+        response.data!.userInfo!.deviceLocation = response.data!.deviceLocation;
+
+        if (response.data!.userInfo!.deviceLocation!.cityName == null) {
+          response.data!.userInfo!.deviceLocation!.cityName = 'Ho Chi Minh';
+        }
+      } else {
+        response.data!.userInfo!.deviceLocation =
+            UserLocation(cityName: 'Ho Chi Minh');
+      }
+
+      Get.put(UserController(response.data!.userInfo!.obs,
+          response.data!.userInfo!.deviceLocation!.obs));
+
       Navigator.push(
         context,
         MaterialPageRoute(

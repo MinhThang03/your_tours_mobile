@@ -7,9 +7,9 @@ class ErrorResponse {
   String code;
 
   factory ErrorResponse.fromJson(Map<String, dynamic> json) => ErrorResponse(
-        success: json["success"] as bool,
-        message: json["message"] as String,
-        code: json["code"] as String,
+        success: json["success"] ?? false,
+        message: json["message"] ?? json["error"] ?? '',
+        code: json["code"].toString(),
       );
 
   Map<String, dynamic> toJson() => {

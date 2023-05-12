@@ -1,13 +1,12 @@
-import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:your_tours_mobile/constants.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
 import 'package:your_tours_mobile/models/responses/user_response.dart';
-import 'package:your_tours_mobile/screens/profile/components/profile_confirm.dart';
-import 'package:your_tours_mobile/screens/profile_view/profile_view_screen.dart';
+import 'package:your_tours_mobile/screens/sign_in/sign_in_screen.dart';
+import 'package:your_tours_mobile/services/token_handler.dart';
 
-import '../../../controllers/user_controller.dart';
+import 'profile_info_section.dart';
 import 'profile_menu.dart';
-import 'profile_pic.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -17,98 +16,46 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  UserInfoResponse? _userInfo;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchDataUserInfoFromApi();
-  }
+  UserController userController = Get.find<UserController>();
 
-  @override
-  void dispose() {
-    _userInfo = null;
-    super.dispose();
-  }
-
-  Future<void> _fetchDataUserInfoFromApi() async {
-    try {
-      final response = await getCurrentUserController();
-      setState(() {
-        _userInfo = response;
-      });
-    } on FormatException catch (error) {
-      AnimatedSnackBar.material(
-        error.message,
-        type: AnimatedSnackBarType.error,
-        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
-      ).show(context);
-    }
-  }
-
-  bool _getStatusOfUser() {
-    if (_userInfo == null) {
+  bool _getStatusOfUser(UserInfo? userInfo) {
+    if (userInfo == null) {
       return false;
     }
 
-    if (_userInfo!.data?.status == 'ACTIVE') {
+    if (userInfo.status == 'ACTIVE') {
       return true;
     }
 
     return false;
   }
 
+  Future<void> handleLogOut() async {
+    await deleteToken();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const SignInScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          ProfilePic(
-            avatar: _userInfo?.data?.avatar,
-          ),
-          const SizedBox(height: 10),
-          _userInfo == null
-              ? Container()
-              : ProfileConfirm(active: _getStatusOfUser()),
+          ProfileInfoSection(),
           const SizedBox(height: 20),
-          _getStatusOfUser() == true
+          Obx(() => _getStatusOfUser(userController.userInfo.value)
               ? Container()
               : ProfileMenu(
-            text: "Active account",
-            icon: "assets/icons/active_user_icon.svg",
-            press: () => {},
-          ),
-          ProfileMenu(
-            text: "My Account",
-            icon: "assets/icons/User Icon.svg",
-            press: () => {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: timeNavigatorPush,
-                  transitionsBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation,
-                      Widget child) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(1.0, 0.0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: child,
-                    );
-                  },
-                  pageBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation) {
-                    return ProfileViewScreen();
-                  },
-                ),
-              )
-            },
-          ),
+                  text: "Active account",
+                  icon: "assets/icons/active_user_icon.svg",
+                  press: () => {},
+                )),
           ProfileMenu(
             text: "Notifications",
             icon: "assets/icons/Bell.svg",
@@ -127,7 +74,9 @@ class _BodyState extends State<Body> {
           ProfileMenu(
             text: "Log Out",
             icon: "assets/icons/Log out.svg",
-            press: () {},
+            press: () {
+              handleLogOut();
+            },
           ),
         ],
       ),

@@ -18,7 +18,7 @@ class _ProfileConfirmState extends State<ProfileConfirm> {
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
             width: 1,
-            color: widget.active ? Colors.green : Colors.red,
+            color: widget.active ? Colors.blue : Colors.red,
           )),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -26,7 +26,7 @@ class _ProfileConfirmState extends State<ProfileConfirm> {
           Icon(
             widget.active ? Icons.check_circle_outline : Icons.cancel_outlined,
             size: 18,
-            color: widget.active ? Colors.green : Colors.red,
+            color: widget.active ? Colors.blue : Colors.red,
           ),
           const SizedBox(
             width: 6,
@@ -35,7 +35,7 @@ class _ProfileConfirmState extends State<ProfileConfirm> {
             child: Text(
               widget.active ? "Đã xác thực" : "Chưa xác thực",
               style: TextStyle(
-                color: widget.active ? Colors.green : Colors.red,
+                color: widget.active ? Colors.blue : Colors.red,
               ),
             ),
           ),

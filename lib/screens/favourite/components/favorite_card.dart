@@ -1,20 +1,19 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/apis/home_detail_apis.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
-import 'package:your_tours_mobile/controllers/home_detail_controller.dart';
+import 'package:your_tours_mobile/controllers/favourite_controller.dart';
 import 'package:your_tours_mobile/models/responses/home_detail_response.dart';
-import 'package:your_tours_mobile/models/responses/home_info_response.dart';
+import 'package:your_tours_mobile/models/responses/home_page_response.dart';
 import 'package:your_tours_mobile/screens/room_detail/room_detail_screen.dart';
+import 'package:your_tours_mobile/services/handle_province_name.dart';
 
-import '../../../components/rating_bar.dart';
 import '../../../constants.dart';
-import '../../../controllers/favourite_controller.dart';
-import '../../../models/requests/favourite_request.dart';
-import '../../../models/responses/register_response.dart';
 
 class FavoriteCard extends StatefulWidget {
-  final HomeInfo homeInfo;
+  final MobileHomeInfo homeInfo;
 
   const FavoriteCard({Key? key, required this.homeInfo}) : super(key: key);
 
@@ -23,54 +22,19 @@ class FavoriteCard extends StatefulWidget {
 }
 
 class _FavoriteCardState extends State<FavoriteCard> {
-  bool _isFavourited = false;
+  late HandleFavouriteController favoriteController;
 
   @override
   void initState() {
-    _isFavourited = widget.homeInfo.isFavorite ?? false;
+    favoriteController =
+        HandleFavouriteController(widget.homeInfo.isFavorite.obs);
     super.initState();
   }
 
-  Future<void> _handleFavourite() async {
-    try {
-      SuccessResponse favouriteResponse = await favouriteHandlerController(
-          FavouriteRequest(homeId: widget.homeInfo.id));
-
-      setState(() {
-        _isFavourited = !_isFavourited;
-      });
-
-      if (!mounted) return;
-
-      if (favouriteResponse.success == true) {
-        AnimatedSnackBar.material(
-          'Thêm vào danh sách yêu thích thành công',
-          type: AnimatedSnackBarType.success,
-          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-          desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
-        ).show(context);
-      } else {
-        AnimatedSnackBar.material(
-          'Xóa khỏi danh sách yêu thích thành công',
-          type: AnimatedSnackBarType.error,
-          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-          desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
-        ).show(context);
-      }
-    } on FormatException catch (error) {
-      AnimatedSnackBar.material(
-        error.message,
-        type: AnimatedSnackBarType.error,
-        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-        desktopSnackBarPosition: DesktopSnackBarPosition.topRight,
-      ).show(context);
-    }
-  }
-
-  Future<void> _callHomeDetailFromApi() async {
+  Future<void> callHomeDetailFromApi() async {
     try {
       HomeDetailResponse response = await LoadingOverlay.of(context)
-          .during(future: homeDetailController(widget.homeInfo.id));
+          .during(future: homeDetailApi(widget.homeInfo.id));
 
       if (!mounted) {
         return;
@@ -114,125 +78,144 @@ class _FavoriteCardState extends State<FavoriteCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _callHomeDetailFromApi();
+        callHomeDetailFromApi();
       },
-      child: Padding(
-        padding: const EdgeInsets.only(right: 16.0, left: 16, top: 8),
-        child: Container(
-          height: 168,
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 8.0, bottom: 20, top: 20, right: 10),
-                  child: Stack(children: [
-                    ClipRRect(
-                      borderRadius:
-                      const BorderRadius.all(Radius.circular(4.0)),
-                      child: Image.network(
-                        widget.homeInfo.thumbnail!,
-                        fit: BoxFit.cover,
-                        height: 136,
-                        width: 128,
-                      ),
-                    ),
-                    Positioned(
-                      top: -10,
-                      right: -6,
-                      child: IconButton(
-                        icon: _isFavourited
-                            ? SvgPicture.asset(
-                          'assets/icons/Heart Icon_2.svg',
-                          width: 20,
-                          height: 20,
-                          color: kPrimaryColor,
-                        )
-                            : SvgPicture.asset(
-                          'assets/icons/Heart Icon.svg',
-                          width: 20,
-                          height: 20,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {
-                          _handleFavourite();
-                        },
-                      ),
-                    ),
-                  ]),
-                ),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18.0),
+          border: Border.all(color: kPrimaryColor, width: 1),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(18.0)),
+              child: Image.network(
+                widget.homeInfo.thumbnail,
+                fit: BoxFit.cover,
+                height: 110,
+                width: 110,
               ),
-              Flexible(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20.0, bottom: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Text(widget.homeInfo.name!,
-                          style: const TextStyle(fontWeight: FontWeight.w600)),
-                      const RatingBarCommon(
-                        maxRating: 5,
-                        minRating: 5,
-                        initialRating: 5,
+                      Expanded(
+                        child: Text(widget.homeInfo.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
-                      Row(
-                        children: [
-                          Text('${widget.homeInfo.costPerNightDefault}VNĐ'),
-                          const Text('/đêm')
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      // Row(
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: [
-                      //     SvgPicture.asset(
-                      //       'assets/icons/homeCard.svg',
-                      //       width: 18,
-                      //       height: 18,
-                      //     ),
-                      //     const SizedBox(width: 4),
-                      //     Text('50'),
-                      //     const Text(
-                      //       ' m²',
-                      //       style: TextStyle(fontSize: 12),
-                      //     )
-                      //   ],
-                      // ),
+                      Obx(() => IconButton(
+                            icon: favoriteController.isFavorite.value
+                                ? SvgPicture.asset(
+                                    'assets/icons/Heart Icon_2.svg',
+                                    width: 16,
+                                    height: 16,
+                                    color: kSecondaryColor,
+                                  )
+                                : SvgPicture.asset(
+                                    'assets/icons/Heart Icon.svg',
+                                    width: 16,
+                                    height: 16,
+                                    color: Colors.red,
+                                  ),
+                            onPressed: () async {
+                              await favoriteController.handleFavorite(
+                                  context, widget.homeInfo.id);
+
+                              if (!mounted) return;
+
+                              if (favoriteController.message.value != '') {
+                                AnimatedSnackBar.material(
+                                  favoriteController.message.value,
+                                  type: AnimatedSnackBarType.success,
+                                  mobileSnackBarPosition:
+                                      MobileSnackBarPosition.bottom,
+                                  desktopSnackBarPosition:
+                                      DesktopSnackBarPosition.topRight,
+                                ).show(context);
+                              } else {
+                                AnimatedSnackBar.material(
+                                  favoriteController.errorMessage.value,
+                                  type: AnimatedSnackBarType.error,
+                                  mobileSnackBarPosition:
+                                      MobileSnackBarPosition.bottom,
+                                  desktopSnackBarPosition:
+                                      DesktopSnackBarPosition.topRight,
+                                ).show(context);
+                              }
+                            },
+                          )),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
                       Expanded(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SvgPicture.asset(
-                              'assets/icons/location.svg',
+                              'assets/icons/location_fill_icon.svg',
+                              width: 18,
+                              height: 18,
+                              color: kSmoke,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              getShortProvinceName(
+                                  widget.homeInfo.provinceName),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/Star Icon.svg',
                               width: 18,
                               height: 18,
                             ),
                             const SizedBox(width: 4),
-                            Flexible(
-                              flex: 3,
-                              child: Text(
-                                widget.homeInfo.provinceName ?? '',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            )
+                            const Text(
+                              '5.0',
+                              style: TextStyle(fontSize: 12),
+                            ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
-                ),
-              )
-            ],
-          ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        '${widget.homeInfo.costPerNightDefault.toInt()} VNĐ',
+                        style: const TextStyle(
+                            color: kSecondaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                      const Text('/Night')
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

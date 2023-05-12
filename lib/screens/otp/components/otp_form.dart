@@ -1,8 +1,8 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:your_tours_mobile/apis/otp_controller.dart';
 import 'package:your_tours_mobile/components/default_button.dart';
 import 'package:your_tours_mobile/components/loading_overlay.dart';
-import 'package:your_tours_mobile/controllers/otp_controller.dart';
 import 'package:your_tours_mobile/models/requests/active_account_request.dart';
 import 'package:your_tours_mobile/screens/sign_in/sign_in_screen.dart';
 import 'package:your_tours_mobile/size_config.dart';

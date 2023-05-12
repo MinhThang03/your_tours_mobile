@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/controllers/search_controller.dart';
 
 import '../../../size_config.dart';
 
-class SearchField extends StatelessWidget {
-  final ValueChanged<String?> onChangeSearch;
+class SearchField extends StatefulWidget {
+  const SearchField({Key? key}) : super(key: key);
 
-  const SearchField({
-    Key? key,
-    required this.onChangeSearch,
-  }) : super(key: key);
+  @override
+  State<SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState extends State<SearchField> {
+  SearchController searchController = Get.find<SearchController>();
+
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (searchController.keyword.value.isNotEmpty) {
+      _textController.text = searchController.keyword.value;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +31,7 @@ class SearchField extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
@@ -27,9 +42,10 @@ class SearchField extends StatelessWidget {
         ],
       ),
       child: TextField(
-        onChanged: (value) {
-          onChangeSearch(value);
+        onSubmitted: (value) {
+          searchController.setKeyword(value);
         },
+        controller: _textController,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(20),

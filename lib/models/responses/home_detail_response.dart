@@ -83,9 +83,9 @@ class Data {
   String? status;
   int? numberOfGuests;
   int? view;
-  bool? favorite;
+  int? favorite;
   String? thumbnail;
-  int? averageRate;
+  double? averageRate;
   int? numberOfReviews;
   DateTime? lastModifiedDate;
   List<RoomsImportant>? roomsImportant;

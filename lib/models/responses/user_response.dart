@@ -1,3 +1,5 @@
+import 'package:your_tours_mobile/models/responses/location_response.dart';
+
 class UserInfoResponse {
   UserInfoResponse({required this.success, this.data});
 
@@ -30,6 +32,7 @@ class UserInfo {
     this.role,
     this.isOwner,
     this.owner,
+    this.deviceLocation,
   });
 
   String? id;
@@ -44,6 +47,7 @@ class UserInfo {
   String? role;
   bool? isOwner;
   bool? owner;
+  UserLocation? deviceLocation;
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
         id: json["id"],
@@ -75,3 +79,4 @@ class UserInfo {
         "owner": owner,
       };
 }
+

@@ -7,8 +7,8 @@ import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/models/requests/register_request.dart';
 import 'package:your_tours_mobile/screens/otp/otp_screen.dart';
 
+import '../../../apis/register_controller.dart';
 import '../../../constants.dart';
-import '../../../controllers/register_controller.dart';
 import '../../../size_config.dart';
 
 class SignUpForm extends StatefulWidget {
