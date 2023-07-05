@@ -1,5 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:your_tours_mobile/apis/location_api.dart';
+import 'package:your_tours_mobile/apis/user_api.dart';
+import 'package:your_tours_mobile/components/loading_overlay.dart';
 import 'package:your_tours_mobile/constants.dart';
+import 'package:your_tours_mobile/controllers/user_controller.dart';
+import 'package:your_tours_mobile/models/responses/location_response.dart';
+import 'package:your_tours_mobile/models/responses/user_response.dart';
+import 'package:your_tours_mobile/screens/main_screen/main_screen.dart';
 import 'package:your_tours_mobile/screens/sign_in/sign_in_screen.dart';
 import 'package:your_tours_mobile/size_config.dart';
 
@@ -17,21 +27,49 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   int currentPage = 0;
   List<Map<String, String>> splashData = [
-    {
-      "text": "Welcome to Tokoto, Let’s shop!",
-      "image": "assets/images/splash_1.png"
-    },
+    {"text": "Welcome , Let’s go!", "image": "assets/images/splash_1.png"},
     {
       "text":
-          "We help people conect with store \naround United State of America",
+          "We help people connect with owners \naround United State of America",
       "image": "assets/images/splash_2.png"
     },
     {
       "text":
-          "We show the easy way to shop. \nJust stay at search_home with us",
+          "We show the easy way to home. \nJust stay at search_home with us",
       "image": "assets/images/splash_3.png"
     },
   ];
+
+  Future<void> _fetchDataUserFromApi() async {
+    try {
+      List<Object> response = await LoadingOverlay.of(context).during(
+          future: Future.wait([
+        getCurrentUserApi(),
+        getCurrentLocationApi(),
+      ]));
+
+      UserInfoResponse userResponse = response.first as UserInfoResponse;
+      GetCurrentLocationResponse locationResponse =
+          response.last as GetCurrentLocationResponse;
+
+      userResponse.data?.deviceLocation = locationResponse.data;
+
+      Get.put(
+          UserController(userResponse.data!.obs, locationResponse.data!.obs));
+
+      if (!mounted) {
+        return;
+      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const MainScreen(selectedInit: 0)),
+      );
+    } on FormatException catch (error) {
+      log(name: 'ERROR PRE START:', error.toString());
+      Navigator.pushNamed(context, SignInScreen.routeName);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +112,7 @@ class _BodyState extends State<Body> {
                     DefaultButton(
                       text: "Continue",
                       press: () {
-                        Navigator.pushNamed(context, SignInScreen.routeName);
+                        _fetchDataUserFromApi();
                       },
                     ),
                     const Spacer(),
