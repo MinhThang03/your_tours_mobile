@@ -33,6 +33,7 @@ class _BodyState extends State<Body> {
 
   Future<void> handleLogOut() async {
     await deleteToken();
+    Get.deleteAll();
 
     if (!mounted) return;
 

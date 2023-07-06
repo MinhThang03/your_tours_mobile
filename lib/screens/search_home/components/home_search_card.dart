@@ -110,6 +110,18 @@ class _HomeSearchCardState extends State<HomeSearchCard> {
     }
   }
 
+  String handleViewProvince(String? province) {
+    if (province == null) {
+      return '';
+    }
+
+    if (province.length > 10) {
+      return '${province.substring(0, 7)}...';
+    }
+
+    return province;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -187,8 +199,8 @@ class _HomeSearchCardState extends State<HomeSearchCard> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              getShortProvinceName(
-                                  widget.homeInfo.provinceName),
+                              handleViewProvince(getShortProvinceName(
+                                  widget.homeInfo.provinceName)),
                               style: const TextStyle(fontSize: 12),
                             ),
                           ],

@@ -237,6 +237,7 @@ class _HomeCardState extends State<HomeCard> {
                   Text(
                     widget.homeInfo.provinceName ?? '',
                     style: const TextStyle(color: Colors.black),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
